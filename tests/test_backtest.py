@@ -170,6 +170,9 @@ def test_swap_and_risk_limits():
     t, b, a = ticks((5000, 399990, 400010), (10_300, 399995, 400015), (12_000, 399995, 400015))
     c.run(t, b, a, [(SIG(), []), (SIG(t=11_000, sid="s2"), [])], 50_000)
     assert [o["status"] for o in c.out["orders"]] == ["FILLED", "REJECTED_MAX_CONCURRENT"] or [o["status"] for o in c.out["orders"]] == ["REJECTED_MAX_CONCURRENT"]
+    lim, _, _ = sim()
+    lim.run(*ticks((5000, 399990, 400010), (10_300, 399995, 400015)), [({**SIG(), "entry_type": "limit"}, [])], 50_000)
+    assert lim.out["orders"][0]["status"] == "REJECTED_UNSUPPORTED_ENTRY_TYPE"
     z, _, _ = sim(backtest={"risk": {"risk_per_trade": "0.00001"}})
     z.run(*ticks((5000, 399990, 400010), (10_300, 399995, 400015)), [(SIG(), [])], 50_000)
     assert z.out["orders"][0]["status"] == "REJECTED_SIZE_BELOW_MIN"

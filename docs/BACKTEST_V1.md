@@ -100,4 +100,4 @@ The default limits are PROPOSED (decision D7): 0.5 % per trade, 2 % daily, 8 % m
 - The basis uses Binance last trades (no Binance quotes exist).
 - Event tracking and the gap path have 1 s resolution.
 - The rollover convention and costs must be confirmed with the broker.
-- Market orders only: the example strategies emit `market` entries; limit and stop entries are not simulated yet. A signal with another entry type is refused in Phase 11's schema check.
+- Market entries only: the example strategies emit `market` entries. A signal with any other entry type is refused by the simulator (`REJECTED_UNSUPPORTED_ENTRY_TYPE`), never filled as if it were a market order.

@@ -140,7 +140,9 @@ class Simulator:
                  "entry_ref_points": None, "sl_points": None, "tp_points": None, "lots": None, "basis_half": None, "risk_cents": None}  # fmt: skip
         reason = None
         bh, nb = self.basis.at(E)
-        if self.halted:
+        if sig.get("entry_type", "market") != "market":
+            reason = "REJECTED_UNSUPPORTED_ENTRY_TYPE"  # limit/stop entries are not simulated in v1
+        elif self.halted:
             reason = "REJECTED_MAX_DRAWDOWN"
         elif self.locked_day == E // DAY_MS:
             reason = f"REJECTED_{self.lock_reason}"
