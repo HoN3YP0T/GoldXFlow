@@ -19,7 +19,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8,<10", "ruff>=0.6", "mypy>=1.10"]
+dev = ["pytest>=8,<10", "ruff>=0.6", "mypy>=1.10", "websockets>=12,<16"]
+# Phase 8 live depth recorder (goldflow depth-record)
+live = ["websockets>=12,<16"]
 
 [project.scripts]
 goldflow = "goldflow.cli:main"
@@ -60,10 +62,11 @@ python_version = "3.12"
 warn_unused_configs = true
 ignore_missing_imports = true
 files = ["goldflow/settings.py", "goldflow/profiles.py", "goldflow/observability.py", "goldflow/migrations.py",
-         "goldflow/providers"]
+         "goldflow/providers", "goldflow/liquidity"]
 
 [[tool.mypy.overrides]]
-module = ["goldflow.settings", "goldflow.profiles", "goldflow.observability", "goldflow.migrations", "goldflow.providers.*"]
+module = ["goldflow.settings", "goldflow.profiles", "goldflow.observability", "goldflow.migrations", "goldflow.providers.*",
+          "goldflow.liquidity", "goldflow.liquidity.*"]
 strict = true
 
 [[tool.mypy.overrides]]

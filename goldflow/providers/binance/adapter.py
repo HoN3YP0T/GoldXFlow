@@ -71,7 +71,9 @@ class BinanceUsdmProvider(Provider):
                     A.NOT_IMPLEMENTED, "Phase 14 (REST /fapi/v1/trades polling; RPI policy)"
                 ),
                 Capability.REALTIME_AGGTRADES: CapabilityInfo(A.NOT_IMPLEMENTED, "Phase 14 (WebSocket aggTrade; excludes RPI)"),
-                Capability.REALTIME_L2_DEPTH: CapabilityInfo(A.NOT_IMPLEMENTED, "Phase 8/14 (depth@100ms + snapshot, U/u/pu)"),
+                Capability.REALTIME_L2_DEPTH: CapabilityInfo(
+                    A.AVAILABLE, "Phase 8 recorder: depth@100ms + /fapi/v1/depth, U/u/pu checked; non-US host only (451)"
+                ),
                 Capability.AGGRESSOR_SIDE: CapabilityInfo(A.EXCHANGE_REPORTED, "is_buyer_maker: true => seller aggressor"),
                 Capability.TRADE_SEQUENCE: CapabilityInfo(
                     A.NOT_CONTIGUOUS, "ids skip unused values; completeness via kline counts"

@@ -219,7 +219,7 @@ mql5/   (Phase 16: EA executor source)
 | 5 | Trade processing, classification, price-level aggregation | Not started. **Next.** | M3 (begins) |
 | 6 | Volume Profile, POC, Value Area, HVN/LVN, VWAP | Not started | M3 |
 | 7 | Delta, CVD, imbalance, Big Trades, absorption, exhaustion | Not started | M3 |
-| 8 | Order-book reconstruction and liquidity | Not started (live-only; no historical L2) | M3 (live part) |
+| 8 | Order-book reconstruction and liquidity | **Done** (2026-10-31; live-only, see `docs/PHASE8_COMPLETION_REPORT.md`). The recorder must run on the PC or a non-US VPS. | M3 (live part) |
 | 9 | Auction Market Theory and failed auctions | Not started | M3 |
 | 10 | Sessions, Initial Balance, IVB | Not started (IVB definition required from you) | M3 |
 | 11 | Strategy interface and signal generation | Not started | – |
@@ -528,7 +528,8 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 8: Historical and live order-book reconstruction and liquidity. **Status: Not started. Live only.**
+### Phase 8: Historical and live order-book reconstruction and liquidity. **Status: Done (2026-10-31). Live only.**
+**Built** (`goldflow/liquidity/`, `docs/METRICS_LIQUIDITY_V1.md`, `docs/PHASE8_COMPLETION_REPORT.md`): local book with the Binance sync procedure, raw recorder (`goldflow depth-record`), capture replay (`depth-replay`), DepthEvent v1 normalisation (`depth-normalize`), per-interval depth capability, book metrics, and one book per venue with RPI separate. Next step for you: start `depth-record` on the PC or a non-US VPS (D6) so depth history begins to accumulate.
 **Objective.** Depth-based analytics **only** where genuine snapshots and incremental updates exist.
 
 **Reality for us.** There is no historical price-level L2 for 2026-04-30 → 2026-10-30. Depth analytics can only be built from our **own live recorder**, so it should be started as early as possible (see Phase 14) to accumulate history. Paid history (for example Tardis.dev `incremental_book_L2`) is the alternative and needs your decision.

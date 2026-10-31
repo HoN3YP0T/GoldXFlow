@@ -40,8 +40,20 @@ Five-minute open interest and long/short ratios, as reported. Source rows are un
 ## Kline1m (`klines_1m`): reference only
 These are Binance-computed candles, used as the **independent completeness reference** for trades: per-minute `trade_count` and `volume` must equal the normalised trades. They are not an analytics input.
 
-## DepthEvent (`depth_l2`): defined, no data
-The price-level L2 schema follows the build guide: update ids, bids/asks lists, snapshot_or_delta and sequence_validity. The capability is **UNAVAILABLE** for the historical period. Only a future live recorder will fill it.
+## DepthEvent (`depth_l2`, `depth_l2_rpi`): price-level L2 from the Phase 8 live recorder
+The capability is **UNAVAILABLE** for the historical period (2026-04-30 → 2026-10-30). Rows exist only for intervals the live recorder captured (`goldflow depth-normalize`; definitions in `docs/METRICS_LIQUIDITY_V1.md`). RPI liquidity, when enabled, goes to `data_type=depth_l2_rpi` and is never mixed into `depth_l2`.
+
+| Field | Kind | Notes |
+|---|---|---|
+| exchange_event_time_utc, transaction_time_utc | reported | Binance `E` / `T`. Boundary rows (below) are stamped at the last `E` seen for that book + 1 ms. |
+| first_update_id, final_update_id, previous_update_id | reported | `U`, `u`, `pu` for deltas. A snapshot has only `final_update_id` = `lastUpdateId`. |
+| bids, asks | reported | `(price, quantity)` lists, absolute quantities; quantity 0 removes the level. Converted back to ticks/lots exactly on read. |
+| snapshot_or_delta | reported | `SNAPSHOT` (REST response), `DELTA` (diff event), `CONNECTION_LOST` (connection or capture boundary that invalidated the book), `INVALID_PAYLOAD` (unparseable diff that invalidated the book) |
+| sequence_validity | derived | The record's final outcome in the book: `APPLIED`, `DROPPED_BEFORE_SNAPSHOT`, `DUPLICATE`, `DISCARDED`, `SNAPSHOT_APPLIED`, `SNAPSHOT_REJECTED`, `INVALID_PAYLOAD`, `CONNECTION_LOST` |
+| data_quality_status | derived | `VALID` if the record was applied, else `NOT_APPLIED` |
+| raw_file_id, raw_row | reference | `raw_file_id` indexes the partition metadata list `goldflow.capture_sessions`; `raw_row` is the record's `seq` in that session's raw capture |
+
+Partition metadata also carries `goldflow.book_kind` and `goldflow.snapshot_limits` (the snapshot depth limit per snapshot row, which decides how much of the book is known). The live `receive_time` is kept in the raw capture (`recv_ms`). Rows are sorted by exchange time, then capture order.
 
 ## Quarantine record
 `dataset, reason_code, reason_detail, raw_file_id, raw_row, source_id, event_time_ms, raw_fields_json`. Stored under `data/quarantine/...` with the same partitioning.

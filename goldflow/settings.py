@@ -162,6 +162,91 @@ class ReplayCfg(_Strict):
     paced_chunk_sim_ms: int = Field(ge=1)
 
 
+class DepthCfg(_Strict):
+    """Phase 8 live price-level book recorder. Defaults live here (not in the JSON file) so the config hash is unchanged.
+
+    Endpoints are configurable because Binance has changed WebSocket routing before: re-verify them on the recording host.
+    The RPI stream/endpoint names are unverified and therefore disabled by default."""
+
+    ws_base_url: str = "wss://fstream.binance.com/stream"
+    stream: str = "{symbol}@depth@100ms"
+    snapshot_path: str = "/fapi/v1/depth"
+    snapshot_limit: Literal[5, 10, 20, 50, 100, 500, 1000] = 1000
+    snapshot_min_interval_s: float = Field(default=2.0, ge=0, le=600)
+    rpi_enabled: bool = False
+    rpi_stream: str = "{symbol}@rpiDepth@500ms"
+    rpi_snapshot_path: str = "/fapi/v1/rpiDepth"
+    max_buffer_events: int = Field(default=20_000, ge=10, le=10_000_000)
+    invalidate_on_crossed_book: bool = True
+    reconnect_base_s: float = Field(default=1.0, gt=0, le=60)
+    reconnect_cap_s: float = Field(default=60.0, gt=0, le=3600)
+    max_connection_s: float = Field(default=23 * 3600 + 50 * 60, ge=60, le=24 * 3600)
+    flush_every_s: float = Field(default=1.0, ge=0, le=60)
+    status_every_s: float = Field(default=60.0, gt=0)
+    metrics_cadence_ms: int = Field(default=1_000, ge=100)
+    flow_window_ms: int = Field(default=60_000, ge=1_000)
+    touch_ticks: int = Field(default=10, ge=0)
+    tick_bands: list[int] = Field(default_factory=lambda: [10, 50, 100, 500])
+    pct_bands: list[str] = Field(default_factory=lambda: ["0.1", "0.25", "0.5", "1.0"])
+    top_k: int = Field(default=5, ge=1)
+
+    @field_validator("ws_base_url")
+    @classmethod
+    def _wss(cls, v: str) -> str:
+        if not v.startswith("wss://"):
+            raise ValueError(f"must be a wss:// URL: {v!r}")
+        return v.rstrip("/")
+
+    @field_validator("stream", "rpi_stream")
+    @classmethod
+    def _stream(cls, v: str) -> str:
+        if "{symbol}" not in v:
+            raise ValueError("stream must contain the {symbol} placeholder")
+        return v
+
+    @field_validator("snapshot_path", "rpi_snapshot_path")
+    @classmethod
+    def _path(cls, v: str) -> str:
+        if not v.startswith("/fapi/"):
+            raise ValueError(f"must be a /fapi/ REST path: {v!r}")
+        return v
+
+    @field_validator("tick_bands")
+    @classmethod
+    def _bands(cls, v: list[int]) -> list[int]:
+        if any(x <= 0 for x in v):
+            raise ValueError("tick bands must be > 0")
+        return v
+
+    @field_validator("pct_bands")
+    @classmethod
+    def _pct(cls, v: list[str]) -> list[str]:
+        for x in v:
+            try:
+                d = Decimal(x)
+            except InvalidOperation as e:
+                raise ValueError(f"pct band {x!r} is not a decimal string") from e
+            if not (0 < d <= 50):
+                raise ValueError(f"pct band {x!r} must be in (0, 50]")
+        return v
+
+    @model_validator(mode="after")
+    def _backoff(self) -> "DepthCfg":
+        if self.reconnect_cap_s < self.reconnect_base_s:
+            raise ValueError("reconnect_cap_s must be >= reconnect_base_s")
+        return self
+
+    def streams(self, symbol: str) -> dict[str, str]:
+        """Combined-stream name -> book kind."""
+        out = {self.stream.format(symbol=symbol.lower()): "regular"}
+        if self.rpi_enabled:
+            out[self.rpi_stream.format(symbol=symbol.lower())] = "rpi"
+        return out
+
+    def url(self, symbol: str) -> str:
+        return f"{self.ws_base_url}?streams=" + "/".join(self.streams(symbol))
+
+
 class ExecutionCfg(_Strict):
     """Order routing. Off by default; the live profile additionally requires the recorded M7 demo gate."""
 
@@ -182,6 +267,7 @@ class Settings(_Strict):
     instrument: InstrumentCfg
     replay: ReplayCfg
     execution: ExecutionCfg = ExecutionCfg()
+    depth: DepthCfg = DepthCfg()
 
     @model_validator(mode="after")
     def _cross(self) -> "Settings":

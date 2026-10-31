@@ -1,4 +1,4 @@
-# goldflow: Binance XAUUSDT gold orderflow data foundation (Phases 1–4)
+# goldflow: Binance XAUUSDT gold orderflow data foundation (Phases 1–4, 8)
 
 Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions and Phase 4 replays it deterministically.
 
@@ -84,6 +84,17 @@ python -m goldflow.cli replay --start 2026-10-29T13:00:00Z --end 2026-10-29T21:0
 python -m goldflow.cli replay --dates 2026-07-09 --session 13:00-21:00 --streams trades klines_1m --name x
 ```
 Prints the event counts per stream, the final simulation clock, throughput, peak memory, the sequence digest and integrity violations. See `docs/REPLAY_V1.md` for availability rules, tie order, controls and checkpoint semantics. Python API: `goldflow.replay.ReplayEngine` with `Consumer` subclasses.
+
+## Phase 8: live order book (L2) recorder and liquidity metrics
+There is no historical price-level book for this dataset, so depth history starts the day the recorder starts. Run it where `fapi.binance.com` REST is reachable (the trading PC or a non-US VPS). A US host gets HTTP 451 on the snapshot, and the recorder stops with exit code 4.
+```bash
+pip install -e ".[live]"                         # adds websockets
+python -m goldflow.cli depth-record              # run until Ctrl-C (or --duration S); every payload is captured raw first
+python -m goldflow.cli depth-replay              # rebuild the book from the capture: digests, validity intervals, counters
+python -m goldflow.cli depth-normalize           # DepthEvent v1 Parquet + validity intervals + data/reports/depth_coverage.{json,md}
+python scripts/verify_depth_reference.py --seconds 120   # real-data check: diff-built book vs Binance's own top-20 view
+```
+The book follows Binance's documented snapshot + diff procedure (`U ≤ lastUpdateId ≤ u`, then `pu ==` previous `u`). Any gap, crossed book, bad payload or lost connection invalidates it until a new snapshot bridges. Depth metrics and signals refuse to run unless one continuous valid book covers their window. See `docs/METRICS_LIQUIDITY_V1.md`.
 
 ## Running on a restricted Windows-shared folder (Claude desktop Linux VM)
 On mounts where SQLite journals fail and files can't be deleted, run every step through the wrapper:

@@ -4,6 +4,8 @@
   python -m goldflow.cli acquire   --config ... [--months 6 | --start ISO --end ISO] [--new-range] [--no-rest]
   python -m goldflow.cli rest      --config ...          # REST recovery units only (run where fapi is reachable)
   python -m goldflow.cli manifest  --config ...
+  python -m goldflow.cli depth-record [--duration S]   # Phase 8 live L2 recorder (non-US host)
+  python -m goldflow.cli depth-replay | depth-normalize
 The acquisition range is frozen in data/state/range.json on first run so that resumed runs
 cover exactly the same [start, end); pass --new-range to start a fresh range.
 Exit code 1 if any unit failed or any interval of a primary dataset is uncovered.
@@ -117,7 +119,7 @@ def _providers(cfg, profile) -> int:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="goldflow")
     ap.add_argument("cmd", choices=["status", "providers", "discover", "acquire", "rest", "manifest", "normalize",
-                                    "validate", "report", "replay"])
+                                    "validate", "report", "replay", "depth-record", "depth-replay", "depth-normalize"])
     ap.add_argument("--profile", help="research (default) | test | live; or env GOLDFLOW_PROFILE")
     ap.add_argument("--config", default="config/binance_xauusdt.json")
     ap.add_argument("--months", type=int); ap.add_argument("--start"); ap.add_argument("--end")
@@ -135,6 +137,7 @@ def main(argv=None) -> int:
     ap.add_argument("--session", action="append", help="replay: UTC time-of-day window HH:MM-HH:MM (repeatable)")
     ap.add_argument("--until", help="replay: stop before this UTC time (resumable)")
     ap.add_argument("--streams", nargs="*", help="replay: enable only these streams (default: config)")
+    ap.add_argument("--duration", type=float, help="depth-record: stop after this many seconds (default: run until Ctrl-C)")
     a = ap.parse_args(argv)
     from .migrations import apply_migrations
     from .observability import new_run_id, setup_logging
@@ -178,6 +181,9 @@ def main(argv=None) -> int:
         return 0 if not summary["digest_differences_vs_catalog"] else 1
     if a.cmd == "replay":
         return _replay_cmd(cfg, a, log)
+    if a.cmd.startswith("depth-"):   # Phase 8: live L2 recorder, capture replay, DepthEvent normalisation
+        from .liquidity.commands import run_depth_command
+        return run_depth_command(cfg, a)
     if a.cmd == "report":
         from .fsutil import connect
         db = connect(cfg.state_db)
