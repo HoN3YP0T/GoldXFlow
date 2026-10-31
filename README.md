@@ -1,6 +1,6 @@
-# goldflow: Binance XAUUSDT gold orderflow data foundation (Phases 1–4, 8)
+# goldflow: Binance XAUUSDT gold orderflow engine (Phases 1–5, 8)
 
-Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions and Phase 4 replays it deterministically.
+Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions, Phase 4 replays it deterministically, and Phase 5 turns the replayed trades into exact price-level and footprint aggregates.
 
 **No market data is committed to this repository.** Rebuild it with `python -m goldflow.cli acquire` then `python -m goldflow.cli normalize`. The frozen range in `data/state/range.json` reproduces the exact dataset, and the partition digests in `data/manifests/dataset_manifest.json` let you verify it.
 
@@ -32,9 +32,12 @@ goldflow/
                     thread pool downloader, progress.json, republish detection, monthly->daily fallback
   integrity.py      streaming pyarrow verification (bounded memory): ids, gaps, dups, time order, values
   report.py         coverage of [start,end), cross-file id continuity, trades-vs-1m-klines cross-check, manifest
-  cli.py            discover | acquire | rest | manifest
-docs/L2_ORDERBOOK_AVAILABILITY.md
-tests/test_core.py
+  replay.py         Phase 4 deterministic replay (EventChunk / Consumer interface)
+  processing/       Phase 5: trade_processor.py (TradeProcessor consumer), classify.py, aggregation.py,
+                    sessions.py (zoneinfo calendar), settings.py, footprint_store.py, reconcile.py
+  cli.py            discover | acquire | rest | manifest | normalize | validate | report | replay | process | reconcile
+docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, PHASE*_REPORT.md
+tests/test_core.py, test_phase3.py, test_replay.py, test_processing.py
 data/raw/binance/futures_um/XAUUSDT/<dataset>/<daily|monthly|rest>/   raw zips + .CHECKSUM (+ _verify sidecars)
 data/state/   acquisition.sqlite, range.json, plan-*.json, progress.json, acquisition.log, instrument_discovery.json
 data/manifest.json
@@ -42,7 +45,7 @@ data/manifest.json
 
 ## Usage
 ```bash
-pip install pyarrow requests numpy
+pip install -r requirements.txt pytest
 python -m goldflow.cli discover                 # instrument spec (REST) + archive availability
 python -m goldflow.cli acquire --months 6       # first run freezes [start,end) in data/state/range.json
 python -m goldflow.cli acquire                  # resume: verified files are skipped (size + ETag + status)
@@ -85,6 +88,21 @@ python -m goldflow.cli replay --dates 2026-07-09 --session 13:00-21:00 --streams
 ```
 Prints the event counts per stream, the final simulation clock, throughput, peak memory, the sequence digest and integrity violations. See `docs/REPLAY_V1.md` for availability rules, tie order, controls and checkpoint semantics. Python API: `goldflow.replay.ReplayEngine` with `Consumer` subclasses.
 
+## Phase 5: trade processing and price-level aggregation
+```bash
+python -m goldflow.cli process --name p1                  # replay -> TradeProcessor -> footprint Parquet -> reconciliation
+python -m goldflow.cli process --name p1 --resume         # continue after --until / --budget / Ctrl-C (state is in the checkpoint)
+python -m goldflow.cli process --name p1 --dates 2026-10-26
+python -m goldflow.cli reconcile --interval 1m            # re-check the written footprint against partitions and 1m klines
+```
+Outputs:
+```
+data/derived/provider=binance/market=usdm_perpetual/instrument=XAUUSDT/footprint/interval=1m/date=YYYY-MM-DD/{bars,levels}.parquet
+data/derived/.../footprint/interval=1m/_manifest.json      per-date totals, digests, settings hash, source dataset version
+data/reports/processing_reconciliation_1m.{md,json}       exact checks vs trades partitions and Binance 1m klines
+```
+Exchange-reported aggressor sides only (UNKNOWN is never reassigned), integer lots and ticks, duplicate-safe, bars finalised only after their end (no look-ahead), sessions in named time zones with DST, and snapshot/restore equal to an uninterrupted run. Settings live in the `processing` and `sessions` config blocks; the session times are **proposed** defaults (decision D4). See `docs/PROCESSING_V1.md`. Python API: `goldflow.processing.TradeProcessor` with `ProcessorSink` subclasses for downstream analytics.
+
 ## Phase 8: live order book (L2) recorder and liquidity metrics
 There is no historical price-level book for this dataset, so depth history starts the day the recorder starts. Run it where `fapi.binance.com` REST is reachable (the trading PC or a non-US VPS). A US host gets HTTP 451 on the snapshot, and the recorder stops with exit code 4.
 ```bash
@@ -104,5 +122,6 @@ scripts/pc_run.sh 165 rest --skip-reconcile                                     
 GOLDFLOW_SNAPSHOT=0 scripts/pc_run.sh 165 normalize --budget 95 --no-report     # repeat until finalized
 scripts/pc_run.sh 165 validate --budget 95 ; scripts/pc_run.sh 165 validate --resume --budget 95 ...
 scripts/pc_run.sh 165 report --budget 95                                        # resumable monthly cross-check + reports
+scripts/pc_run.sh 165 process --name pc-p5 --budget 130 ; scripts/pc_run.sh 165 process --name pc-p5 --resume --budget 130 ...
 ```
 The working DB lives on local disk (`$HOME/gf_state`) and a consistent snapshot is saved to `data/state/acquisition.sqlite`. Files that would be deleted are moved to `data/_to_delete/`. Code updates are applied with `python3 scripts/apply_update.py update.tgz`.

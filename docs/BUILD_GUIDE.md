@@ -188,11 +188,12 @@ goldflow/                     current package
   rest_client.py  vision_archive.py  checkpoint.py  acquire.py  integrity.py  report.py   (Phase 2)
   schemas.py  normalize.py  catalog.py  dataset_report.py                                  (Phase 3)
   replay.py                                                                                (Phase 4)
-  cli.py                       discover | acquire | rest | manifest | normalize | validate | report | replay
+  processing/{trade_processor.py, classify.py, aggregation.py, sessions.py, settings.py,
+              footprint_store.py, reconcile.py}                                            (Phase 5)
+  cli.py                       discover | acquire | rest | manifest | normalize | validate | report | replay | process | reconcile
   — to add —
   providers/{base.py, registry.py, binance/, dummy/}                                       (Phase 1, 14, 15)
   logging.py  settings.py (validated config)                                               (Phase 1)
-  processing/{trade_processor.py, aggregation.py, sessions.py}                             (Phase 5)
   orderflow/{volume_profile.py, vwap.py, delta.py, cvd.py, imbalance.py, big_trades.py,
              absorption.py, liquidity.py, auction.py, failed_auction.py, initial_balance.py, ivb.py}  (Ph 6–10)
   strategies/  signals/                                                                    (Phase 11)
@@ -216,7 +217,7 @@ mql5/   (Phase 16: EA executor source)
 | 2 | Binance adapter and six-month acquisition | **Done** | M1 |
 | 3 | Validation, normalisation and storage | **Done** | M1 |
 | 4 | Deterministic historical replay | **Done** | M2 |
-| 5 | Trade processing, classification, price-level aggregation | Not started. **Next.** | M3 (begins) |
+| 5 | Trade processing, classification, price-level aggregation | **Done** (session times still PROPOSED, D4) | M3 (begins) |
 | 6 | Volume Profile, POC, Value Area, HVN/LVN, VWAP | Not started | M3 |
 | 7 | Delta, CVD, imbalance, Big Trades, absorption, exhaustion | Not started | M3 |
 | 8 | Order-book reconstruction and liquidity | **Done** (2026-10-31; live-only, see `docs/PHASE8_COMPLETION_REPORT.md`). The recorder must run on the PC or a non-US VPS. | M3 (live part) |
@@ -398,7 +399,25 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 5: Trade processing, classification and price-level aggregation. **Status: Not started**
+### Phase 5: Trade processing, classification and price-level aggregation. **Status: Done (M3 begins)**
+**Built** (`goldflow/processing/`; spec `docs/PROCESSING_V1.md`; report `docs/PHASE5_COMPLETION_REPORT.md`):
+- `TradeProcessor(Consumer)`, the single path for replay and live: dedup (watermark plus id ring), exchange-reported sides (cross-checked against Phase 3), and an optional INFERRED tick rule kept separate.
+- Integer footprint bars at 1s/5s/1m/5m/15m/1h, finalised only at `end + shift`.
+- Windows: UTC day, trading day, trading week, sessions and custom ranges, using zoneinfo for DST.
+- Snapshot/restore inside replay checkpoints, guarded by the settings hash. The 1m footprint is written to Parquet with a manifest, and `reconcile` checks it.
+
+**Evidence (full six months, rebuilt in the cloud):**
+- Replay digest `eeacba10…` unchanged; 657,749 events/s; 1.25 GB peak.
+- 183/183 days: footprint = partition exactly.
+- All 181 COMPLETE days equal Binance klines minute by minute (volume, count, taker-buy, OHLC).
+- Processor state digest `ad595214…`, reproduced after stop/resume.
+- 85 tests pass (`scripts/check.sh` green, with `goldflow.processing` under `mypy --strict`).
+
+**Commands.** `python -m goldflow.cli process --name p1 [--resume] [--dates …] [--until …] [--budget S]`; `python -m goldflow.cli reconcile`.
+
+**Open:** session times are PROPOSED (D4). No holiday calendar yet (Phase 10).
+
+**Original specification:**
 **Objective.** One shared event processor that turns trades into price-level and time-window aggregates. Every analytic in Phases 6–10 is built on its outputs.
 
 **Depends on.** Phase 4 (the Consumer interface) and Phase 1 (settings, logging). The session config is drafted here and finalised in Phase 10.
@@ -839,7 +858,7 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ### 9.1 Data integrity: the eight layers (all phases)
 1. **Source validation:** checksums, schema and value rules (built: Phases 2–3).
-2. **Event identity and idempotency:** keys scoped by provider, market, instrument and source id (built for history; Phase 5 for processing; Phase 14 for live).
+2. **Event identity and idempotency:** keys scoped by provider, market, instrument and source id (built for history; built for processing in Phase 5: watermark plus recent-id ring; Phase 14 for live).
 3. **Sequence validation where the source provides it:** trade ids are not contiguous on Binance (unused ids), so completeness is proven with **kline counts** rather than id gaps. Depth uses `U/u/pu`.
 4. **Durable raw capture before transformation:** archive zips and REST JSONL (built); live capture (Phase 14).
 5. **Normalised validation and quarantine** (built).
@@ -857,7 +876,7 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ### 9.3 Determinism and parity
 - Every dataset, run and backtest records its dataset digest, config hash and code version.
-- Digest checks become regression tests. Today: Phase 3 `7eb02d13…` and replay `eeacba10…`. Any refactor must keep them, or explain and re-baseline them deliberately.
+- Digest checks become regression tests. Today: Phase 3 `7eb02d13…` (PC catalog), replay `eeacba10…`, and Phase 5 processor state `ad595214…` (default processing/session settings `2b3dc7ba…`). Any refactor must keep them, or explain and re-baseline them deliberately.
 - Live/historical parity is proven by the Phase 14 harness.
 
 ### 9.4 Risk (layered)
@@ -937,7 +956,7 @@ Every phase ends with a report containing:
 **Standing instruction (append to every phase request):**
 > Execute only the current phase. First inspect the repository and identify what is already implemented. Do not rewrite working components unnecessarily. Implement real functionality; no placeholder calculations or fabricated market data. Run unit, integration, regression and data-integrity tests (including the digest regression checks). Inspect actual outputs, fix critical errors, update documentation, and provide evidence. If data or credentials are unavailable, document the limitation and stop the dependent task. Summarise the phase contents before starting. Stop after the phase with the completion report.
 
-Completed reports: `docs/PHASE2_ACQUISITION_REPORT.md`, `docs/PHASE3_COMPLETION_REPORT.md`, `docs/PHASE4_COMPLETION_REPORT.md`.
+Completed reports: `docs/PHASE2_ACQUISITION_REPORT.md`, `docs/PHASE3_COMPLETION_REPORT.md`, `docs/PHASE4_COMPLETION_REPORT.md`, `docs/PHASE5_COMPLETION_REPORT.md`.
 
 ---
 

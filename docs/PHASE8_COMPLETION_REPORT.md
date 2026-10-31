@@ -29,6 +29,8 @@ Also built:
 - **Catalog registration of depth partitions:** Phase 14, together with the live catalog.
 - **RPI stream verification.** It needs a live check on the PC before `depth.rpi_enabled` is turned on.
 
+**Merge note (Phase 5 integrated after this report).** Phase 5 (commit `93cbf3b`) was merged into this branch afterwards. Phase 5 adds `processing` and `sessions` blocks to `config/binance_xauusdt.json`, so the config-file hash is now `9d77c52f…` instead of `f0b71abc…`. Phase 8 itself still adds nothing to the config file. After the merge: 105 tests pass; ruff passes; mypy --strict passes on 30 files, including both `goldflow/processing` and `goldflow/liquidity`.
+
 ## 2. Files
 **Created**
 - `goldflow/liquidity/__init__.py`, `units.py`, `book.py`, `registry.py`, `coverage.py`, `metrics.py`, `tracker.py`, `capture.py`, `driver.py`, `recorder.py`, `dataset.py`, `commands.py`

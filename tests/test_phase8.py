@@ -539,8 +539,12 @@ RAW = json.loads((ROOT / "config/binance_xauusdt.json").read_text())
 def test_depth_settings_defaults_and_validation():
     from goldflow.settings import ConfigError, config_hash, validate_config
 
+    from goldflow.settings import DepthCfg
+
     s = validate_config(RAW)
-    assert config_hash(RAW).startswith("f0b71abc")  # defaults live in code: the config file and its hash are unchanged
+    # Phase 8 defaults live in code: the config file has no depth block, so Phase 8 does not change its hash
+    assert "depth" not in RAW and s.depth == DepthCfg()
+    assert config_hash(RAW) == config_hash(json.loads((ROOT / "config/binance_xauusdt.json").read_text()))
     d = s.depth
     assert d.snapshot_limit == 1000 and not d.rpi_enabled
     assert d.url("XAUUSDT") == "wss://fstream.binance.com/stream?streams=xauusdt@depth@100ms"
