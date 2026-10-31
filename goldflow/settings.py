@@ -361,6 +361,14 @@ def validate_config(raw: dict[str, Any], base_dir: Path | None = None, check_dis
             validate_ivb(raw.get("ivb"))
         except ValueError as e:
             raise ConfigError([f"ivb: {e}"]) from None
+    if raw.get("broker") is not None or raw.get("backtest") is not None:
+        from .backtesting.settings import BacktestSettings
+        from .config import Config
+
+        try:
+            BacktestSettings.from_config(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError, TypeError) as e:
+            raise ConfigError([f"broker/backtest: {e}"]) from None
     if raw.get("strategies") is not None:
         from .config import Config
         from .strategies.engine import strategy_settings

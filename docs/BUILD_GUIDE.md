@@ -196,12 +196,12 @@ goldflow/                     current package
              events.py, flow_engine.py, flow_store.py, flow_verify.py, flow_settings.py}                  (Phase 7)
   liquidity/{book.py, recorder.py, capture.py, dataset.py, metrics.py, coverage.py, registry.py, ...}     (Phase 8)
   cli.py      discover | acquire | rest | manifest | normalize | validate | report | replay | process | reconcile |
-              vprofile[-verify|-export] | orderflow[-verify] | auction[-verify|-review] | ib[-verify] | signals[-verify] | depth-record | depth-replay | depth-normalize
+              vprofile[-verify|-export] | orderflow[-verify] | auction[-verify|-review] | ib[-verify] | signals[-verify] | broker-import | backtest | depth-record | depth-replay | depth-normalize
   orderflow/{auction.py, failed_auction.py, auction_engine.py, auction_verify.py, auction_review.py, auction_settings.py}  (Phase 9)
   orderflow/{initial_balance.py, ib_verify.py, ivb.py}  processing/holidays.py                 (Phase 10)
   — to add —
   strategies/{signal.py, base.py, regime.py, library.py, engine.py, verify.py}             (Phase 11, built)
-  backtesting/{engine.py, simulator.py, costs.py, ledger.py}                               (Phase 12)
+  backtesting/{settings.py, broker.py, basis.py, simulator.py, engine.py}                  (Phase 12, built)
   research/{splits.py, walkforward.py, montecarlo.py, ledger.py}                          (Phase 13)
   live/{ws_client.py, recorder.py, parity.py}                                              (Phase 14)
   execution/{bridge.py, order_manager.py, positions.py}  risk/                             (Phase 16)
@@ -228,7 +228,7 @@ mql5/   (Phase 16: EA executor source)
 | 9 | Auction Market Theory and failed auctions | **Done** (2026-10-31; see `docs/PHASE9_COMPLETION_REPORT.md`; thresholds PROPOSED, D12; IB levels arrive with Phase 10) | M3 |
 | 10 | Sessions, Initial Balance, IVB | **Done** (2026-10-31; see `docs/PHASE10_COMPLETION_REPORT.md`). IVB disabled until D1; holiday calendar PROPOSED | M3 |
 | 11 | Strategy interface and signal generation | **Done** (2026-10-31; see `docs/PHASE11_COMPLETION_REPORT.md`; example strategy parameters PROPOSED, D13) | – |
-| 12 | Event-driven backtesting and execution simulation | Not started (needs broker tick history) | M4 |
+| 12 | Event-driven backtesting and execution simulation | **Built** (2026-10-31; see `docs/PHASE12_COMPLETION_REPORT.md`). Real backtests **blocked on D2** (broker spec + tick history) | M4 |
 | 13 | Reports, validation, walk-forward, research | Not started | M5 |
 | 14 | Live Binance ingestion and historical/live parity | Not started (start the depth recorder early) | M6 |
 | 15 | Additional providers and cross-market mapping | Not started | – |
@@ -650,7 +650,7 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 ---
 
 ### Phase 11: Unified strategy interface and signal generation. **Status: Done (2026-10-31)**
-**Built** (`goldflow/strategies/`; spec `docs/SIGNALS_V1.md`; report `docs/PHASE11_COMPLETION_REPORT.md`): strategy contract (capabilities, inputs, triggers, typed parameters, warm-up, pure `build` from evidence), `StrategyEngine` as the last sink with time-ordered dispatch and suppress-only gating (capability refusal, WARMUP, DQ_OPEN, DQ_EVIDENCE, DUPLICATE_ACTIVE), regime features, grouped uncalibrated score, `TradingSignal` with exact R:R and evidence, three example research strategies with hypotheses. Commands: `signals`, `signals-verify` (re-derives every signal from its stored evidence). Evidence (4 real days): 5 signals, all re-derived; digest reproduced after stop/resume.
+**Built** (`goldflow/strategies/`; spec `docs/SIGNALS_V1.md`; report `docs/PHASE11_COMPLETION_REPORT.md`): strategy contract (capabilities, inputs, triggers, typed parameters, warm-up, pure `build` from evidence), `StrategyEngine` after its analytics engines with time-ordered dispatch and suppress-only gating (capability refusal, WARMUP, DQ_OPEN, DQ_EVIDENCE, DUPLICATE_ACTIVE), regime features, grouped uncalibrated score, `TradingSignal` with exact R:R and evidence, three example research strategies with hypotheses. Commands: `signals`, `signals-verify` (re-derives every signal from its stored evidence). Evidence (4 real days): 5 signals, all re-derived; digest reproduced after stop/resume.
 
 **Objective.** Strategies consume validated analytical state and emit explainable, timestamped signals, or emit nothing.
 
@@ -685,7 +685,9 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 12: Event-driven backtesting and execution simulation. **Status: Not started**
+### Phase 12: Event-driven backtesting and execution simulation. **Status: Built (2026-10-31). Real results blocked on D2.**
+**Built** (`goldflow/backtesting/`; spec `docs/BACKTEST_V1.md`; report `docs/PHASE12_COMPLETION_REPORT.md`): MT5 tick import (server time zone, quarantine, manifest), basis model (past-only rolling median, exact translation), `Backtester` sink on the replay clock after the `StrategyEngine`, fills on broker bid/ask with latency and slippage, gapped stops, unfavourable gap rule, seeded rejections, stops level, commission and swap, risk sizing and limits, exact cents ledger reconciled before every report, reproducibility record. Refuses to run without a configured broker; synthetic broker data only in tests and labelled NOT A RESULT. Commands: `broker-import`, `backtest`.
+
 **Objective.** Backtest strategies over the dataset with the same analytics and strategy code as live, and with realistic, disclosed execution.
 
 **Critical design point: signal venue ≠ execution venue.** Signals come from Binance XAUUSDT. Orders execute on your **MT5 broker's XAUUSD**, a different price feed with its own spread, swap, commission and hours. So the backtest must fill on **broker prices**.
@@ -971,7 +973,7 @@ Every phase ends with a report containing:
 **Standing instruction (append to every phase request):**
 > Execute only the current phase. First inspect the repository and identify what is already implemented. Do not rewrite working components unnecessarily. Implement real functionality; no placeholder calculations or fabricated market data. Run unit, integration, regression and data-integrity tests (including the digest regression checks). Inspect actual outputs, fix critical errors, update documentation, and provide evidence. If data or credentials are unavailable, document the limitation and stop the dependent task. Summarise the phase contents before starting. Stop after the phase with the completion report.
 
-Completed reports: `docs/PHASE2_ACQUISITION_REPORT.md`, `docs/PHASE3_COMPLETION_REPORT.md`, `docs/PHASE4_COMPLETION_REPORT.md`, `docs/PHASE5_COMPLETION_REPORT.md`, `docs/PHASE7_COMPLETION_REPORT.md`, `docs/PHASE8_COMPLETION_REPORT.md`, `docs/PHASE9_COMPLETION_REPORT.md`, `docs/PHASE10_COMPLETION_REPORT.md`, `docs/PHASE11_COMPLETION_REPORT.md`.
+Completed reports: `docs/PHASE2_ACQUISITION_REPORT.md`, `docs/PHASE3_COMPLETION_REPORT.md`, `docs/PHASE4_COMPLETION_REPORT.md`, `docs/PHASE5_COMPLETION_REPORT.md`, `docs/PHASE7_COMPLETION_REPORT.md`, `docs/PHASE8_COMPLETION_REPORT.md`, `docs/PHASE9_COMPLETION_REPORT.md`, `docs/PHASE10_COMPLETION_REPORT.md`, `docs/PHASE11_COMPLETION_REPORT.md`, `docs/PHASE12_COMPLETION_REPORT.md`.
 
 ---
 

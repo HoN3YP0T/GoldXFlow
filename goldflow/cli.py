@@ -13,6 +13,7 @@
   python -m goldflow.cli auction --name a1 [--resume] | auction-verify | auction-review [--limit N]   # Phase 9 AMT
   python -m goldflow.cli ib --name i1 [--resume] | ib-verify                                        # Phase 10 Initial Balance
   python -m goldflow.cli signals --name s1 [--resume] | signals-verify                              # Phase 11 strategy signals
+  python -m goldflow.cli broker-import --file F --format mt5|csv | backtest --name b1 [--resume]    # Phase 12 backtesting
   python -m goldflow.cli depth-record [--duration S]   # Phase 8 live L2 recorder (non-US host)
   python -m goldflow.cli depth-replay | depth-normalize
 The acquisition range is frozen in data/state/range.json on first run so that resumed runs
@@ -21,6 +22,7 @@ Exit code 1 if any unit failed or any interval of a primary dataset is uncovered
 """
 from __future__ import annotations
 import argparse, json, logging, sys
+from pathlib import Path
 
 from .acquire import list_dataset, make_archive, run
 from .checkpoint import Checkpoint
@@ -189,7 +191,7 @@ def main(argv=None) -> int:
                                     "validate", "report", "replay", "process", "reconcile",
                                     "vprofile", "vprofile-verify", "vprofile-export", "orderflow", "orderflow-verify",
                                     "auction", "auction-verify", "auction-review", "ib", "ib-verify",
-                                    "signals", "signals-verify",
+                                    "signals", "signals-verify", "broker-import", "backtest",
                                     "depth-record", "depth-replay", "depth-normalize"])
     ap.add_argument("--profile", help="research (default) | test | live; or env GOLDFLOW_PROFILE")
     ap.add_argument("--config", default="config/binance_xauusdt.json")
@@ -215,6 +217,8 @@ def main(argv=None) -> int:
     ap.add_argument("--window", help="vprofile-export: window key, e.g. session:london:2026-10-26")
     ap.add_argument("--bin", type=int, default=10, help="vprofile-export: profile bin size in ticks")
     ap.add_argument("--as-of", help="vprofile-export: developing snapshot time (UTC ISO); default = latest/final")
+    ap.add_argument("--file", help="broker-import: MT5 tick export to import")
+    ap.add_argument("--format", default="mt5", help="broker-import: mt5 (terminal tick export) | csv (time_msc,bid,ask)")
     ap.add_argument("--limit", type=int, default=120, help="auction-review: number of event charts")
     ap.add_argument("--duration", type=float, help="depth-record: stop after this many seconds (default: run until Ctrl-C)")
     a = ap.parse_args(argv)
@@ -290,6 +294,14 @@ def main(argv=None) -> int:
         from .orderflow.ib_verify import verify as ib_verify
         rep = ib_verify(cfg, dates=a.dates)
         print(json.dumps(rep["summary"], indent=1)); return 1 if rep["summary"]["fail"] else 0
+    if a.cmd == "broker-import":
+        from .backtesting import BrokerSpec, import_ticks
+        spec = BrokerSpec.from_raw(cfg.raw.get("broker"))
+        if spec is None or not a.file:
+            print("goldflow: broker-import needs the broker block filled in (decision D2) and --file", file=sys.stderr); return 2
+        print(json.dumps(import_ticks(cfg.data_root, spec, Path(a.file), a.format), indent=1)); return 0
+    if a.cmd == "backtest":
+        return _backtest_cmd(cfg, a, log)
     if a.cmd == "signals":
         return _signals_cmd(cfg, a, log)
     if a.cmd == "signals-verify":
@@ -448,6 +460,37 @@ def _signals_cmd(cfg, a, log) -> int:
     print(json.dumps(out, indent=1, default=str))
     bad = checker.violations or (out.get("verification") or {}).get("fail")
     return 1 if bad else (0 if res["status"] == "completed" else 3)
+
+def _backtest_cmd(cfg, a, log) -> int:
+    """Phase 12: replay -> analytics -> StrategyEngine -> Backtester (fills on broker ticks) -> data/backtests/<name>/."""
+    import signal, threading
+    from .replay import ReplayEngine, ChainHasher, IntegrityChecker
+    from .processing.trade_processor import TradeProcessor
+    from .orderflow.engine import ProfileEngine
+    from .orderflow.flow_engine import OrderflowEngine
+    from .orderflow.initial_balance import IBEngine
+    from .orderflow.auction_engine import AuctionEngine
+    from .strategies import StrategyEngine, build_strategies
+    from .backtesting import Backtester, BrokerNotConfigured
+    name = a.name or "backtest"
+    prof, flow, ib = ProfileEngine(cfg), OrderflowEngine(cfg), IBEngine(cfg)
+    auc = AuctionEngine(cfg, prof, ib_engine=ib)
+    strat = StrategyEngine(cfg, build_strategies(cfg), {"profile": prof, "orderflow": flow, "ib": ib, "auction": auc})
+    try:
+        bt = Backtester(cfg, strat, run_name=name)
+    except (BrokerNotConfigured, FileNotFoundError, ValueError) as e:
+        print(f"goldflow: {e}", file=sys.stderr); return 2
+    proc = TradeProcessor(cfg, sinks=[prof, flow, ib, auc, strat, bt]); hasher, checker = ChainHasher(), IntegrityChecker()
+    eng = ReplayEngine(cfg, [hasher, checker, proc], start=a.start, end=a.end, dates=a.dates, name=name,
+                       progress=lambda m: log.info("backtest %s day=%s events=%d clock=%s", name, m.get("day"), m["events"], m["sim_clock"]))
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        signal.signal(sig, lambda *_: (log.info("stop requested; checkpointing"), eng.stop()))
+    if a.budget: threading.Timer(a.budget, eng.stop).start()
+    res = eng.run(resume=a.resume, until=a.until)
+    out = {"name": name, "status": res["status"], "events": res["events"], "wall_s": res["wall_s"], "sequence_digest": hasher.digest,
+           "integrity_violations": checker.violations, "output": str(bt.out_root / name) if res["status"] == "completed" else None}
+    print(json.dumps(out, indent=1, default=str))
+    return 1 if checker.violations else (0 if res["status"] == "completed" else 3)
 
 if __name__ == "__main__":
     sys.exit(main())

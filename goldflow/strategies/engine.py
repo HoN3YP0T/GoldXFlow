@@ -1,4 +1,4 @@
-"""Phase 11: the strategy engine (``ProcessorSink``, placed **last**). Gating, dispatch, signal dataset.
+"""Phase 11: the strategy engine (``ProcessorSink``, placed after every analytics engine it reads). Gating, dispatch, signal dataset.
 
 Wiring: ``StrategyEngine(cfg, strategies, sources={"orderflow": ..., "auction": ..., "ib": ..., "profile": ...})``
 registers itself as a listener of each analytics engine it is given. During a processor advance those engines emit
@@ -168,11 +168,9 @@ class StrategyEngine(ProcessorSink):
     def on_start(self, ctx: dict[str, Any], proc: Any) -> None:
         self.proc = proc
         sinks = list(proc.sinks)
-        if sinks[-1] is not self:
-            raise ValueError("StrategyEngine must be the last sink of the processor")
         for name, eng in self.sources.items():
-            if eng not in sinks:
-                raise ValueError(f"source engine {name} is not a sink of this processor")
+            if eng not in sinks or sinks.index(eng) > sinks.index(self):
+                raise ValueError(f"source engine {name} must be a sink of this processor placed before the StrategyEngine")
         if self.store is not None:
             self.store.start({"strategies_hash": self.hash, "processing_settings_hash": proc.st.hash, "source_dataset_version": ctx.get("dataset_version"),
                               "strategies": [s.describe() for s in self.strategies], "observe_from": proc.observe_from}, bool(ctx.get("resumed")))  # fmt: skip

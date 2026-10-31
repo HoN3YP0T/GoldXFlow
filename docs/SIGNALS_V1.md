@@ -45,7 +45,7 @@ Fields:
 A failure is a bug and stops the run.
 
 ## 3. Engine: dispatch and gating
-- **Dispatch.** The `StrategyEngine` is the **last** sink. It listens to the analytics engines, buffers every row emitted during a processor advance, and dispatches them in `available_at` order. All rows with the same `available_at` are applied to the `AnalyticsState` before any trigger at that time is evaluated. Nothing later is visible.
+- **Dispatch.** The `StrategyEngine` comes after every analytics engine it reads (only the Phase 12 backtester may follow it). It listens to the analytics engines, buffers every row emitted during a processor advance, and dispatches them in `available_at` order. All rows with the same `available_at` are applied to the `AnalyticsState` before any trigger at that time is evaluated. Nothing later is visible.
 - **Gating** (suppress only; each suppressed signal is stored with its reason):
 
 | Reason | Rule |

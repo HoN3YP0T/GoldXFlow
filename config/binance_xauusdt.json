@@ -513,5 +513,49 @@
       "volume_lookback_days": 20
     },
     "persist": true
+  },
+  "broker": {
+    "_doc": "Execution venue (decision D2, OPEN): your MT5 broker's XAUUSD contract specification. A backtest refuses to run while name is null. Copy every value from the broker's contract specification (MT5: Symbols -> XAUUSD -> Specification); server_tz is the broker server time zone used by its tick timestamps.",
+    "name": null,
+    "symbol": "XAUUSD",
+    "digits": 2,
+    "contract_size": "100",
+    "volume_min": "0.01",
+    "volume_step": "0.01",
+    "volume_max": "50",
+    "commission_per_lot_side": "0",
+    "swap_long_per_lot": "0",
+    "swap_short_per_lot": "0",
+    "swap_time": "00:00",
+    "triple_swap_day": "Wed",
+    "stops_level_points": 0,
+    "server_tz": null,
+    "account_currency": "USD"
+  },
+  "backtest": {
+    "_doc": "Phase 12 execution model and risk limits (docs/BACKTEST_V1.md). PROPOSED defaults; risk limits are decision D7.",
+    "version": 1,
+    "starting_capital": "10000",
+    "latency_ms": 250,
+    "slippage_points": 2,
+    "slippage_vol_mult": "0",
+    "slippage_vol_ticks": 20,
+    "reject_rate": "0",
+    "max_tick_gap": "60s",
+    "max_hold": "24h",
+    "seed": 1,
+    "basis": {
+      "window": "5m",
+      "min_samples": 30
+    },
+    "risk": {
+      "risk_per_trade": "0.005",
+      "max_concurrent_positions": 1,
+      "max_exposure_lots": "5",
+      "daily_loss_limit": "0.02",
+      "max_drawdown": "0.08",
+      "max_consecutive_losses": 4,
+      "sessions": []
+    }
   }
 }

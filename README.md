@@ -1,6 +1,6 @@
 # goldflow: Binance XAUUSDT gold orderflow engine (Phases 1–6, 8)
 
-Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions, Phase 4 replays it deterministically, Phase 5 turns the replayed trades into exact price-level and footprint aggregates, Phase 6 builds volume profiles (POC, value area, HVN/LVN) and VWAP with bands on top of them, Phase 7 adds delta, CVD, footprint imbalances, Big Trades (rebuilt taker orders) and absorption / exhaustion / divergence events, Phase 9 adds Auction Market Theory: acceptance, rejection and failed auctions at reference levels, auction state, activity and profile shape. Phase 10 adds the Initial Balance (with extensions, breakouts and failed breaks) and a holiday calendar; IVB stays disabled until it is defined. Phase 11 adds the strategy interface: research strategies turn that evidence into explainable, gated trading signals (proposals, not orders).
+Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions, Phase 4 replays it deterministically, Phase 5 turns the replayed trades into exact price-level and footprint aggregates, Phase 6 builds volume profiles (POC, value area, HVN/LVN) and VWAP with bands on top of them, Phase 7 adds delta, CVD, footprint imbalances, Big Trades (rebuilt taker orders) and absorption / exhaustion / divergence events, Phase 9 adds Auction Market Theory: acceptance, rejection and failed auctions at reference levels, auction state, activity and profile shape. Phase 10 adds the Initial Balance (with extensions, breakouts and failed breaks) and a holiday calendar; IVB stays disabled until it is defined. Phase 11 adds the strategy interface: research strategies turn that evidence into explainable, gated trading signals (proposals, not orders). Phase 12 adds the event-driven backtester that fills those signals on your broker's XAUUSD bid/ask (it waits for the broker specification and tick history, decision D2).
 
 **No market data is committed to this repository.** Rebuild it with `python -m goldflow.cli acquire` then `python -m goldflow.cli normalize`. The frozen range in `data/state/range.json` reproduces the exact dataset, and the partition digests in `data/manifests/dataset_manifest.json` let you verify it.
 
@@ -44,10 +44,12 @@ goldflow/
                     Phase 10: initial_balance.py (IBEngine sink), ib_verify.py, ivb.py (disabled); processing/holidays.py
   strategies/       Phase 11: signal.py (TradingSignal), base.py (Strategy contract), regime.py, library.py (examples),
                     engine.py (StrategyEngine sink, gating), verify.py
+  backtesting/      Phase 12: settings.py (broker spec, execution model), broker.py (MT5 tick import), basis.py,
+                    simulator.py (fills, costs, risk, cents ledger), engine.py (Backtester sink, report)
   cli.py            discover | acquire | rest | manifest | normalize | validate | report | replay | process | reconcile |
-                    vprofile | vprofile-verify | vprofile-export | orderflow | orderflow-verify | auction | auction-verify | auction-review | ib | ib-verify | signals | signals-verify
-docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, METRICS_PROFILE_V1.md, METRICS_ORDERFLOW_V1.md, METRICS_AUCTION_V1.md, METRICS_IB_V1.md, SIGNALS_V1.md, PHASE*_REPORT.md
-tests/test_core.py, test_phase3.py, test_replay.py, test_processing.py, test_profile.py, test_orderflow.py, test_auction.py, test_ib.py, test_strategies.py
+                    vprofile | vprofile-verify | vprofile-export | orderflow | orderflow-verify | auction | auction-verify | auction-review | ib | ib-verify | signals | signals-verify | broker-import | backtest
+docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, METRICS_PROFILE_V1.md, METRICS_ORDERFLOW_V1.md, METRICS_AUCTION_V1.md, METRICS_IB_V1.md, SIGNALS_V1.md, BACKTEST_V1.md, PHASE*_REPORT.md
+tests/test_core.py, test_phase3.py, test_replay.py, test_processing.py, test_profile.py, test_orderflow.py, test_auction.py, test_ib.py, test_strategies.py, test_backtest.py
 data/raw/binance/futures_um/XAUUSDT/<dataset>/<daily|monthly|rest>/   raw zips + .CHECKSUM (+ _verify sidecars)
 data/state/   acquisition.sqlite, range.json, plan-*.json, progress.json, acquisition.log, instrument_discovery.json
 data/manifest.json
@@ -213,3 +215,16 @@ python -m goldflow.cli signals-verify                    # re-derives every sign
 - **Signals:** each signal has an entry, stop, target, exact R:R, an uncalibrated score, an expiry and an evidence list (every item with its timestamp and source ids). They are in Binance ticks and are proposals, not orders.
 - **Gating:** suppress-only. Unsupported capabilities are refused at start; signals are suppressed during warm-up, open data-quality intervals, non-OK evidence and duplicate active setups.
 - **Example research strategies** (not assumed profitable): failed auction at VAH/VAL, absorption at an HVN or VWAP band, and IB failed break. Parameters are **proposed** (D13). See `docs/SIGNALS_V1.md`.
+
+## Phase 12: Backtesting on broker prices
+```bash
+# 1. fill in the "broker" block of config/binance_xauusdt.json from MT5 (Symbols -> XAUUSD -> Specification), incl. server_tz
+# 2. export XAUUSD ticks from MT5 (Symbols -> Ticks -> Export, or a CopyTicksRange script) and import them:
+python -m goldflow.cli broker-import --file XAUUSD_ticks.tsv --format mt5
+# 3. run the backtest (same analytics and strategy code as research/live):
+python -m goldflow.cli backtest --name b1 [--resume]     # -> data/backtests/b1/{orders,fills,trades,cash,equity}.parquet, run.json, report.md
+```
+- **Prices:** fills on broker **bid/ask** only (never Binance). Signal levels are translated with the Binance-to-broker price gap (basis) known at signal time.
+- **Execution model:** latency, slippage, gapped stops, stop-first on ambiguous gaps, commission, swap and broker rejections. It is printed at the top of every report.
+- **Risk:** sizing and limits (decision D7), and every result reconciled to the cent against the cash ledger.
+- **Without a broker:** until the `broker` block is filled in (decision D2), `backtest` refuses to run. See `docs/BACKTEST_V1.md`.

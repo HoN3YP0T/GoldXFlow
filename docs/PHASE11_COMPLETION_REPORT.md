@@ -12,7 +12,7 @@ Date: 2026-10-31. Specification: `docs/SIGNALS_V1.md`.
 - **Regime features** (no look-ahead) and a **grouped, documented, uncalibrated score**.
 - **`TradingSignal` schema** per the guide, with exact R:R, an evidence list with timestamps and source ids, and a structural check.
 - **Three example research strategies,** each with a written hypothesis (failed auction at VAH/VAL, absorption at an HVN or VWAP band, IB failed break), plus a depth example that demonstrates capability refusal.
-- **Tooling.** `StrategyEngine` as the last sink with time-ordered dispatch; a signals dataset with a suppression log; `signals` and `signals-verify` commands.
+- **Tooling.** `StrategyEngine` after its analytics engines with time-ordered dispatch; a signals dataset with a suppression log; `signals` and `signals-verify` commands.
 
 **Not completed**
 - **Score calibration** is Phase 13 work.
