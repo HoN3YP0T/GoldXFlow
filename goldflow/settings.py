@@ -230,6 +230,15 @@ def validate_config(raw: dict[str, Any], base_dir: Path | None = None, check_dis
             loc = ".".join(str(p) for p in err["loc"]) or "(root)"
             problems.append(f"{loc}: {err['msg']}")
         raise ConfigError(problems) from None
+    if raw.get("processing") is not None or raw.get("sessions") is not None:
+        # Phase 5 blocks: intervals, bins, session calendar (zoneinfo, DST gaps), alignment rules
+        from .config import Config
+        from .processing.settings import ProcessingSettings
+
+        try:
+            ProcessingSettings.from_config(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError) as e:
+            raise ConfigError([f"processing/sessions: {e}"]) from None
     if check_discovery and base_dir is not None:
         disc = base_dir / s.paths.data_root / "state" / "instrument_discovery.json"
         if disc.exists():

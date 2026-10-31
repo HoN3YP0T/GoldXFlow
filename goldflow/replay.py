@@ -302,7 +302,9 @@ class ReplayEngine:
                 m = (av >= w0) & (av < w1)
                 if not m.any(): continue
                 idx = np.nonzero(m)[0]
-                parts.append((t.take(pa.array(idx)), av[idx], (dd - date(1970, 1, 1)).days * SEQ_DAY_MULT + idx))
+                # contiguous selection (the usual case) -> zero-copy slice; identical rows and order to take()
+                sel = t.slice(int(idx[0]), len(idx)) if idx[-1] - idx[0] + 1 == len(idx) else t.take(pa.array(idx))
+                parts.append((sel, av[idx], (dd - date(1970, 1, 1)).days * SEQ_DAY_MULT + idx))
             if not parts: continue
             t = pa.concat_tables([x[0] for x in parts]) if len(parts) > 1 else parts[0][0]
             av = np.concatenate([x[1] for x in parts]); sq = np.concatenate([x[2] for x in parts])
@@ -379,13 +381,16 @@ class ReplayEngine:
         self._guard_and_restore(resume)
         until_ms = self._to_ms(until) if until is not None else None
         ctx = {"name": self.name, "dataset_version": self.dataset_version, "config_hash": self.config_hash,
-               "start_ms": self.start_ms, "end_ms": self.end_ms, "streams": self.stream_names, "resumed": resume and self.last_key is not None}
+               "start_ms": self.start_ms, "end_ms": self.end_ms, "streams": self.stream_names, "resumed": resume and self.last_key is not None,
+               # for consumers (Phase 5+): whether delivery has holes by design, and DQ intervals already open at start
+               "filtered": bool(self.dates or self.sessions),
+               "quality_before_start": [e for e in self.quality if e["avail_ms"] < self.start_ms]}
         for c in self.consumers: c.on_start(ctx)
         self.status = "running"; self.t_wall0 = time.monotonic(); self.sim0 = self.clock_ms; t_run0 = time.monotonic()
         self._emitted_at_start = self.emitted
         first_day = from_ms(self.last_key[0] if self.last_key else self.start_ms).date()
         last_day = from_ms(self.end_ms - 1).date()
-        d = first_day
+        d = first_day; interrupted = False
         try:
             while d <= last_day and not self._stop.is_set():
                 if self.dates is not None and str(d) not in self.dates:
@@ -446,12 +451,15 @@ class ReplayEngine:
                         if self._step_until is not None and (pos >= len(keys) or keys["avail"][pos] >= self._step_until):
                             self._step_until = None; self.pause()
                     if self._since_ckpt >= self.ckpt_every: self._checkpoint("running")
+                if pos < len(keys): interrupted = True   # stopped (stop/until/budget) with events of this day left
                 if not self._stop.is_set():
                     self._checkpoint("running")   # day boundary checkpoint
                     if self.progress_cb: self.progress_cb(self.metrics(t_run0, day=str(d)))
                 d += timedelta(days=1)
         finally:
-            self.status = "completed" if d > last_day else "stopped"
+            # completed only if every selected event was delivered. A stop inside the last day must not read as
+            # completed: consumers (Phase 5) treat completion as "the clock reached end_ms".
+            self.status = "completed" if d > last_day and not interrupted else "stopped"
             self._checkpoint(self.status)
             ctx.update(self.metrics(t_run0)); ctx["status"] = self.status
             for c in self.consumers: c.on_stop(ctx)

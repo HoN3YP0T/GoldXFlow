@@ -60,10 +60,11 @@ python_version = "3.12"
 warn_unused_configs = true
 ignore_missing_imports = true
 files = ["goldflow/settings.py", "goldflow/profiles.py", "goldflow/observability.py", "goldflow/migrations.py",
-         "goldflow/providers"]
+         "goldflow/providers", "goldflow/processing"]
 
 [[tool.mypy.overrides]]
-module = ["goldflow.settings", "goldflow.profiles", "goldflow.observability", "goldflow.migrations", "goldflow.providers.*"]
+module = ["goldflow.settings", "goldflow.profiles", "goldflow.observability", "goldflow.migrations", "goldflow.providers.*",
+          "goldflow.processing.*"]
 strict = true
 
 [[tool.mypy.overrides]]

@@ -4,6 +4,8 @@
   python -m goldflow.cli acquire   --config ... [--months 6 | --start ISO --end ISO] [--new-range] [--no-rest]
   python -m goldflow.cli rest      --config ...          # REST recovery units only (run where fapi is reachable)
   python -m goldflow.cli manifest  --config ...
+  python -m goldflow.cli process   --name p1 [--resume] [--dates ..] [--budget S]   # Phase 5 trade processor
+  python -m goldflow.cli reconcile [--interval 1m]                              # Phase 5 footprint checks
 The acquisition range is frozen in data/state/range.json on first run so that resumed runs
 cover exactly the same [start, end); pass --new-range to start a fresh range.
 Exit code 1 if any unit failed or any interval of a primary dataset is uncovered.
@@ -114,10 +116,38 @@ def _providers(cfg, profile) -> int:
     print(json.dumps(out, indent=1))
     return 0
 
+def _process_cmd(cfg, a, log) -> int:
+    """Phase 5: replay -> TradeProcessor -> footprint Parquet, then reconciliation. Resumable like replay."""
+    import signal, threading
+    from .replay import ReplayEngine, ChainHasher, IntegrityChecker
+    from .processing.trade_processor import TradeProcessor
+    from .processing.footprint_store import FootprintWriter
+    from .processing.reconcile import reconcile
+    name = a.name or "process"
+    writer = FootprintWriter(cfg.data_root, cfg.symbol, replace=not a.resume)
+    proc = TradeProcessor(cfg, sinks=[writer]); hasher, checker = ChainHasher(), IntegrityChecker()
+    prog = lambda m: log.info("process %s day=%s events=%d clock=%s %.0f ev/s rss=%dMB", name, m.get("day"), m["events"],
+                              m["sim_clock"], m["events_per_s"] or 0, m["peak_rss_mb"])
+    eng = ReplayEngine(cfg, [hasher, checker, proc], start=a.start, end=a.end, dates=a.dates, name=name, progress=prog)
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        signal.signal(sig, lambda *_: (log.info("stop requested; checkpointing"), eng.stop()))
+    if a.budget: threading.Timer(a.budget, eng.stop).start()
+    res = eng.run(resume=a.resume, until=a.until)
+    out = {"name": name, "status": res["status"], "events": res["events"], "events_this_run": res["events_this_run"],
+           "per_stream": res["per_stream"], "sim_clock": res["sim_clock"], "wall_s": res["wall_s"], "events_per_s": res["events_per_s"],
+           "peak_rss_mb": res["peak_rss_mb"], "sequence_digest": hasher.digest, "integrity_violations": checker.violations,
+           "processor": proc.summary()}
+    if res["status"] == "completed" and not a.no_reconcile:
+        rep = reconcile(cfg, interval=proc.st.persist_intervals[0]) if proc.st.persist_intervals else None
+        if rep: out["reconciliation"] = rep["summary"]
+    print(json.dumps(out, indent=1, default=str))
+    bad = checker.violations or (out.get("reconciliation") or {}).get("fail")
+    return 1 if bad else (0 if res["status"] == "completed" else 3)
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="goldflow")
     ap.add_argument("cmd", choices=["status", "providers", "discover", "acquire", "rest", "manifest", "normalize",
-                                    "validate", "report", "replay"])
+                                    "validate", "report", "replay", "process", "reconcile"])
     ap.add_argument("--profile", help="research (default) | test | live; or env GOLDFLOW_PROFILE")
     ap.add_argument("--config", default="config/binance_xauusdt.json")
     ap.add_argument("--months", type=int); ap.add_argument("--start"); ap.add_argument("--end")
@@ -135,6 +165,8 @@ def main(argv=None) -> int:
     ap.add_argument("--session", action="append", help="replay: UTC time-of-day window HH:MM-HH:MM (repeatable)")
     ap.add_argument("--until", help="replay: stop before this UTC time (resumable)")
     ap.add_argument("--streams", nargs="*", help="replay: enable only these streams (default: config)")
+    ap.add_argument("--no-reconcile", action="store_true", help="process: skip the reconciliation after completion")
+    ap.add_argument("--interval", default="1m", help="reconcile: footprint interval to check")
     a = ap.parse_args(argv)
     from .migrations import apply_migrations
     from .observability import new_run_id, setup_logging
@@ -178,6 +210,12 @@ def main(argv=None) -> int:
         return 0 if not summary["digest_differences_vs_catalog"] else 1
     if a.cmd == "replay":
         return _replay_cmd(cfg, a, log)
+    if a.cmd == "process":
+        return _process_cmd(cfg, a, log)
+    if a.cmd == "reconcile":
+        from .processing.reconcile import reconcile
+        rep = reconcile(cfg, interval=a.interval)
+        print(json.dumps(rep["summary"], indent=1)); return 1 if rep["summary"]["fail"] else 0
     if a.cmd == "report":
         from .fsutil import connect
         db = connect(cfg.state_db)

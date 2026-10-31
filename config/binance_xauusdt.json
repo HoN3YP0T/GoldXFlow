@@ -122,5 +122,89 @@
     "max_events_per_chunk": 65536,
     "checkpoint_every_events": 2000000,
     "paced_chunk_sim_ms": 250
+  },
+  "processing": {
+    "_doc": "Phase 5 trade processor (docs/PROCESSING_V1.md). Volume in integer lots (0.001 oz), price in integer ticks (0.01 USDT).",
+    "version": 1,
+    "intervals": [
+      "1s",
+      "5s",
+      "1m",
+      "5m",
+      "15m",
+      "1h"
+    ],
+    "persist_intervals": [
+      "1m"
+    ],
+    "footprint_bin_ticks": 1,
+    "dedup_window_ids": 131072,
+    "include_recovered": true,
+    "inferred_side": {
+      "enabled": false,
+      "method": "tick_rule",
+      "_doc": "only splits UNKNOWN-side volume into separate INFERRED columns; never mixed into exchange-reported buy/sell"
+    },
+    "dq_datasets": [
+      "trades"
+    ]
+  },
+  "sessions": {
+    "_doc": "Session calendar v1. STATUS: PROPOSED defaults from the build guide; decision D4 (which sessions, IB window) is still open. Times are local wall-clock in the named zone; DST via zoneinfo.",
+    "version": "1-proposed",
+    "trading_day": {
+      "tz": "America/New_York",
+      "roll": "18:00",
+      "starts_previous_day": true,
+      "_doc": "CME/COMEX convention: trading day D = 18:00 New York on D-1 -> 18:00 on D"
+    },
+    "regular_trading_week_utc": {
+      "open": "Sun 22:00",
+      "close": "Fri 21:00",
+      "_doc": "Binance tradingSchedule COMMODITY REGULAR (re-verify against /fapi tradingSchedule from a permitted host). Outside it bars are flagged weekend=true."
+    },
+    "sessions": [
+      {
+        "name": "asia",
+        "tz": "Asia/Tokyo",
+        "start": "08:00",
+        "end": "17:00",
+        "weekdays": [
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri"
+        ],
+        "_doc": "= 23:00-08:00 UTC (Tokyo has no DST)"
+      },
+      {
+        "name": "london",
+        "tz": "Europe/London",
+        "start": "07:00",
+        "end": "16:00",
+        "weekdays": [
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri"
+        ]
+      },
+      {
+        "name": "new_york",
+        "tz": "America/New_York",
+        "start": "08:20",
+        "end": "17:00",
+        "weekdays": [
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri"
+        ],
+        "_doc": "COMEX gold pit hours"
+      }
+    ]
   }
 }
