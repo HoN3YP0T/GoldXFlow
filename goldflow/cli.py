@@ -14,6 +14,7 @@
   python -m goldflow.cli ib --name i1 [--resume] | ib-verify                                        # Phase 10 Initial Balance
   python -m goldflow.cli signals --name s1 [--resume] | signals-verify                              # Phase 11 strategy signals
   python -m goldflow.cli broker-import --file F --format mt5|csv | backtest --name b1 [--resume]    # Phase 12 backtesting
+  python -m goldflow.cli perf-report --name b1 | study --plan P.json --name s1 | ledger-verify     # Phase 13 research
   python -m goldflow.cli depth-record [--duration S]   # Phase 8 live L2 recorder (non-US host)
   python -m goldflow.cli depth-replay | depth-normalize
 The acquisition range is frozen in data/state/range.json on first run so that resumed runs
@@ -192,6 +193,7 @@ def main(argv=None) -> int:
                                     "vprofile", "vprofile-verify", "vprofile-export", "orderflow", "orderflow-verify",
                                     "auction", "auction-verify", "auction-review", "ib", "ib-verify",
                                     "signals", "signals-verify", "broker-import", "backtest",
+                                    "perf-report", "study", "ledger-verify",
                                     "depth-record", "depth-replay", "depth-normalize"])
     ap.add_argument("--profile", help="research (default) | test | live; or env GOLDFLOW_PROFILE")
     ap.add_argument("--config", default="config/binance_xauusdt.json")
@@ -218,6 +220,7 @@ def main(argv=None) -> int:
     ap.add_argument("--bin", type=int, default=10, help="vprofile-export: profile bin size in ticks")
     ap.add_argument("--as-of", help="vprofile-export: developing snapshot time (UTC ISO); default = latest/final")
     ap.add_argument("--file", help="broker-import: MT5 tick export to import")
+    ap.add_argument("--plan", help="study: research plan (JSON)")
     ap.add_argument("--format", default="mt5", help="broker-import: mt5 (terminal tick export) | csv (time_msc,bid,ask)")
     ap.add_argument("--limit", type=int, default=120, help="auction-review: number of event charts")
     ap.add_argument("--duration", type=float, help="depth-record: stop after this many seconds (default: run until Ctrl-C)")
@@ -302,6 +305,28 @@ def main(argv=None) -> int:
         print(json.dumps(import_ticks(cfg.data_root, spec, Path(a.file), a.format), indent=1)); return 0
     if a.cmd == "backtest":
         return _backtest_cmd(cfg, a, log)
+    if a.cmd == "perf-report":
+        import pyarrow.parquet as pq
+        from .research import ResearchSettings, performance
+        rs = ResearchSettings.from_config(cfg)
+        d = cfg.data_root / "backtests" / (a.name or "backtest")
+        rd = lambda n: pq.read_table(d / f"{n}.parquet").to_pylist() if (d / f"{n}.parquet").exists() else []
+        rec = json.loads((d / "run.json").read_text())
+        sig = {r["signal_id"]: r for r in rd("signals")}
+        p = performance(rd("trades"), rd("cash"), int(rec["statistics"]["starting_cents"]), rd("fills"), sig, rs.min_trades_conclusion,
+                        (rs.boot_samples, rs.boot_seed))
+        (d / "performance.json").write_text(json.dumps(p, indent=1, default=str))
+        print(json.dumps({k: p[k] for k in ("trades", "sample", "net_cents", "profit_factor", "profit_factor_ci95", "expectancy_r",
+                                            "max_drawdown_pct")}, indent=1, default=str)); return 0
+    if a.cmd == "study":
+        from .research import run_study
+        out = run_study(cfg, json.loads(Path(a.plan).read_text()), a.name or "study")
+        print(json.dumps({"approved": out["approval"]["approved"], "final_candidate": out.get("final_candidate"),
+                          "report": str(cfg.data_root / "research" / "studies" / (a.name or "study") / "report.md")}, indent=1)); return 0
+    if a.cmd == "ledger-verify":
+        from .research import ResearchLedger
+        es = ResearchLedger(cfg.data_root / "research").verify()
+        print(json.dumps({"entries": len(es), "chain": "OK"}, indent=1)); return 0
     if a.cmd == "signals":
         return _signals_cmd(cfg, a, log)
     if a.cmd == "signals-verify":

@@ -66,7 +66,14 @@ class Simulator:
         self.positions: list[dict[str, Any]] = []
         self.next_roll = -INF  # next swap rollover (UTC ms); set from the first tick
         self.n = 0
-        self.out: dict[str, list[dict[str, Any]]] = {"orders": [], "fills": [], "trades": [], "cash": [], "equity": []}
+        self.out: dict[str, list[dict[str, Any]]] = {
+            "orders": [],
+            "fills": [],
+            "trades": [],
+            "cash": [],
+            "equity": [],
+            "signals": [],
+        }
         self.counts: dict[str, int] = {"gap_assumed_stop": 0, "late_signals": 0}
         self.path = {"t": np.zeros(0, I64), "lo": np.zeros(0, I64), "hi": np.zeros(0, I64)}  # Binance 1 s path
 

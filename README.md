@@ -1,6 +1,6 @@
 # goldflow: Binance XAUUSDT gold orderflow engine (Phases 1–6, 8)
 
-Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions, Phase 4 replays it deterministically, Phase 5 turns the replayed trades into exact price-level and footprint aggregates, Phase 6 builds volume profiles (POC, value area, HVN/LVN) and VWAP with bands on top of them, Phase 7 adds delta, CVD, footprint imbalances, Big Trades (rebuilt taker orders) and absorption / exhaustion / divergence events, Phase 9 adds Auction Market Theory: acceptance, rejection and failed auctions at reference levels, auction state, activity and profile shape. Phase 10 adds the Initial Balance (with extensions, breakouts and failed breaks) and a holiday calendar; IVB stays disabled until it is defined. Phase 11 adds the strategy interface: research strategies turn that evidence into explainable, gated trading signals (proposals, not orders). Phase 12 adds the event-driven backtester that fills those signals on your broker's XAUUSD bid/ask (it waits for the broker specification and tick history, decision D2).
+Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions, Phase 4 replays it deterministically, Phase 5 turns the replayed trades into exact price-level and footprint aggregates, Phase 6 builds volume profiles (POC, value area, HVN/LVN) and VWAP with bands on top of them, Phase 7 adds delta, CVD, footprint imbalances, Big Trades (rebuilt taker orders) and absorption / exhaustion / divergence events, Phase 9 adds Auction Market Theory: acceptance, rejection and failed auctions at reference levels, auction state, activity and profile shape. Phase 10 adds the Initial Balance (with extensions, breakouts and failed breaks) and a holiday calendar; IVB stays disabled until it is defined. Phase 11 adds the strategy interface: research strategies turn that evidence into explainable, gated trading signals (proposals, not orders). Phase 12 adds the event-driven backtester that fills those signals on your broker's XAUUSD bid/ask (it waits for the broker specification and tick history, decision D2). Phase 13 adds the research layer: walk-forward, robustness checks, a once-only test set, a hash-chained research ledger and approval criteria.
 
 **No market data is committed to this repository.** Rebuild it with `python -m goldflow.cli acquire` then `python -m goldflow.cli normalize`. The frozen range in `data/state/range.json` reproduces the exact dataset, and the partition digests in `data/manifests/dataset_manifest.json` let you verify it.
 
@@ -46,10 +46,11 @@ goldflow/
                     engine.py (StrategyEngine sink, gating), verify.py
   backtesting/      Phase 12: settings.py (broker spec, execution model), broker.py (MT5 tick import), basis.py,
                     simulator.py (fills, costs, risk, cents ledger), engine.py (Backtester sink, report)
+  research/         Phase 13: metrics.py, ledger.py (research ledger, test lock), runner.py, walkforward.py, study.py
   cli.py            discover | acquire | rest | manifest | normalize | validate | report | replay | process | reconcile |
-                    vprofile | vprofile-verify | vprofile-export | orderflow | orderflow-verify | auction | auction-verify | auction-review | ib | ib-verify | signals | signals-verify | broker-import | backtest
-docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, METRICS_PROFILE_V1.md, METRICS_ORDERFLOW_V1.md, METRICS_AUCTION_V1.md, METRICS_IB_V1.md, SIGNALS_V1.md, BACKTEST_V1.md, PHASE*_REPORT.md
-tests/test_core.py, test_phase3.py, test_replay.py, test_processing.py, test_profile.py, test_orderflow.py, test_auction.py, test_ib.py, test_strategies.py, test_backtest.py
+                    vprofile | vprofile-verify | vprofile-export | orderflow | orderflow-verify | auction | auction-verify | auction-review | ib | ib-verify | signals | signals-verify | broker-import | backtest | perf-report | study | ledger-verify
+docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, METRICS_PROFILE_V1.md, METRICS_ORDERFLOW_V1.md, METRICS_AUCTION_V1.md, METRICS_IB_V1.md, SIGNALS_V1.md, BACKTEST_V1.md, RESEARCH_V1.md, PHASE*_REPORT.md
+tests/test_core.py, test_phase3.py, test_replay.py, test_processing.py, test_profile.py, test_orderflow.py, test_auction.py, test_ib.py, test_strategies.py, test_backtest.py, test_research.py
 data/raw/binance/futures_um/XAUUSDT/<dataset>/<daily|monthly|rest>/   raw zips + .CHECKSUM (+ _verify sidecars)
 data/state/   acquisition.sqlite, range.json, plan-*.json, progress.json, acquisition.log, instrument_discovery.json
 data/manifest.json
@@ -228,3 +229,14 @@ python -m goldflow.cli backtest --name b1 [--resume]     # -> data/backtests/b1/
 - **Execution model:** latency, slippage, gapped stops, stop-first on ambiguous gaps, commission, swap and broker rejections. It is printed at the top of every report.
 - **Risk:** sizing and limits (decision D7), and every result reconciled to the cent against the cash ledger.
 - **Without a broker:** until the `broker` block is filled in (decision D2), `backtest` refuses to run. See `docs/BACKTEST_V1.md`.
+
+## Phase 13: Research, walk-forward and validation
+```bash
+python -m goldflow.cli perf-report --name b1             # full performance report (intervals, splits, Monte Carlo) of a backtest
+python -m goldflow.cli study --plan plan.json --name s1  # hypothesis -> walk-forward -> robustness -> (once) test -> approval -> report
+python -m goldflow.cli ledger-verify                     # research ledger hash chain
+```
+- **Splits:** development 30 Apr–31 Aug, validation September, test October. The **test set opens once**, for one final candidate (`data/research/test_lock.json`).
+- **Validation:** walk-forward (8 weeks in-sample / 2 weeks out-of-sample), ±20 % parameter stability, costs ×1.5, sensitivity heatmap, Monte Carlo.
+- **Research ledger:** hypotheses are recorded before any results.
+- **Approval:** thresholds are proposed (D8). `research.approval.max_oos_drawdown` must be set before anything can pass. See `docs/RESEARCH_V1.md`.

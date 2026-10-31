@@ -45,6 +45,7 @@ DEFAULT_BACKTEST: dict[str, Any] = {
     "max_tick_gap": "60s",
     "max_hold": "24h",
     "seed": 1,
+    "spread_mult": "1",
     "basis": {"window": "5m", "min_samples": 30},
     "risk": {
         "risk_per_trade": "0.005",
@@ -137,6 +138,7 @@ class BacktestSettings:
     max_tick_gap_ms: int
     max_hold_ms: int
     seed: int
+    spread_mult: Fraction
     basis_window_ms: int
     basis_min_samples: int
     risk_per_trade: Fraction
@@ -168,11 +170,13 @@ class BacktestSettings:
         st = cls(_frac(raw["starting_capital"], "starting_capital"), i(raw["latency_ms"], "latency_ms"), i(raw["slippage_points"], "slippage_points"),
                  _frac(raw["slippage_vol_mult"], "slippage_vol_mult"), i(raw["slippage_vol_ticks"], "slippage_vol_ticks", 2),
                  _frac(raw["reject_rate"], "reject_rate"), parse_interval(str(raw["max_tick_gap"])), parse_interval(str(raw["max_hold"])),
-                 i(raw["seed"], "seed"), parse_interval(str(bs["window"])), i(bs["min_samples"], "basis.min_samples", 1),
+                 i(raw["seed"], "seed"), _frac(raw["spread_mult"], "spread_mult"), parse_interval(str(bs["window"])), i(bs["min_samples"], "basis.min_samples", 1),
                  _frac(rk["risk_per_trade"], "risk.risk_per_trade"), i(rk["max_concurrent_positions"], "risk.max_concurrent_positions", 1),
                  _frac(rk["max_exposure_lots"], "risk.max_exposure_lots"), _frac(rk["daily_loss_limit"], "risk.daily_loss_limit"),
                  _frac(rk["max_drawdown"], "risk.max_drawdown"), i(rk["max_consecutive_losses"], "risk.max_consecutive_losses", 1),
                  tuple(str(x) for x in rk["sessions"]), raw, "")  # fmt: skip
+        if st.spread_mult < 1:
+            raise ValueError("backtest.spread_mult must be >= 1 (a cost stress widens the broker spread, never narrows it)")
         if st.starting_capital <= 0 or not (0 <= st.reject_rate < 1) or not (0 < st.risk_per_trade <= Fraction(1, 10)):
             raise ValueError("backtest: starting_capital > 0, reject_rate in [0, 1), risk_per_trade in (0, 0.1]")
         if (

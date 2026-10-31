@@ -20,6 +20,7 @@ A run on **synthetic** broker ticks (tests) is refused unless ``allow_synthetic`
 from __future__ import annotations
 
 import json
+from fractions import Fraction
 import subprocess
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
@@ -95,9 +96,16 @@ class Backtester(ProcessorSink):
     name = "backtest"
 
     def __init__(
-        self, cfg: Any, strategy_engine: Any, run_name: str = "bt", allow_synthetic: bool = False, out_root: Path | None = None
+        self,
+        cfg: Any,
+        strategy_engine: Any,
+        run_name: str = "bt",
+        allow_synthetic: bool = False,
+        out_root: Path | None = None,
+        accept_from_ms: int | None = None,
     ) -> None:
         self.cfg = cfg
+        self.accept_from = accept_from_ms  # signals before this time are warm-up only: never traded (walk-forward windows)
         self.bt = BacktestSettings.from_config(cfg)
         spec = BrokerSpec.from_raw(cfg.raw.get("broker"))
         if spec is None:
@@ -120,13 +128,24 @@ class Backtester(ProcessorSink):
         self.bars: list[list[int]] = []  # Binance 1 s bars [end, close, low, high] not yet turned into samples
         self.cursor: int | None = None
         self.carry: list[int] | None = None  # last broker tick before the cursor
-        self.stats = {"basis_samples": 0, "basis_skipped_stale_quote": 0, "signals": 0, "broker_ticks": 0}
+        self.stats = {
+            "basis_samples": 0,
+            "basis_skipped_stale_quote": 0,
+            "signals": 0,
+            "broker_ticks": 0,
+            "signals_before_window": 0,
+        }
         self.ctx: dict[str, Any] = {}
 
     # ------------------------------------------------------------------ inputs
     def _on_signals(self, table: str, rows: list[dict[str, Any]]) -> None:
         if table == "signals":
-            self.pending += rows
+            for r in rows:
+                if self.accept_from is not None and int(r["event_time"]) < self.accept_from:
+                    self.stats["signals_before_window"] += 1
+                else:
+                    self.pending.append(r)
+                    self.sim.out.setdefault("signals", []).append(r)  # traded signals with their evidence (regime splits)
 
     def on_start(self, ctx: dict[str, Any], proc: Any) -> None:
         self.proc = proc
@@ -162,6 +181,11 @@ class Backtester(ProcessorSink):
             else min([r[0] for r in self.bars] + [int(s["event_time"]) for s in self.pending] + [X]) - DAY_MS
         )
         tk = self.ticks.between(a, X)
+        if self.bt.spread_mult != 1 and len(tk["t"]):  # cost stress: widen the spread symmetrically around the mid
+            m = self.bt.spread_mult
+            widen = [int((Fraction(int(x)) * (m - 1) / 2).__ceil__()) for x in (tk["ask"] - tk["bid"]).tolist()]
+            w = np.array(widen, I64)
+            tk = {"t": tk["t"], "bid": tk["bid"] - w, "ask": tk["ask"] + w}
         self.cursor = X
         self.stats["broker_ticks"] += len(tk["t"])
         # basis samples and the Binance 1 s path, for seconds that ended by X

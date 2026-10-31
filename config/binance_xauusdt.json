@@ -544,6 +544,7 @@
     "max_tick_gap": "60s",
     "max_hold": "24h",
     "seed": 1,
+    "spread_mult": "1",
     "basis": {
       "window": "5m",
       "min_samples": 30
@@ -556,6 +557,44 @@
       "max_drawdown": "0.08",
       "max_consecutive_losses": 4,
       "sessions": []
+    }
+  },
+  "research": {
+    "_doc": "Phase 13 research (docs/RESEARCH_V1.md). Splits are fixed before any testing; the test period is opened once (data/research/test_lock.json). Approval thresholds are PROPOSED; you set the final numbers (D8), and max_oos_drawdown must be set before anything can be approved.",
+    "version": 1,
+    "splits": {
+      "development": [
+        "2026-04-30",
+        "2026-08-31"
+      ],
+      "validation": [
+        "2026-09-01",
+        "2026-09-30"
+      ],
+      "test": [
+        "2026-10-01",
+        "2026-10-29"
+      ]
+    },
+    "walk_forward": {
+      "in_sample_days": 56,
+      "out_of_sample_days": 14,
+      "step_days": 14,
+      "warmup_days": 2
+    },
+    "objective": "profit_factor",
+    "min_trades_in_sample": 30,
+    "min_trades_conclusion": 100,
+    "bootstrap": {
+      "samples": 2000,
+      "seed": 7
+    },
+    "approval": {
+      "oos_profit_factor": "1.2",
+      "wf_positive_share": "0.7",
+      "max_oos_drawdown": null,
+      "param_change": "0.2",
+      "cost_multiplier": "1.5"
     }
   }
 }

@@ -196,13 +196,13 @@ goldflow/                     current package
              events.py, flow_engine.py, flow_store.py, flow_verify.py, flow_settings.py}                  (Phase 7)
   liquidity/{book.py, recorder.py, capture.py, dataset.py, metrics.py, coverage.py, registry.py, ...}     (Phase 8)
   cli.py      discover | acquire | rest | manifest | normalize | validate | report | replay | process | reconcile |
-              vprofile[-verify|-export] | orderflow[-verify] | auction[-verify|-review] | ib[-verify] | signals[-verify] | broker-import | backtest | depth-record | depth-replay | depth-normalize
+              vprofile[-verify|-export] | orderflow[-verify] | auction[-verify|-review] | ib[-verify] | signals[-verify] | broker-import | backtest | perf-report | study | ledger-verify | depth-record | depth-replay | depth-normalize
   orderflow/{auction.py, failed_auction.py, auction_engine.py, auction_verify.py, auction_review.py, auction_settings.py}  (Phase 9)
   orderflow/{initial_balance.py, ib_verify.py, ivb.py}  processing/holidays.py                 (Phase 10)
   — to add —
   strategies/{signal.py, base.py, regime.py, library.py, engine.py, verify.py}             (Phase 11, built)
   backtesting/{settings.py, broker.py, basis.py, simulator.py, engine.py}                  (Phase 12, built)
-  research/{splits.py, walkforward.py, montecarlo.py, ledger.py}                          (Phase 13)
+  research/{settings.py, metrics.py, ledger.py, runner.py, walkforward.py, study.py}         (Phase 13, built)
   live/{ws_client.py, recorder.py, parity.py}                                              (Phase 14)
   execution/{bridge.py, order_manager.py, positions.py}  risk/                             (Phase 16)
   monitoring/  dashboard/                                                                  (Phase 17)
@@ -229,7 +229,7 @@ mql5/   (Phase 16: EA executor source)
 | 10 | Sessions, Initial Balance, IVB | **Done** (2026-10-31; see `docs/PHASE10_COMPLETION_REPORT.md`). IVB disabled until D1; holiday calendar PROPOSED | M3 |
 | 11 | Strategy interface and signal generation | **Done** (2026-10-31; see `docs/PHASE11_COMPLETION_REPORT.md`; example strategy parameters PROPOSED, D13) | – |
 | 12 | Event-driven backtesting and execution simulation | **Built** (2026-10-31; see `docs/PHASE12_COMPLETION_REPORT.md`). Real backtests **blocked on D2** (broker spec + tick history) | M4 |
-| 13 | Reports, validation, walk-forward, research | Not started | M5 |
+| 13 | Reports, validation, walk-forward, research | **Built** (2026-10-31; see `docs/PHASE13_COMPLETION_REPORT.md`). Real studies blocked on D2; thresholds D8 | M5 |
 | 14 | Live Binance ingestion and historical/live parity | Not started (start the depth recorder early) | M6 |
 | 15 | Additional providers and cross-market mapping | Not started | – |
 | 16 | MT5 execution bridge and risk controls | Not started | M7 |
@@ -721,7 +721,9 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 13: Reports, validation, walk-forward and strategy research. **Status: Not started**
+### Phase 13: Reports, validation, walk-forward and strategy research. **Status: Built (2026-10-31). Real studies blocked on D2.**
+**Built** (`goldflow/research/`; spec `docs/RESEARCH_V1.md`; report `docs/PHASE13_COMPLETION_REPORT.md`): reconciled performance report with intervals, splits by regime and cost impact; fixed chronological splits and a once-only test-set lock; rolling walk-forward with stitched out-of-sample equity; stability, cost stress (real reruns with a widened spread), sensitivity heatmap and Monte Carlo; hash-chained research ledger with hypotheses first; approval criteria (`max_oos_drawdown` must be set, D8). Commands: `study`, `perf-report`, `ledger-verify`.
+
 **Objective.** Decide whether a strategy is robust, not merely fitted.
 
 **What to build** (`research/`):
@@ -973,7 +975,7 @@ Every phase ends with a report containing:
 **Standing instruction (append to every phase request):**
 > Execute only the current phase. First inspect the repository and identify what is already implemented. Do not rewrite working components unnecessarily. Implement real functionality; no placeholder calculations or fabricated market data. Run unit, integration, regression and data-integrity tests (including the digest regression checks). Inspect actual outputs, fix critical errors, update documentation, and provide evidence. If data or credentials are unavailable, document the limitation and stop the dependent task. Summarise the phase contents before starting. Stop after the phase with the completion report.
 
-Completed reports: `docs/PHASE2_ACQUISITION_REPORT.md`, `docs/PHASE3_COMPLETION_REPORT.md`, `docs/PHASE4_COMPLETION_REPORT.md`, `docs/PHASE5_COMPLETION_REPORT.md`, `docs/PHASE7_COMPLETION_REPORT.md`, `docs/PHASE8_COMPLETION_REPORT.md`, `docs/PHASE9_COMPLETION_REPORT.md`, `docs/PHASE10_COMPLETION_REPORT.md`, `docs/PHASE11_COMPLETION_REPORT.md`, `docs/PHASE12_COMPLETION_REPORT.md`.
+Completed reports: `docs/PHASE2_ACQUISITION_REPORT.md`, `docs/PHASE3_COMPLETION_REPORT.md`, `docs/PHASE4_COMPLETION_REPORT.md`, `docs/PHASE5_COMPLETION_REPORT.md`, `docs/PHASE7_COMPLETION_REPORT.md`, `docs/PHASE8_COMPLETION_REPORT.md`, `docs/PHASE9_COMPLETION_REPORT.md`, `docs/PHASE10_COMPLETION_REPORT.md`, `docs/PHASE11_COMPLETION_REPORT.md`, `docs/PHASE12_COMPLETION_REPORT.md`, `docs/PHASE13_COMPLETION_REPORT.md`.
 
 ---
 
