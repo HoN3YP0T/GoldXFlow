@@ -1,6 +1,6 @@
 # goldflow: Binance XAUUSDT gold orderflow engine (Phases 1–6, 8)
 
-Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions, Phase 4 replays it deterministically, Phase 5 turns the replayed trades into exact price-level and footprint aggregates, Phase 6 builds volume profiles (POC, value area, HVN/LVN) and VWAP with bands on top of them, Phase 7 adds delta, CVD, footprint imbalances, Big Trades (rebuilt taker orders) and absorption / exhaustion / divergence events, and Phase 9 adds Auction Market Theory: acceptance, rejection and failed auctions at reference levels, auction state, activity and profile shape.
+Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions, Phase 4 replays it deterministically, Phase 5 turns the replayed trades into exact price-level and footprint aggregates, Phase 6 builds volume profiles (POC, value area, HVN/LVN) and VWAP with bands on top of them, Phase 7 adds delta, CVD, footprint imbalances, Big Trades (rebuilt taker orders) and absorption / exhaustion / divergence events, Phase 9 adds Auction Market Theory: acceptance, rejection and failed auctions at reference levels, auction state, activity and profile shape. Phase 10 adds the Initial Balance (with extensions, breakouts and failed breaks) and a holiday calendar; IVB stays disabled until it is defined.
 
 **No market data is committed to this repository.** Rebuild it with `python -m goldflow.cli acquire` then `python -m goldflow.cli normalize`. The frozen range in `data/state/range.json` reproduces the exact dataset, and the partition digests in `data/manifests/dataset_manifest.json` let you verify it.
 
@@ -41,10 +41,11 @@ goldflow/
                     events.py, flow_engine.py (OrderflowEngine sink), flow_store.py, flow_verify.py, flow_settings.py
                     Phase 9: auction.py, failed_auction.py, auction_engine.py (AuctionEngine sink), auction_verify.py,
                     auction_review.py (CSV + SVG charts), auction_settings.py
+                    Phase 10: initial_balance.py (IBEngine sink), ib_verify.py, ivb.py (disabled); processing/holidays.py
   cli.py            discover | acquire | rest | manifest | normalize | validate | report | replay | process | reconcile |
-                    vprofile | vprofile-verify | vprofile-export | orderflow | orderflow-verify | auction | auction-verify | auction-review
-docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, METRICS_PROFILE_V1.md, METRICS_ORDERFLOW_V1.md, METRICS_AUCTION_V1.md, PHASE*_REPORT.md
-tests/test_core.py, test_phase3.py, test_replay.py, test_processing.py, test_profile.py, test_orderflow.py, test_auction.py
+                    vprofile | vprofile-verify | vprofile-export | orderflow | orderflow-verify | auction | auction-verify | auction-review | ib | ib-verify
+docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, METRICS_PROFILE_V1.md, METRICS_ORDERFLOW_V1.md, METRICS_AUCTION_V1.md, METRICS_IB_V1.md, PHASE*_REPORT.md
+tests/test_core.py, test_phase3.py, test_replay.py, test_processing.py, test_profile.py, test_orderflow.py, test_auction.py, test_ib.py
 data/raw/binance/futures_um/XAUUSDT/<dataset>/<daily|monthly|rest>/   raw zips + .CHECKSUM (+ _verify sidecars)
 data/state/   acquisition.sqlite, range.json, plan-*.json, progress.json, acquisition.log, instrument_discovery.json
 data/manifest.json
@@ -190,3 +191,14 @@ Outputs: `data/derived/.../auction/date=YYYY-MM-DD/{levels,events,outcomes,state
   - outcome rows at 15/30/60 min, for review only.
 - **Context:** balance / imbalance / transition state every 15 minutes, initiative vs responsive activity per bar, excess, poor highs/lows and a labelled single-print proxy.
 - **Settings:** the `auction` config block; thresholds are **proposed** (decision D12). See `docs/METRICS_AUCTION_V1.md`.
+
+## Phase 10: Sessions, Initial Balance and IVB
+```bash
+python -m goldflow.cli ib --name i1 [--resume]           # replay -> TradeProcessor -> IBEngine -> initial_balance Parquet -> verification
+python -m goldflow.cli ib-verify                         # exact recomputation from trades
+```
+- **IB:** New York 08:20–09:20 New York time and London 08:00–09:00 London time by default (PROPOSED, D4). DST-safe. Developing snapshots every minute, then the final high, low, mid and range with 0.5–3 × range extensions.
+- **IB events:** breakouts (volume and delta filters are reported, not applied), failed breaks, extension touches and a session summary.
+- **Auction link:** IB high, low and mid are Phase 9 reference levels. Acceptance outside the IB is Phase 9's acceptance on them.
+- **Holidays:** the `holidays` block labels IB rows and skips the IB on CLOSED dates. It is **PROPOSED**: verify it against CME's published schedule.
+- **IVB:** **disabled**. `ivb.enabled: true` is refused until its definition is supplied and implemented (decision D1). See `docs/METRICS_IB_V1.md`.

@@ -345,7 +345,8 @@
     "levels": {
       "sources": [
         "trading_day",
-        "session"
+        "session",
+        "ib"
       ],
       "types": [
         "HIGH",
@@ -403,5 +404,98 @@
       "single_print_min_bins": 2
     },
     "persist": true
+  },
+  "holidays": {
+    "_doc": "Gold (CME/COMEX) holiday calendar, local dates in America/New_York. STATUS: PROPOSED. The dates are the 2026 US federal holidays and Good Friday; verify each date and its trading hours against CME Group's published holiday schedule before relying on it. CLOSED = no IB is built; MODIFIED_HOURS = IB built and labelled. Labels only: Phase 5 sessions are not changed.",
+    "version": "2026-proposed",
+    "tz": "America/New_York",
+    "days": [
+      {
+        "date": "2026-01-01",
+        "name": "New Year's Day",
+        "type": "CLOSED"
+      },
+      {
+        "date": "2026-01-19",
+        "name": "Martin Luther King Jr. Day",
+        "type": "MODIFIED_HOURS"
+      },
+      {
+        "date": "2026-02-16",
+        "name": "Presidents' Day",
+        "type": "MODIFIED_HOURS"
+      },
+      {
+        "date": "2026-04-03",
+        "name": "Good Friday",
+        "type": "CLOSED"
+      },
+      {
+        "date": "2026-05-25",
+        "name": "Memorial Day",
+        "type": "MODIFIED_HOURS"
+      },
+      {
+        "date": "2026-06-19",
+        "name": "Juneteenth",
+        "type": "MODIFIED_HOURS"
+      },
+      {
+        "date": "2026-07-03",
+        "name": "Independence Day (observed)",
+        "type": "MODIFIED_HOURS"
+      },
+      {
+        "date": "2026-09-07",
+        "name": "Labor Day",
+        "type": "MODIFIED_HOURS"
+      },
+      {
+        "date": "2026-11-26",
+        "name": "Thanksgiving Day",
+        "type": "MODIFIED_HOURS"
+      },
+      {
+        "date": "2026-12-25",
+        "name": "Christmas Day",
+        "type": "CLOSED"
+      }
+    ]
+  },
+  "initial_balance": {
+    "_doc": "Phase 10 Initial Balance (docs/METRICS_IB_V1.md). Each IB lies inside a Phase 5 session: 'offset' from the session start or local 'start' in the session's time zone. STATUS: PROPOSED (decision D4).",
+    "version": 1,
+    "definitions": [
+      {
+        "name": "new_york",
+        "session": "new_york",
+        "offset": "0m",
+        "length": "60m",
+        "_doc": "08:20-09:20 America/New_York (COMEX open)"
+      },
+      {
+        "name": "london",
+        "session": "london",
+        "start": "08:00",
+        "length": "60m",
+        "_doc": "08:00-09:00 Europe/London"
+      }
+    ],
+    "extensions": [
+      "0.5",
+      "1",
+      "1.5",
+      "2",
+      "3"
+    ],
+    "break_interval": "5m",
+    "failed_break_window": "30m",
+    "snapshot_every": "1m",
+    "persist": true
+  },
+  "ivb": {
+    "_doc": "IVB is DISABLED until its definition is supplied and signed off (decision D1). It is never replaced by IB or another metric.",
+    "enabled": false,
+    "definition": null
   }
 }

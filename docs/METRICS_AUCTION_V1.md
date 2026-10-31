@@ -38,7 +38,7 @@ Inputs:
 
 The previous and current session high/low of the guide: the previous session's high and low are levels. The current session's developing extremes are not used as levels: price makes them, so they cannot be accepted or rejected.
 
-**IB high/low** are added in Phase 10 as another level source.
+**IB levels** (Phase 10): `IB_HIGH`, `IB_LOW` and `IB_MID` of every fully observed Initial Balance (series `ib:<name>`), available at the IB end. They are included by default (`sources` contains `ib`), and the `AuctionEngine` then needs an `IBEngine` placed before it (`docs/METRICS_IB_V1.md`).
 
 ## 3. Episodes, acceptance, rejection
 Per level and side (ABOVE / BELOW), an **episode** starts with the first bar that trades beyond the level and ends with the first bar that **closes** back inside it.

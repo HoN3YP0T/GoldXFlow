@@ -196,10 +196,10 @@ goldflow/                     current package
              events.py, flow_engine.py, flow_store.py, flow_verify.py, flow_settings.py}                  (Phase 7)
   liquidity/{book.py, recorder.py, capture.py, dataset.py, metrics.py, coverage.py, registry.py, ...}     (Phase 8)
   cli.py      discover | acquire | rest | manifest | normalize | validate | report | replay | process | reconcile |
-              vprofile[-verify|-export] | orderflow[-verify] | auction[-verify|-review] | depth-record | depth-replay | depth-normalize
+              vprofile[-verify|-export] | orderflow[-verify] | auction[-verify|-review] | ib[-verify] | depth-record | depth-replay | depth-normalize
   orderflow/{auction.py, failed_auction.py, auction_engine.py, auction_verify.py, auction_review.py, auction_settings.py}  (Phase 9)
+  orderflow/{initial_balance.py, ib_verify.py, ivb.py}  processing/holidays.py                 (Phase 10)
   — to add —
-  orderflow/{initial_balance.py, ivb.py}                                                   (Phase 10)
   strategies/  signals/                                                                    (Phase 11)
   backtesting/{engine.py, simulator.py, costs.py, ledger.py}                               (Phase 12)
   research/{splits.py, walkforward.py, montecarlo.py, ledger.py}                          (Phase 13)
@@ -226,7 +226,7 @@ mql5/   (Phase 16: EA executor source)
 | 7 | Delta, CVD, imbalance, Big Trades, absorption, exhaustion | **Done** (2026-10-31; see `docs/PHASE7_COMPLETION_REPORT.md`; detector parameters PROPOSED, D11) | M3 |
 | 8 | Order-book reconstruction and liquidity | **Done** (2026-10-31; live-only, see `docs/PHASE8_COMPLETION_REPORT.md`). The recorder must run on the PC or a non-US VPS. | M3 (live part) |
 | 9 | Auction Market Theory and failed auctions | **Done** (2026-10-31; see `docs/PHASE9_COMPLETION_REPORT.md`; thresholds PROPOSED, D12; IB levels arrive with Phase 10) | M3 |
-| 10 | Sessions, Initial Balance, IVB | Not started (IVB definition required from you) | M3 |
+| 10 | Sessions, Initial Balance, IVB | **Done** (2026-10-31; see `docs/PHASE10_COMPLETION_REPORT.md`). IVB disabled until D1; holiday calendar PROPOSED | M3 |
 | 11 | Strategy interface and signal generation | Not started | – |
 | 12 | Event-driven backtesting and execution simulation | Not started (needs broker tick history) | M4 |
 | 13 | Reports, validation, walk-forward, research | Not started | M5 |
@@ -259,7 +259,7 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 | §3 VWAP and volume analytics | Ph6 | Exact integer VWAP sums; float64 recomputation from decimal prices within 1e-9 relative |
 | §3 trade and orderflow analysis | Ph5, Ph7, Ph8 | `docs/METRICS_ORDERFLOW_V1.md`; hand-computed imbalance/quantile/event tests; `orderflow-verify` exact recomputation from trades (bars, CVD, imbalances, every big trade and fill id, event evidence and resolutions) |
 | §3 Auction Market Theory | Ph9 | `docs/METRICS_AUCTION_V1.md`; hand-computed episode/failed-auction/shape tests; replay clock check; `auction-verify` exact re-derivation from trades; `auction-review` charts |
-| §3 Initial Balance and IVB | Ph10 | IVB enabled only after its formula is approved |
+| §3 Initial Balance and IVB | Ph10 | `docs/METRICS_IB_V1.md`; DST-week tests; `ib-verify` exact recomputation; IVB refused at startup until its formula is approved (D1) |
 | §4 signal generation with evidence, SL/TP, R:R, score, reason | Ph11 | Signal schema; reproducibility tests |
 | §5 MT5 lifecycle, risk, reconciliation, recovery | Ph16 | – |
 | §6 backtest/live parity, costs, walk-forward, reports | Ph12, Ph13, Ph14 | – |
@@ -624,7 +624,9 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 10: Sessions, Initial Balance and IVB. **Status: Not started. IVB definition required.**
+### Phase 10: Sessions, Initial Balance and IVB. **Status: Done (2026-10-31). IVB disabled until its definition (D1).**
+**Built** (`orderflow/initial_balance.py`, `ib_verify.py`, `ivb.py`, `processing/holidays.py`; spec `docs/METRICS_IB_V1.md`; report `docs/PHASE10_COMPLETION_REPORT.md`): `IBEngine(ProcessorSink)` with per-session IB definitions (offset or local start; DST-checked at startup), developing and final IB with k × range extensions, breakouts (volume/delta filters reported), failed breaks, extension touches and session summaries; IB levels feed the Phase 9 auction engine (acceptance outside the IB); a PROPOSED holiday calendar that labels without changing Phase 5 sessions; IVB refused until a signed-off definition and implementation exist. Commands: `ib`, `ib-verify`. Evidence (4 real days): exact verification, digest reproduced after stop/resume.
+
 **Objective.** Session-aware opening range and initial-session analytics.
 
 **What to build.**
@@ -966,7 +968,7 @@ Every phase ends with a report containing:
 **Standing instruction (append to every phase request):**
 > Execute only the current phase. First inspect the repository and identify what is already implemented. Do not rewrite working components unnecessarily. Implement real functionality; no placeholder calculations or fabricated market data. Run unit, integration, regression and data-integrity tests (including the digest regression checks). Inspect actual outputs, fix critical errors, update documentation, and provide evidence. If data or credentials are unavailable, document the limitation and stop the dependent task. Summarise the phase contents before starting. Stop after the phase with the completion report.
 
-Completed reports: `docs/PHASE2_ACQUISITION_REPORT.md`, `docs/PHASE3_COMPLETION_REPORT.md`, `docs/PHASE4_COMPLETION_REPORT.md`, `docs/PHASE5_COMPLETION_REPORT.md`, `docs/PHASE7_COMPLETION_REPORT.md`, `docs/PHASE8_COMPLETION_REPORT.md`, `docs/PHASE9_COMPLETION_REPORT.md`.
+Completed reports: `docs/PHASE2_ACQUISITION_REPORT.md`, `docs/PHASE3_COMPLETION_REPORT.md`, `docs/PHASE4_COMPLETION_REPORT.md`, `docs/PHASE5_COMPLETION_REPORT.md`, `docs/PHASE7_COMPLETION_REPORT.md`, `docs/PHASE8_COMPLETION_REPORT.md`, `docs/PHASE9_COMPLETION_REPORT.md`, `docs/PHASE10_COMPLETION_REPORT.md`.
 
 ---
 

@@ -23,6 +23,7 @@ from goldflow.orderflow.auction_engine import AuctionEngine, AuctionStore  # noq
 from goldflow.orderflow.auction_review import review  # noqa: E402
 from goldflow.orderflow.auction_settings import AuctionSettings  # noqa: E402
 from goldflow.orderflow.auction_verify import verify  # noqa: E402
+from goldflow.orderflow.initial_balance import IBEngine  # noqa: E402
 from goldflow.orderflow.failed_auction import FailedAuctionHold, Outcome, failed_auction_evidence  # noqa: E402
 from goldflow.processing import TradeProcessor  # noqa: E402
 from goldflow.replay import ChainHasher, ReplayEngine, ReplayGuardError  # noqa: E402
@@ -198,9 +199,10 @@ class Listen:
 
 def arun(cfg, name="a", resume=False, until=None, store=True, listen=None, **kw):
     prof = ProfileEngine(cfg)
+    ib = IBEngine(cfg)
     eng = AuctionEngine(cfg, prof, store=AuctionStore(cfg.data_root, cfg.symbol, replace=not resume) if store else None,
-                        listeners=[listen] if listen else [])  # fmt: skip
-    p = TradeProcessor(cfg, sinks=[prof, eng])
+                        listeners=[listen] if listen else [], ib_engine=ib)  # fmt: skip
+    p = TradeProcessor(cfg, sinks=[prof, ib, eng])
     if listen: listen.proc = p
     r = ReplayEngine(cfg, [ChainHasher(), p], name=name, **kw).run(resume=resume, until=until)
     return eng, prof, p, r
@@ -280,6 +282,11 @@ def test_restore_and_chunking_do_not_change_results(tmp_path):
 
 def test_auction_engine_must_follow_its_profile_engine(tmp_path):
     cfg = make_dataset(tmp_path, n_per_day=200)
-    prof = ProfileEngine(cfg); eng = AuctionEngine(cfg, prof)
+    prof = ProfileEngine(cfg); ib = IBEngine(cfg); eng = AuctionEngine(cfg, prof, ib_engine=ib)
     with pytest.raises(ValueError, match="after its ProfileEngine"):
-        ReplayEngine(cfg, [TradeProcessor(cfg, sinks=[eng, prof])], name="x").run()
+        ReplayEngine(cfg, [TradeProcessor(cfg, sinks=[eng, prof, ib])], name="x").run()
+    prof = ProfileEngine(cfg); ib = IBEngine(cfg); eng = AuctionEngine(cfg, prof, ib_engine=ib)
+    with pytest.raises(ValueError, match="after its IBEngine"):
+        ReplayEngine(cfg, [TradeProcessor(cfg, sinks=[prof, eng, ib])], name="y").run()
+    with pytest.raises(ValueError, match="pass the IBEngine"):
+        AuctionEngine(cfg, ProfileEngine(cfg))

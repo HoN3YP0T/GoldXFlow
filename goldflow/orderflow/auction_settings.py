@@ -21,7 +21,7 @@ DEFAULT_AUCTION: dict[str, Any] = {
     "interval": "1m",
     "bin_ticks": 10,
     "levels": {
-        "sources": ["trading_day", "session"],
+        "sources": ["trading_day", "session", "ib"],
         "types": ["HIGH", "LOW", "POC", "VAH", "VAL", "VWAP"],
         "band_k": [1, 2],
         "user": [],
@@ -114,9 +114,18 @@ class AuctionSettings:
             raise ValueError(f"auction.bin_ticks {bt} must be one of volume_profile.bin_ticks {list(prof.bin_ticks)}")
         lv = raw["levels"]
         sources = tuple(str(x) for x in lv["sources"])
-        bad = [s for s in sources if s.split(":")[0] not in prof.windows or s.split(":")[0] == "anchor"]
+        bad = [
+            s for s in sources if (s.split(":")[0] not in prof.windows and s.split(":")[0] != "ib") or s.split(":")[0] == "anchor"
+        ]
         if bad:
-            raise ValueError(f"auction.levels.sources {bad}: each must be a volume_profile window kind (not anchor)")
+            raise ValueError(f"auction.levels.sources {bad}: each must be a volume_profile window kind (not anchor) or ib[:name]")
+        ib_names = [s.split(":", 1)[1] for s in sources if s.startswith("ib:")]
+        if any(s.startswith("ib") for s in sources):
+            from .initial_balance import IBSettings
+
+            known = {d.name for d in IBSettings.from_config(cfg).defs}
+            if any(n not in known for n in ib_names):
+                raise ValueError(f"auction.levels.sources: unknown IB definitions {[n for n in ib_names if n not in known]}")
         types = tuple(str(x) for x in lv["types"])
         if any(t not in LEVEL_TYPES for t in types) or len(set(types)) != len(types):
             raise ValueError(f"auction.levels.types must be distinct values of {list(LEVEL_TYPES)}")
@@ -135,7 +144,7 @@ class AuctionSettings:
             raise ValueError("acceptance.accept_time must be a multiple of auction.interval (it counts bar closes)")
         st_series = tuple(str(x) for x in stb["series"])
         for s in st_series:
-            if s.split(":")[0] not in sources and s not in sources:
+            if s.startswith("ib") or (s.split(":")[0] not in sources and s not in sources):
                 raise ValueError(f"auction.state.series {s!r} must also be a level source")
             if not {"VAH", "VAL", "POC"} <= set(types):
                 raise ValueError("auction.state needs VAH, VAL and POC in auction.levels.types")
@@ -185,6 +194,11 @@ class AuctionSettings:
                 raise ValueError(f"auction {what} must be in (0, 1]")
         if any(w.split(":")[0] not in ("utc_day", "trading_day", "trading_week", "session", "custom") for w in shape_w):
             raise ValueError("auction.profile_shape.windows must be Phase 5 window kinds")
-        body = {"auction": raw, "processing_hash": proc.hash, "profile_hash": prof.hash}
+        ib_hash = None
+        if any(x.startswith("ib") for x in sources):
+            from .initial_balance import IBSettings
+
+            ib_hash = IBSettings.from_config(cfg).hash
+        body = {"auction": raw, "processing_hash": proc.hash, "profile_hash": prof.hash, "ib_hash": ib_hash}
         h = hashlib.sha256(json.dumps(body, sort_keys=True, default=str).encode()).hexdigest()
         return cls(**{**st.__dict__, "hash": h})

@@ -83,12 +83,17 @@ class AuctionEngine(ProcessorSink):
     name = "auction"
 
     def __init__(self, cfg: Any, profile_engine: Any, store: AuctionStore | None = None,
-                 listeners: list[Listener] | tuple[Listener, ...] = ()) -> None:  # fmt: skip
+                 listeners: list[Listener] | tuple[Listener, ...] = (), ib_engine: Any = None) -> None:  # fmt: skip
         self.st = AuctionSettings.from_config(cfg)
         self.profile = profile_engine
         if self.st.bin_ticks not in profile_engine.ps.bin_ticks:
             raise ValueError("auction.bin_ticks must be one of the profile engine's bin sizes")
         profile_engine.listeners.append(self._on_profile)
+        self.ib = ib_engine
+        if any(x.startswith("ib") for x in self.st.sources):
+            if ib_engine is None:
+                raise ValueError("auction.levels.sources includes IB levels: pass the IBEngine (ib_engine=...)")
+            ib_engine.listeners.append(self._on_ib)
         self.store = store
         self.listeners = list(listeners)
         self.proc: Any = None
@@ -153,18 +158,30 @@ class AuctionEngine(ProcessorSink):
         return {"val": f(r.get("val_ticks")), "vah": f(r.get("vah_ticks"), bt - 1), "poc": poc, "vwap": vw}
 
     def _register(self, r: dict[str, Any], nodes: list[dict[str, Any]]) -> None:
-        series = f"{r['kind']}:{r['name']}"
-        av = int(r["available_at"])
+        items = levels_from_snapshot(r, nodes, self.st.level_types, self.st.band_k)
+        self._add_levels(f"{r['kind']}:{r['name']}", r["window_key"], items, int(r["available_at"]), int(r["total_lots"]))
+
+    def _on_ib(self, table: str, rows: list[dict[str, Any]]) -> None:
+        """Phase 10 IB levels (IB_HIGH, IB_LOW, IB_MID) of fully observed IBs, available at the IB end."""
+        if table != "ib_level":
+            return
+        for x in rows:
+            if "ib" in self.st.sources or x["series"] in self.st.sources:
+                items = [(t, Fraction(int(n), int(d))) for t, n, d in x["levels"]]
+                self._add_levels(x["series"], x["window_key"], items, int(x["available_at"]), int(x["ref_lots"]))
+
+    def _add_levels(self, series: str, window_key: str, items: list[tuple[str, Fraction]], av: int, ref_lots: int | None) -> None:
+        """Register a new instance's levels; the previous instance of the same series stops being active at ``av``."""
         for lv in self.levels.values():
             if lv.series == series and lv.active_until is None:
                 lv.active_until = av
         rows = []
-        for t, price in levels_from_snapshot(r, nodes, self.st.level_types, self.st.band_k):
-            lid = f"{r['window_key']}:{t}"
-            self.levels[lid] = Level(lid, series, r["window_key"], t, price, av, int(r["total_lots"]))
-            rows.append({"level_id": lid, "series": series, "window_key": r["window_key"], "level_type": t,
+        for t, price in items:
+            lid = f"{window_key}:{t}"
+            self.levels[lid] = Level(lid, series, window_key, t, price, av, ref_lots)
+            rows.append({"level_id": lid, "series": series, "window_key": window_key, "level_type": t,
                          "price_ticks": float(price), "price_exact": f"{price.numerator}/{price.denominator}",
-                         "available_at": av, "ref_lots": int(r["total_lots"])})  # fmt: skip
+                         "available_at": av, "ref_lots": ref_lots})  # fmt: skip
         self.stats["levels_registered"] += len(rows)
         self._emit("levels", rows)
 
@@ -177,6 +194,8 @@ class AuctionEngine(ProcessorSink):
         sinks = list(proc.sinks)
         if self.profile not in sinks or sinks.index(self.profile) > sinks.index(self):
             raise ValueError("AuctionEngine must come after its ProfileEngine in the processor's sinks")
+        if self.ib is not None and (self.ib not in sinks or sinks.index(self.ib) > sinks.index(self)):
+            raise ValueError("AuctionEngine must come after its IBEngine in the processor's sinks")
         for name, price in self.st.user_levels:
             lid = f"user:{name}"
             if lid not in self.levels:

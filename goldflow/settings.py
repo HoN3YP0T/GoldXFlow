@@ -343,6 +343,24 @@ def validate_config(raw: dict[str, Any], base_dir: Path | None = None, check_dis
             OrderflowSettings.from_config(Config(raw, base_dir or Path(".")))
         except (ValueError, KeyError, TypeError) as e:
             raise ConfigError([f"orderflow: {e}"]) from None
+    if raw.get("initial_balance") is not None or raw.get("holidays") is not None:
+        # Phase 10 blocks: IB definitions (inside their sessions, DST-safe), extensions, holiday calendar
+        from .config import Config
+        from .orderflow.initial_balance import IBSettings
+        from .processing.holidays import HolidayCalendar
+
+        try:
+            IBSettings.from_config(Config(raw, base_dir or Path(".")))
+            HolidayCalendar(raw.get("holidays"))
+        except (ValueError, KeyError, TypeError) as e:
+            raise ConfigError([f"initial_balance/holidays: {e}"]) from None
+    if raw.get("ivb") is not None:
+        from .orderflow.ivb import validate as validate_ivb
+
+        try:
+            validate_ivb(raw.get("ivb"))
+        except ValueError as e:
+            raise ConfigError([f"ivb: {e}"]) from None
     if raw.get("auction") is not None:
         # Phase 9 block: reference levels, acceptance/rejection, failed auctions, auction state, profile shape
         from .config import Config
