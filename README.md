@@ -4,6 +4,9 @@ Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`**
 
 **No market data is committed to this repository.** Rebuild it with `python -m goldflow.cli acquire` then `python -m goldflow.cli normalize`. The frozen range in `data/state/range.json` reproduces the exact dataset, and the partition digests in `data/manifests/dataset_manifest.json` let you verify it.
 
+## Build guide
+**[docs/BUILD_GUIDE.md](docs/BUILD_GUIDE.md)** is the complete phase-by-phase plan (Phases 0–17): what to build, how to build it, acceptance criteria, current status, goal traceability, milestone gates and open decisions.
+
 ## Layout
 ```
 config/binance_xauusdt.json   symbol, datasets, range, concurrency, retry, REST limits
