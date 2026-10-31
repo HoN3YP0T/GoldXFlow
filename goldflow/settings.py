@@ -34,6 +34,7 @@ class ConfigError(ValueError):
 class Profile(str, Enum):
     RESEARCH = "research"  # history, analytics, backtests; no order routing
     TEST = "test"  # automated tests; synthetic providers allowed
+    DEMO = "demo"  # Phase 16: order routing to MT5 DEMO accounts only (the bridge refuses any other account)
     LIVE = "live"  # order routing; locked until the Phase 16 demo gate (M7) is recorded
 
 
@@ -380,6 +381,15 @@ def validate_config(raw: dict[str, Any], base_dir: Path | None = None, check_dis
             ResearchSettings.from_config(Config(raw, base_dir or Path(".")))
         except (ValueError, KeyError, TypeError) as e:
             raise ConfigError([f"research: {e}"]) from None
+    if raw.get("bridge") is not None or raw.get("risk") is not None:
+        from .config import Config
+        from .execution.settings import BridgeSettings, RiskSettings
+
+        try:
+            BridgeSettings.from_config(Config(raw, base_dir or Path(".")))
+            RiskSettings.from_config(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError, TypeError, ArithmeticError) as e:
+            raise ConfigError([f"bridge/risk: {e}"]) from None
     if raw.get("venues") is not None:
         from .config import Config
         from .venues.mapping import basis_settings, venue_settings

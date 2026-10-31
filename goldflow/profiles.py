@@ -2,11 +2,13 @@
 
 research  history, analytics, replay, backtests. Order routing impossible.
 test      automated tests. Synthetic providers allowed. Order routing impossible.
-live      order routing. Refused unless ALL of:
+demo      order routing to an MT5 **demo** account only (Phase 16). The bridge checks the account mode the EA reports
+          and blocks every order if it is not DEMO. This is how the M7 demo evidence is collected.
+live      order routing to a real account. Refused unless ALL of:
             1. execution.live_trading_enabled = true in the config, and
             2. data/state/live_gates.json records the passed M7 MT5-demo gate with operator approval
-               ({"M7_demo_passed": true, "approved_by": "...", "approved_utc": "..."}), written by Phase 16 tooling.
-          Until Phase 16 exists, the live profile always refuses to start.
+               ({"M7_demo_passed": true, "approved_by": "...", "approved_utc": "..."}), written only by
+               `exec-gate` (Phase 16) from a passing demo audit log and a named operator.
 """
 
 from __future__ import annotations
@@ -58,4 +60,8 @@ def assert_profile_allowed(profile: Profile, settings: Settings, data_root: Path
 
 def trading_mode(profile: Profile) -> str:
     """Human-readable order-routing state for status output."""
-    return "LIVE (order routing enabled)" if profile is Profile.LIVE else "DISABLED (no order routing in this profile)"
+    if profile is Profile.LIVE:
+        return "LIVE (order routing enabled)"
+    if profile is Profile.DEMO:
+        return "DEMO (order routing to MT5 demo accounts only)"
+    return "DISABLED (no order routing in this profile)"

@@ -205,6 +205,7 @@ goldflow/                     current package
   research/{settings.py, metrics.py, ledger.py, runner.py, walkforward.py, study.py}         (Phase 13, built)
   live/{trades.py, bus.py, runner.py, parity.py}                                           (Phase 14, built)
   venues/{mapping.py, archives.py, ingest.py, run.py, crossvenue.py, report.py}; providers/{okx,bybit,bitget}  (Phase 15, built)
+  execution/{protocol, settings, orders, risk, symbol, reconcile, audit, transport, bridge, gate, sim}.py; mt5/GoldflowExecutor.mq5  (Phase 16, built)
   execution/{bridge.py, order_manager.py, positions.py}  risk/                             (Phase 16)
   monitoring/  dashboard/                                                                  (Phase 17)
 config/  docs/  scripts/  tests/  data/ (git-ignored except small reports, manifest and frozen range)
@@ -233,7 +234,7 @@ mql5/   (Phase 16: EA executor source)
 | 13 | Reports, validation, walk-forward, research | **Built** (2026-10-31; see `docs/PHASE13_COMPLETION_REPORT.md`). Real studies blocked on D2; thresholds D8 | M5 |
 | 14 | Live Binance ingestion and historical/live parity | **Built** (2026-10-31; see `docs/PHASE14_COMPLETION_REPORT.md`). Parity exact on 4 real days; live REST needs a non-US host (D6) | M6 |
 | 15 | Additional providers and cross-market mapping | **Done** (2026-10-31; see `docs/PHASE15_COMPLETION_REPORT.md`). OKX + Bybit history imported and run through the unchanged stack; Bitget discovery only | – |
-| 16 | MT5 execution bridge and risk controls | Not started | M7 |
+| 16 | MT5 execution bridge and risk controls | **Built** (2026-10-31; see `docs/PHASE16_COMPLETION_REPORT.md`). EA not compiled here; demo run and M7 gate need D2/D6 | M7 |
 | 17 | Dashboard, observability, deployment, hardening | Not started | M8 |
 
 ---
@@ -818,7 +819,9 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 16: MT5 execution bridge and risk controls. **Status: Not started**
+### Phase 16: MT5 execution bridge and risk controls. **Status: Built (2026-10-31). Demo evidence pending (D2, D6).**
+**Built** (`goldflow/execution/`, `mt5/GoldflowExecutor.mq5`; spec `docs/EXECUTION_V1.md`; report `docs/PHASE16_COMPLETION_REPORT.md`): HMAC-authenticated loopback protocol (EA connects; Common Files fallback), symbol validation against the broker block, broker-confirmed order lifecycle with idempotency keys in the order comment, pre-trade risk engine (limits from `backtest.risk`, stricter only; DQ gate cannot be disabled; latched emergency flatten), reconciliation (adopt broker changes, block on mismatch), hash-chained audit log, `demo` profile (DEMO accounts only) and `exec-gate` for the M7 record. 13 fault-injection tests against a simulated EA following the MQL5 rules. Live off by default.
+
 **Objective.** Connect validated signals to MetaTrader 5 with broker-side confirmation and strict safety.
 
 **Bridge design (recommended).** An **MQL5 EA executor** running in MT5 on Windows (the trading PC or a Windows VPS) plus a **local authenticated channel** to the Python engine.

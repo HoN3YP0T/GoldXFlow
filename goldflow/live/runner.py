@@ -91,6 +91,7 @@ class LiveRunner:
         self.counters: dict[str, int] = {"polls": 0, "poll_errors": 0, "trades": 0, "rpi_trades": 0, "lots": 0, "rpi_lots": 0, "rejected": 0,
                                          "backfill_pages": 0, "gaps": 0, "late_trades": 0, "ws_messages": 0, "checkpoints": 0}  # fmt: skip
         self.last_checkpoint = 0
+        self.hooks: list[Callable[[int], None]] = []  # called after each step (Phase 16: the execution bridge tick)
         self.recovery_open: int | None = None
         self.last_ok: int | None = None  # receive time of the last successful trade poll
         self.status = "created"
@@ -226,6 +227,8 @@ class LiveRunner:
         if now - self.last_checkpoint >= int(self.ls["checkpoint_s"]) * 1000:
             self.checkpoint()
             self.last_checkpoint = now
+        for h in self.hooks:
+            h(now)
 
     def stop(self) -> None:
         self.checkpoint()

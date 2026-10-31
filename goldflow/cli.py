@@ -18,6 +18,8 @@
   python -m goldflow.cli live-run --name L [--duration S] | parity --start ISO --end ISO [--from-capture]  # Phase 14 live
   python -m goldflow.cli venue-import --provider okx|bybit --dates D.. | venue-run --provider P --name N    # Phase 15 venues
   python -m goldflow.cli basis --pair binance:okx --dates D.. | volume-oz --venues binance okx bybit --dates D.. | providers-report
+  python -m goldflow.cli bridge-run --profile demo --name E1 | bridge-status | emergency-stop | emergency-reset --operator N  # Phase 16
+  python -m goldflow.cli exec-gate --name E1 --operator N | bridge-secret --out F | audit-verify --name E1 | ea-vector
   python -m goldflow.cli depth-record [--duration S]   # Phase 8 live L2 recorder (non-US host)
   python -m goldflow.cli depth-replay | depth-normalize
 The acquisition range is frozen in data/state/range.json on first run so that resumed runs
@@ -25,7 +27,7 @@ cover exactly the same [start, end); pass --new-range to start a fresh range.
 Exit code 1 if any unit failed or any interval of a primary dataset is uncovered.
 """
 from __future__ import annotations
-import argparse, json, logging, sys
+import argparse, json, logging, os, sys
 from pathlib import Path
 
 from .acquire import list_dataset, make_archive, run
@@ -198,8 +200,10 @@ def main(argv=None) -> int:
                                     "signals", "signals-verify", "broker-import", "backtest",
                                     "perf-report", "study", "ledger-verify", "live-run", "parity",
                                     "venue-import", "venue-run", "basis", "volume-oz", "providers-report",
+                                    "bridge-run", "bridge-status", "emergency-stop", "emergency-reset", "exec-gate", "bridge-secret",
+                                    "audit-verify", "ea-vector",
                                     "depth-record", "depth-replay", "depth-normalize"])
-    ap.add_argument("--profile", help="research (default) | test | live; or env GOLDFLOW_PROFILE")
+    ap.add_argument("--profile", help="research (default) | test | demo (MT5 demo routing) | live; or env GOLDFLOW_PROFILE")
     ap.add_argument("--config", default="config/binance_xauusdt.json")
     ap.add_argument("--months", type=int); ap.add_argument("--start"); ap.add_argument("--end")
     ap.add_argument("--new-range", action="store_true"); ap.add_argument("--no-rest", action="store_true")
@@ -233,6 +237,9 @@ def main(argv=None) -> int:
     ap.add_argument("--pair", help="basis: venue pair A:B, e.g. binance:okx")
     ap.add_argument("--venues", nargs="*", help="volume-oz: venues to aggregate (labelled cross-venue aggregate)")
     ap.add_argument("--no-probe", action="store_true", help="providers-report: skip the reachability probes")
+    ap.add_argument("--operator", help="emergency-reset / exec-gate: operator name recorded with the action")
+    ap.add_argument("--reason", default="operator emergency stop", help="emergency-stop: reason")
+    ap.add_argument("--out", help="bridge-secret: file to write the new shared secret to")
     a = ap.parse_args(argv)
     from .migrations import apply_migrations
     from .observability import new_run_id, setup_logging
@@ -342,6 +349,8 @@ def main(argv=None) -> int:
         return _live_cmd(cfg, a, log)
     if a.cmd in ("venue-import", "venue-run", "basis", "volume-oz", "providers-report"):
         return _venue_cmd(cfg, a, log)
+    if a.cmd in ("bridge-run", "bridge-status", "emergency-stop", "emergency-reset", "exec-gate", "bridge-secret", "audit-verify", "ea-vector"):
+        return _exec_cmd(cfg, a, log, profile)
     if a.cmd == "parity":
         from .live import capture_polls, run_parity
         if not (a.start and a.end):
@@ -536,6 +545,87 @@ def _venue_cmd(cfg, a, log) -> int:
         x, y = (a.pair or "binance:okx").split(":")
         out = V.basis(cfg, x, y, _days(a)); print(json.dumps({k: v for k, v in out.items() if k != "hourly"}, indent=1)); return 0
     out = V.volume_oz(cfg, a.venues or ["binance", "okx", "bybit"], _days(a)); print(json.dumps(out, indent=1)); return 0
+
+def _exec_cmd(cfg, a, log, profile) -> int:
+    """Phase 16: MT5 execution bridge. Order routing only in the demo profile (demo accounts) or the gated live profile."""
+    import secrets as _secrets
+    from .execution import AuditLog, hmac_test_vector
+    from .execution.gate import evidence, record_gate
+    from .settings import Profile
+    name = a.name or "exec"
+    root = cfg.data_root / "execution" / name
+    if a.cmd == "ea-vector":
+        print(json.dumps(hmac_test_vector(), indent=1)); return 0
+    if a.cmd == "bridge-secret":
+        if not a.out: print("goldflow: bridge-secret --out FILE (e.g. MT5 Common Files\\goldflow\\bridge.secret)", file=sys.stderr); return 2
+        p = Path(a.out); p.parent.mkdir(parents=True, exist_ok=True)
+        if p.exists(): print(f"goldflow: {p} exists; not overwritten", file=sys.stderr); return 2
+        p.write_text(_secrets.token_hex(32)); os.chmod(p, 0o600) if hasattr(os, "chmod") else None
+        print(str(p)); return 0
+    if a.cmd == "emergency-stop":
+        root.mkdir(parents=True, exist_ok=True); (root / "EMERGENCY_STOP").write_text(a.reason)
+        print(f"emergency stop requested for {name}: the running bridge flattens and blocks on its next tick"); return 0
+    if a.cmd == "emergency-reset":
+        if not a.operator: print("goldflow: emergency-reset needs --operator NAME", file=sys.stderr); return 2
+        root.mkdir(parents=True, exist_ok=True); (root / "EMERGENCY_RESET").write_text(a.operator); print("reset requested"); return 0
+    if a.cmd == "audit-verify":
+        lg = AuditLog(root / "audit.jsonl"); n = lg.verify(); lg.close(); print(json.dumps({"records": n, "chain": "OK"})); return 0
+    if a.cmd == "bridge-status":
+        p = root / "state.json"
+        if not p.exists(): print(f"goldflow: no state for {name}", file=sys.stderr); return 2
+        s = json.loads(p.read_text())
+        print(json.dumps({"risk": s["risk"], "orders": {k: v["state"] for k, v in s["orders"]["orders"].items()}}, indent=1, default=str)); return 0
+    if a.cmd == "exec-gate":
+        model = (cfg.raw.get("backtest") or {}).get("slippage_points")
+        try:
+            ev = evidence(root / "audit.jsonl", float(model) if model is not None else None)
+        except FileNotFoundError as e:
+            print(f"goldflow: {e}", file=sys.stderr); return 2
+        print(json.dumps(ev, indent=1))
+        if not ev["passed"]: return 1
+        if not a.operator: print("goldflow: evidence passes; approve with --operator NAME", file=sys.stderr); return 2
+        print(str(record_gate(cfg.data_root, ev, a.operator))); return 0
+    # bridge-run
+    if profile not in (Profile.DEMO, Profile.LIVE):
+        print("goldflow: bridge-run routes orders: use --profile demo (MT5 demo account) or the gated live profile", file=sys.stderr); return 2
+    import asyncio
+    from .execution import BridgeSettings, ExecutionBridge, FileQueue, TcpServer
+    from .live import LiveRunner
+    from .orderflow.auction_engine import AuctionEngine
+    from .orderflow.engine import ProfileEngine
+    from .orderflow.flow_engine import OrderflowEngine
+    from .orderflow.initial_balance import IBEngine
+    from .processing.sessions import SessionCalendar
+    from .processing.trade_processor import TradeProcessor
+    from .strategies import SignalStore, StrategyEngine, build_strategies
+    bs = BridgeSettings.from_config(cfg)
+    t = TcpServer(bs.host, bs.port) if bs.transport == "tcp" else FileQueue(Path(bs.file_queue_dir))
+    prof, flow, ib = ProfileEngine(cfg), OrderflowEngine(cfg), IBEngine(cfg)
+    auc = AuctionEngine(cfg, prof, ib_engine=ib)
+    strat = StrategyEngine(cfg, build_strategies(cfg), {"profile": prof, "orderflow": flow, "ib": ib, "auction": auc},
+                           store=SignalStore(cfg.data_root / "live" / name, cfg.symbol, replace=False))
+    proc = TradeProcessor(cfg, sinks=[prof, flow, ib, auc, strat])
+    def dq_open(now: int) -> bool:
+        tt = proc.clock if proc.clock is not None else now
+        return any(x[0] <= tt < x[1] for x in strat.dq) or any(x[0] <= tt < x[1] for x in proc.dq)
+    try:
+        br = ExecutionBridge(cfg, name, t, bs.secret(cfg.base_dir), mode="live" if profile is Profile.LIVE else "demo", dq_open=dq_open,
+                             calendar=SessionCalendar.from_config(cfg.raw.get("sessions")))
+    except ValueError as e:
+        print(f"goldflow: {e}", file=sys.stderr); return 2
+    strat.listeners.append(br.on_signal)
+    runner = LiveRunner(cfg, [proc], name)
+    runner.hooks.append(lambda now: br.tick())
+    br.start()
+    try:
+        out = asyncio.run(runner.run(a.duration))
+    except KeyboardInterrupt:
+        runner.stop(); out = {"status": "stopped"}
+    finally:
+        br.close(); t.close()
+    out["bridge"] = br.status()
+    print(json.dumps(out, indent=1, default=str))
+    return 0
 
 def _live_cmd(cfg, a, log) -> int:
     """Phase 14 paper mode: REST trade poller + WebSocket monitor -> LiveBus -> the replay's analytics and strategy stack."""

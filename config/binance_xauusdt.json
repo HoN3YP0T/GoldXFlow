@@ -622,5 +622,30 @@
       "grid_ms": 1000,
       "max_age_ms": 5000
     }
+  },
+  "bridge": {
+    "_doc": "Phase 16 MT5 execution bridge (docs/EXECUTION_V1.md). Python listens on loopback; the EA (mt5/GoldflowExecutor.mq5) connects. The shared secret is never in this file: secret_file (e.g. the MT5 Common Files goldflow\\bridge.secret, created with `bridge-secret`) or the env var secret_env. Order routing only in the demo profile (demo accounts) or the gated live profile; execution.live_trading_enabled stays false.",
+    "transport": "tcp",
+    "host": "127.0.0.1",
+    "port": 47011,
+    "secret_file": null,
+    "secret_env": "GOLDFLOW_BRIDGE_SECRET",
+    "magic": 20261031,
+    "deviation_points": 30,
+    "ack_timeout_ms": 3000,
+    "max_retries": 3,
+    "heartbeat_ms": 2000,
+    "heartbeat_timeout_ms": 10000,
+    "max_skew_ms": 5000,
+    "reconcile_every_s": 30
+  },
+  "risk": {
+    "_doc": "Phase 16 pre-trade risk engine. Limits default to backtest.risk (decision D7, PROPOSED) so live trades within what was backtested; values here may only be stricter. Spread/slippage filters in broker points (XAUUSD 2 digits: 1 point = 0.01). block_on_dq cannot be disabled.",
+    "max_spread_points": 60,
+    "max_slippage_points": 50,
+    "max_avg_slippage_points": 25,
+    "slippage_window": 20,
+    "sessions": "any",
+    "day_reset_utc": "00:00"
   }
 }
