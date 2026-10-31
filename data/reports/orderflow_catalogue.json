@@ -1,0 +1,157 @@
+{
+ "summary": {
+  "big_trades_with_truncated_ids": 0,
+  "by_session": {
+   "ABSORPTION": {
+    "asia": 559,
+    "london": 752,
+    "new_york": 463,
+    "none": 802,
+    "weekday": 1527,
+    "weekend": 661
+   },
+   "BIG_TRADE": {
+    "asia": 62886,
+    "london": 101248,
+    "new_york": 94587,
+    "none": 26013,
+    "weekday": 201987,
+    "weekend": 16945
+   },
+   "DIVERGENCE_CVD": {
+    "asia": 563,
+    "london": 641,
+    "new_york": 562,
+    "none": 273,
+    "weekday": 1441,
+    "weekend": 236
+   },
+   "DIVERGENCE_DELTA": {
+    "asia": 655,
+    "london": 691,
+    "new_york": 634,
+    "none": 484,
+    "weekday": 1715,
+    "weekend": 365
+   },
+   "EXHAUSTION": {
+    "asia": 1349,
+    "london": 1240,
+    "new_york": 1210,
+    "none": 1044,
+    "weekday": 3330,
+    "weekend": 841
+   },
+   "STACKED_IMBALANCE": {
+    "asia": 26634,
+    "london": 35931,
+    "new_york": 34375,
+    "none": 3331,
+    "weekday": 75606,
+    "weekend": 1113
+   }
+  },
+  "by_type_status": {
+   "ABSORPTION|AMBIGUOUS": 28,
+   "ABSORPTION|CANDIDATE": 2188,
+   "ABSORPTION|CONFIRMED": 1480,
+   "ABSORPTION|EXPIRED": 197,
+   "ABSORPTION|FAILED": 483,
+   "BIG_TRADE|DETECTED": 218932,
+   "DIVERGENCE_CVD|DETECTED": 1677,
+   "DIVERGENCE_CVD|INVALIDATED": 1191,
+   "DIVERGENCE_DELTA|DETECTED": 2080,
+   "DIVERGENCE_DELTA|INVALIDATED": 1456,
+   "EXHAUSTION|AMBIGUOUS": 1242,
+   "EXHAUSTION|CANDIDATE": 4171,
+   "EXHAUSTION|CONFIRMED": 2070,
+   "EXHAUSTION|EXPIRED": 42,
+   "EXHAUSTION|INVALIDATED": 817,
+   "STACKED_IMBALANCE|DETECTED": 76719
+  },
+  "checks": {
+   "big_trade_id_count_mismatch": 0,
+   "duplicate_event_ids": 0,
+   "event_time_before_evidence_end": 0,
+   "initial_events_without_trade_ids": 0,
+   "null_unknown_lots": 0,
+   "orphan_status_events": 0
+  },
+  "detector_stats": {
+   "absorption": {
+    "candidates": 2188,
+    "evaluations": 2886352,
+    "partial_window_skipped": 22,
+    "threshold_not_ready": 1980
+   },
+   "big_trades": {
+    "orders_seen": 42668536,
+    "orders_with_unready_criteria": 2034
+   },
+   "divergence": {
+    "cvd_not_comparable": 204,
+    "pivots_high": 4461,
+    "pivots_low": 4383
+   }
+  },
+  "fail": false,
+  "open_at_end": {
+   "absorption_candidates": 0,
+   "exhaustion_candidates": 0,
+   "taker_order_open": false
+  },
+  "outcomes": {
+   "ABSORPTION": {
+    "AMBIGUOUS": 28,
+    "CONFIRMED": 1480,
+    "EXPIRED": 197,
+    "FAILED": 483,
+    "confirmed_rate": 0.6764,
+    "initial": 2188
+   },
+   "BIG_TRADE": {
+    "confirmed_rate": null,
+    "initial": 218932
+   },
+   "DIVERGENCE_CVD": {
+    "INVALIDATED": 1191,
+    "confirmed_rate": null,
+    "initial": 1677
+   },
+   "DIVERGENCE_DELTA": {
+    "INVALIDATED": 1456,
+    "confirmed_rate": null,
+    "initial": 2080
+   },
+   "EXHAUSTION": {
+    "AMBIGUOUS": 1242,
+    "CONFIRMED": 2070,
+    "EXPIRED": 42,
+    "INVALIDATED": 817,
+    "confirmed_rate": 0.4963,
+    "initial": 4171
+   },
+   "STACKED_IMBALANCE": {
+    "confirmed_rate": null,
+    "initial": 76719
+   }
+  },
+  "rows": 314773,
+  "settings_hash": "086f855c2f22bd23834e0fd49768103cc2fb1f9e0760a9477d1192f51a8a5507",
+  "source_dataset_version": "3da8b283f0241d18045565686dcab938c9c59ec3e2b639ad1dba23d82a837e69",
+  "tables": {
+   "cvd": {
+    "logical_digest": "ace81978f8f4af2316f7aaa7b86b3a52630631b1723d69eaf79b3fb61834f9ea",
+    "rows": 736636
+   },
+   "events": {
+    "logical_digest": "0c971546c4977c1c7a9b853e742a88cab7b6cc6e720ade1742dda118a5d3190c",
+    "rows": 314773
+   },
+   "imbalances": {
+    "logical_digest": "0e27ee46e202a3a66c06e6c0daef0a2aec096800a4c82da8dce93ebf2a6f85fb",
+    "rows": 1505581
+   }
+  }
+ }
+}

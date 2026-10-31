@@ -572,3 +572,17 @@ def test_random_streams_big_trade_detector_matches_bruteforce():
             if len(w) >= 20 and size[i] >= w[max(1, math.ceil(Fraction("0.9") * len(w))) - 1]:
                 exp.add(i)
         assert got == exp
+
+
+def test_independent_validator_passes_on_synthetic_days(tmp_path):
+    from goldflow.orderflow.validate import validate_days
+
+    cfg = make_dataset(tmp_path, n_per_day=3000)
+    cfg.raw["orderflow"] = {"big_trades": {"quantile": {"min_samples": 100}}}
+    run_of(cfg)
+    rep = validate_days(cfg, ["2026-10-23", "2026-10-26"], sensitivity=None)
+    assert not rep["summary"]["fail"] and rep["summary"]["days_ok"] == 2
+    day = rep["per_day"]["2026-10-26"]
+    assert day["cvd_day"]["ok"] and day["imbalances"]["ok"] and day["big_trade_ids"]["checked"] > 0
+    assert day["taker_orders"]["ok"] is None  # the synthetic dataset has no aggTrades partition
+    assert (cfg.data_root / "reports" / "orderflow_validation.md").exists()

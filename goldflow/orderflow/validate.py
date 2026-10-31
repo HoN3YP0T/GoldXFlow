@@ -7,9 +7,11 @@ loops), never through the Phase 5 processor or the Phase 7 engine, and compares 
                    unknown lots = Σ UNKNOWN lots
   imbalances       the set of (bar, bin, side) imbalances of the configured interval/bin/mode equals a pandas
                    recomputation from raw trades
-  taker_orders     reconstructed taker orders against Binance aggTrades (an aggTrade = fills of ONE taker order at ONE
-                   price): aggTrades split across two reconstructed orders (expected 0), and reconstructed orders
-                   holding two aggTrades at the same price (= two taker orders merged; measured, not 0 in general)
+  taker_orders     reconstructed taker orders against Binance aggTrades. Measured on this dataset: an aggTrade
+                   aggregates same-price, same-side fills over up to 100 ms, across different taker orders, so it is
+                   NOT an order. What aggTrades can prove: fills of one aggTrade that share one exchange millisecond
+                   are never split by the reconstruction (must be 0). Multi-ms splits, same-price merges and a
+                   cluster_ms sensitivity table (first day) are reported for information.
   big_trade_ids    every BIG_TRADE's trade ids exist, are consecutive in the partition, share its side, and sum to
                    its size
 Written to data/reports/orderflow_validation.{json,md}.
@@ -108,7 +110,9 @@ def _orders_ref(df: pd.DataFrame, cluster_ms: int, sb: int) -> np.ndarray:
     return out
 
 
-def validate_days(cfg: Any, dates: list[str] | None = None, max_days: int = 7) -> dict[str, Any]:
+def validate_days(
+    cfg: Any, dates: list[str] | None = None, max_days: int = 7, sensitivity: tuple[int, ...] | None = (0, 10, 50, 100, 250, 1000)
+) -> dict[str, Any]:
     of = OrderflowSettings.from_config(cfg)
     root = orderflow_root(cfg.data_root, cfg.symbol)
     man = json.loads((root / "_manifest.json").read_text())
@@ -182,22 +186,41 @@ def validate_days(cfg: Any, dates: list[str] | None = None, max_days: int = 7) -
             inside[inside] &= (df["id"].to_numpy()[pos_f[inside]] == ag["first_trade_id"].to_numpy()[inside]) & (
                 df["id"].to_numpy()[pos_l[inside]] == ag["last_trade_id"].to_numpy()[inside]
             )
-            split = int((oid[pos_f[inside]] != oid[pos_l[inside]]).sum())
+            tt = df["t"].to_numpy()
+            span = tt[pos_l[inside]] - tt[pos_f[inside]]  # ms between an aggTrade's first and last fill
+            is_split = oid[pos_f[inside]] != oid[pos_l[inside]]
+            split_same_ms = int((is_split & (span == 0)).sum())
+            split_multi_ms = int((is_split & (span > 0)).sum())
             ordr = pd.DataFrame({"o": oid[pos_f[inside]], "p": ag["price_ticks"].to_numpy()[inside]})
             per_o = ordr.groupby("o").agg(n=("p", "size"), u=("p", "nunique"))
             merged = int((per_o["n"] > per_o["u"]).sum())
-            multi = int((per_o["n"] > 1).sum())
             r["taker_orders"].update(
                 {
                     "aggtrades": int(len(ag)),
                     "aggtrades_matched": int(inside.sum()),
-                    "aggtrades_split_across_orders": split,
-                    "orders_with_same_price_aggtrades (merged orders)": merged,
-                    "orders_spanning_multiple_aggtrades": multi,
-                    "merged_share_of_orders": round(merged / max(1, r["taker_orders"]["orders"]), 6),
-                    "ok": split == 0,
+                    "aggtrades_multi_ms": int((span > 0).sum()),
+                    "aggtrade_span_ms_max": int(span.max()) if len(span) else None,
+                    "aggtrade_span_ms_p99": float(np.percentile(span, 99)) if len(span) else None,
+                    # the check: fills of one aggTrade that share one exchange millisecond are never split
+                    "split_same_ms": split_same_ms,
+                    # information only: aggTrades spanning several ms (Binance aggregates within ~100 ms, across orders)
+                    "split_multi_ms": split_multi_ms,
+                    "orders_with_same_price_aggtrades": merged,
+                    "ok": split_same_ms == 0,
                 }
             )
+            if sensitivity:
+                sens = []
+                for cl in sensitivity:
+                    o2 = _orders_ref(df, cl, int(bt["sweep_bin_ticks"]))
+                    sp = int((o2[pos_f[inside]] != o2[pos_l[inside]]).sum())
+                    g2 = pd.DataFrame({"o": o2[pos_f[inside]], "p": ag["price_ticks"].to_numpy()[inside]}).groupby("o")["p"]
+                    mg = int((g2.size() > g2.nunique()).sum())
+                    sens.append(
+                        {"cluster_ms": cl, "orders": int(o2[-1] + 1), "aggtrades_split": sp, "orders_merging_aggtrades": mg}
+                    )
+                r["taker_orders"]["cluster_sensitivity"] = sens
+                sensitivity = None  # first validated day only
         else:
             r["taker_orders"].update({"ok": None, "note": "no aggTrades partition"})
         # ---- big trade ids
@@ -243,7 +266,8 @@ def validate_days(cfg: Any, dates: list[str] | None = None, max_days: int = 7) -
         "",
         "Each check is recomputed from the Phase 3 partitions by separate code and compared exactly.",
         "",
-        "| Date | Trades | CVD day | Imbalances (ref / catalogue / missing / extra) | aggTrades split | Merged orders | Big-trade ids | OK |",
+        "| Date | Trades | CVD day = Σbuy−Σsell | Imbalances ref / catalogue / missing / extra | aggTrades split, same ms "
+        "(must be 0) / multi-ms (info) | aggTrade span max ms | Big-trade ids ok | OK |",
         "|---|---|---|---|---|---|---|---|",
     ]
     for d, r in per_day.items():
@@ -251,10 +275,27 @@ def validate_days(cfg: Any, dates: list[str] | None = None, max_days: int = 7) -
         L.append(
             f"| {d} | {r['trades']:,} | {'=' if r['cvd_day']['ok'] else 'MISMATCH'} {r['cvd_day']['expected']:,} | "
             f"{r['imbalances']['reference']:,} / {r['imbalances']['catalogue']:,} / {r['imbalances']['missing']} / "
-            f"{r['imbalances']['extra']} | {to.get('aggtrades_split_across_orders', '-')} | "
-            f"{to.get('orders_with_same_price_aggtrades (merged orders)', '-')} of {to['orders']:,} | "
+            f"{r['imbalances']['extra']} | {to.get('split_same_ms', '-')} / {to.get('split_multi_ms', '-')} | "
+            f"{to.get('aggtrade_span_ms_max', '-')} | "
             f"{r['big_trade_ids']['checked'] - r['big_trade_ids']['bad']}/{r['big_trade_ids']['checked']} | {'yes' if r['ok'] else 'NO'} |"
         )
+    for d, r in per_day.items():
+        sens = r["taker_orders"].get("cluster_sensitivity")
+        if sens:
+            L += [
+                "",
+                f"## Taker-order clustering sensitivity ({d})",
+                "",
+                "aggTrades split = Binance aggTrades spread over several reconstructed orders; orders merging aggTrades = "
+                "reconstructed orders holding two same-price aggTrades (two taker orders glued together).",
+                "",
+                "| cluster_ms | orders | aggTrades split | orders merging aggTrades |",
+                "|---|---|---|---|",
+            ]
+            L += [
+                f"| {x['cluster_ms']} | {x['orders']:,} | {x['aggtrades_split']:,} | {x['orders_merging_aggtrades']:,} |"
+                for x in sens
+            ]
     L += ["", f"Result: **{'FAIL' if summary['fail'] else 'PASS'}** ({summary['days_ok']}/{summary['days']} days)", ""]
     (out / "orderflow_validation.md").write_text("\n".join(L))
     return rep

@@ -1,0 +1,322 @@
+{
+ "per_day": {
+  "2026-04-30": {
+   "aggtrades_status": "COMPLETE",
+   "big_trade_ids": {
+    "bad": 0,
+    "checked": 1049,
+    "events": 1049,
+    "ok": true
+   },
+   "cvd_day": {
+    "expected": -6953836,
+    "got": -6953836,
+    "ok": true,
+    "unknown_expected": 0,
+    "unknown_got": 0
+   },
+   "imbalances": {
+    "catalogue": 10641,
+    "extra": 0,
+    "missing": 0,
+    "ok": true,
+    "reference": 10641
+   },
+   "ok": true,
+   "taker_orders": {
+    "aggtrade_span_ms_max": 100,
+    "aggtrade_span_ms_p99": 82.0,
+    "aggtrades": 253571,
+    "aggtrades_matched": 253571,
+    "aggtrades_multi_ms": 31472,
+    "cluster_sensitivity": [
+     {
+      "aggtrades_split": 31472,
+      "cluster_ms": 0,
+      "orders": 209456,
+      "orders_merging_aggtrades": 0
+     },
+     {
+      "aggtrades_split": 17303,
+      "cluster_ms": 10,
+      "orders": 149066,
+      "orders_merging_aggtrades": 0
+     },
+     {
+      "aggtrades_split": 7386,
+      "cluster_ms": 50,
+      "orders": 133773,
+      "orders_merging_aggtrades": 71
+     },
+     {
+      "aggtrades_split": 0,
+      "cluster_ms": 100,
+      "orders": 123586,
+      "orders_merging_aggtrades": 1289
+     },
+     {
+      "aggtrades_split": 0,
+      "cluster_ms": 250,
+      "orders": 107893,
+      "orders_merging_aggtrades": 11644
+     },
+     {
+      "aggtrades_split": 0,
+      "cluster_ms": 1000,
+      "orders": 80532,
+      "orders_merging_aggtrades": 22207
+     }
+    ],
+    "ok": true,
+    "orders": 209456,
+    "orders_with_same_price_aggtrades": 0,
+    "split_multi_ms": 31472,
+    "split_same_ms": 0
+   },
+   "trades": 620360,
+   "trades_status": "COMPLETE"
+  },
+  "2026-06-27": {
+   "aggtrades_status": "COMPLETE",
+   "big_trade_ids": {
+    "bad": 0,
+    "checked": 238,
+    "events": 238,
+    "ok": true
+   },
+   "cvd_day": {
+    "expected": -2006847,
+    "got": -2006847,
+    "ok": true,
+    "unknown_expected": 0,
+    "unknown_got": 0
+   },
+   "imbalances": {
+    "catalogue": 826,
+    "extra": 0,
+    "missing": 0,
+    "ok": true,
+    "reference": 826
+   },
+   "ok": true,
+   "taker_orders": {
+    "aggtrade_span_ms_max": 100,
+    "aggtrade_span_ms_p99": 91.0,
+    "aggtrades": 46745,
+    "aggtrades_matched": 46745,
+    "aggtrades_multi_ms": 6476,
+    "ok": true,
+    "orders": 47410,
+    "orders_with_same_price_aggtrades": 0,
+    "split_multi_ms": 6476,
+    "split_same_ms": 0
+   },
+   "trades": 93584,
+   "trades_status": "COMPLETE"
+  },
+  "2026-07-17": {
+   "aggtrades_status": "COMPLETE",
+   "big_trade_ids": {
+    "bad": 0,
+    "checked": 1504,
+    "events": 1504,
+    "ok": true
+   },
+   "cvd_day": {
+    "expected": -20641944,
+    "got": -20641944,
+    "ok": true,
+    "unknown_expected": 0,
+    "unknown_got": 0
+   },
+   "imbalances": {
+    "catalogue": 10836,
+    "extra": 0,
+    "missing": 0,
+    "ok": true,
+    "reference": 10836
+   },
+   "ok": true,
+   "taker_orders": {
+    "aggtrade_span_ms_max": 100,
+    "aggtrade_span_ms_p99": 81.0,
+    "aggtrades": 458931,
+    "aggtrades_matched": 458931,
+    "aggtrades_multi_ms": 37520,
+    "ok": true,
+    "orders": 299407,
+    "orders_with_same_price_aggtrades": 0,
+    "split_multi_ms": 37520,
+    "split_same_ms": 0
+   },
+   "trades": 1050936,
+   "trades_status": "COMPLETE"
+  },
+  "2026-08-06": {
+   "aggtrades_status": "COMPLETE",
+   "big_trade_ids": {
+    "bad": 0,
+    "checked": 1607,
+    "events": 1607,
+    "ok": true
+   },
+   "cvd_day": {
+    "expected": 2113980,
+    "got": 2113980,
+    "ok": true,
+    "unknown_expected": 0,
+    "unknown_got": 0
+   },
+   "imbalances": {
+    "catalogue": 13170,
+    "extra": 0,
+    "missing": 0,
+    "ok": true,
+    "reference": 13170
+   },
+   "ok": true,
+   "taker_orders": {
+    "aggtrade_span_ms_max": 100,
+    "aggtrade_span_ms_p99": 84.0,
+    "aggtrades": 471998,
+    "aggtrades_matched": 471998,
+    "aggtrades_multi_ms": 46996,
+    "ok": true,
+    "orders": 340557,
+    "orders_with_same_price_aggtrades": 0,
+    "split_multi_ms": 46996,
+    "split_same_ms": 0
+   },
+   "trades": 1198571,
+   "trades_status": "COMPLETE"
+  },
+  "2026-08-26": {
+   "aggtrades_status": "COMPLETE",
+   "big_trade_ids": {
+    "bad": 0,
+    "checked": 1535,
+    "events": 1535,
+    "ok": true
+   },
+   "cvd_day": {
+    "expected": 9649268,
+    "got": 9649268,
+    "ok": true,
+    "unknown_expected": 0,
+    "unknown_got": 0
+   },
+   "imbalances": {
+    "catalogue": 11939,
+    "extra": 0,
+    "missing": 0,
+    "ok": true,
+    "reference": 11939
+   },
+   "ok": true,
+   "taker_orders": {
+    "aggtrade_span_ms_max": 100,
+    "aggtrade_span_ms_p99": 79.0,
+    "aggtrades": 500920,
+    "aggtrades_matched": 500920,
+    "aggtrades_multi_ms": 40767,
+    "ok": true,
+    "orders": 309697,
+    "orders_with_same_price_aggtrades": 0,
+    "split_multi_ms": 40767,
+    "split_same_ms": 0
+   },
+   "trades": 1257674,
+   "trades_status": "COMPLETE"
+  },
+  "2026-09-15": {
+   "aggtrades_status": "COMPLETE",
+   "big_trade_ids": {
+    "bad": 0,
+    "checked": 1548,
+    "events": 1548,
+    "ok": true
+   },
+   "cvd_day": {
+    "expected": -2127650,
+    "got": -2127650,
+    "ok": true,
+    "unknown_expected": 0,
+    "unknown_got": 0
+   },
+   "imbalances": {
+    "catalogue": 9358,
+    "extra": 0,
+    "missing": 0,
+    "ok": true,
+    "reference": 9358
+   },
+   "ok": true,
+   "taker_orders": {
+    "aggtrade_span_ms_max": 100,
+    "aggtrade_span_ms_p99": 86.0,
+    "aggtrades": 441866,
+    "aggtrades_matched": 441866,
+    "aggtrades_multi_ms": 41219,
+    "ok": true,
+    "orders": 317498,
+    "orders_with_same_price_aggtrades": 0,
+    "split_multi_ms": 41219,
+    "split_same_ms": 0
+   },
+   "trades": 1093228,
+   "trades_status": "COMPLETE"
+  },
+  "2026-10-05": {
+   "aggtrades_status": "COMPLETE",
+   "big_trade_ids": {
+    "bad": 0,
+    "checked": 1514,
+    "events": 1514,
+    "ok": true
+   },
+   "cvd_day": {
+    "expected": -6048027,
+    "got": -6048027,
+    "ok": true,
+    "unknown_expected": 0,
+    "unknown_got": 0
+   },
+   "imbalances": {
+    "catalogue": 8386,
+    "extra": 0,
+    "missing": 0,
+    "ok": true,
+    "reference": 8386
+   },
+   "ok": true,
+   "taker_orders": {
+    "aggtrade_span_ms_max": 100,
+    "aggtrade_span_ms_p99": 89.0,
+    "aggtrades": 422589,
+    "aggtrades_matched": 422589,
+    "aggtrades_multi_ms": 42460,
+    "ok": true,
+    "orders": 296396,
+    "orders_with_same_price_aggtrades": 0,
+    "split_multi_ms": 42460,
+    "split_same_ms": 0
+   },
+   "trades": 1185437,
+   "trades_status": "COMPLETE"
+  }
+ },
+ "summary": {
+  "dates": [
+   "2026-04-30",
+   "2026-06-27",
+   "2026-07-17",
+   "2026-08-06",
+   "2026-08-26",
+   "2026-09-15",
+   "2026-10-05"
+  ],
+  "days": 7,
+  "days_ok": 7,
+  "fail": false
+ }
+}

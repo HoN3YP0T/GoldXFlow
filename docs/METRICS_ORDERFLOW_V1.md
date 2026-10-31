@@ -58,7 +58,23 @@ Levels are re-binned exactly to bins of `bin_ticks` (default 10 = $0.10). Within
 3. moves in the aggressor's direction or stays (buy: price ≥ previous; sell: price ≤ previous);
 4. steps at most one sweep bin (`sweep_bin_ticks`, default 10) from the previous fill.
 
-aggTrades are **not** used as orders. They are incomplete on 39 days, and they aggregate per price, not per order. Binance publishes no order ids, so two taker orders in the same millisecond, on the same side, at adjacent prices merge. `orderflow-validate` measures this against aggTrades (§8).
+aggTrades are **not** used as orders. They are incomplete on 39 days, and **measured on this dataset they are not orders at all**:
+- every aggTrade's fills span at most **100 ms** (99th percentile ≈ 84–91 ms, maximum exactly 100 ms on every validated day);
+- one aggTrade can hold a few small fills at t and a separate large sweep 51 ms later.
+
+A matching engine fills one incoming order atomically, so Binance evidently aggregates same-price, same-side fills inside a ~100 ms window **across different taker orders**.
+
+The default `cluster_ms = 0` follows from this. Raising it removes the multi-ms "splits" only by gluing distinct orders together. On 2026-04-30:
+
+| cluster_ms | Reconstructed orders | aggTrades split | Orders merging two same-price aggTrades |
+|---|---|---|---|
+| 0 | 209,456 | 31,472 | 0 |
+| 100 | 123,586 | 0 | 1,289 |
+| 1000 | 80,532 | 0 | 22,207 |
+
+The validator checks what aggTrades *can* prove: fills of one aggTrade that share one exchange millisecond are never split. That count is 0 on every validated day.
+
+**Remaining limitation:** Binance publishes no order ids, so two taker orders in the same millisecond, on the same side, at adjacent prices still merge.
 
 **Confirmation.** An order is complete when a trade that can't extend it arrives, or when the time floor passes `last fill + cluster_ms`. Its time is fixed at `last_fill_time + cluster_ms + 1 + availability shift`, independent of chunking.
 
@@ -153,8 +169,8 @@ Event types are `DIVERGENCE_CVD` and `DIVERGENCE_DELTA`. Status DETECTED at the 
 - the set of imbalances = a pandas recomputation;
 - every BIG_TRADE's ids are consecutive, single-side and sum to its size;
 - taker orders against aggTrades:
-  - aggTrades split across two reconstructed orders (must be 0);
-  - reconstructed orders that contain two same-price aggTrades, i.e. two taker orders merged (measured and reported).
+  - aggTrades whose fills share one exchange millisecond but are split across orders (must be 0);
+  - for information: multi-ms aggTrade splits, the aggTrade time span, and a `cluster_ms` sensitivity table (§4).
 
 ## 9. Limitations
 - **Trades only.** Absorption and exhaustion are inferred from executions and price. Without L2 history, resting liquidity can't be seen (Phase 8 records it live from now on).
