@@ -11,7 +11,7 @@ from __future__ import annotations
 import gzip, json, logging, os, shutil, threading, time, uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, asdict
-from datetime import date, timedelta
+from datetime import timedelta
 from pathlib import Path
 
 from .checkpoint import Checkpoint
@@ -20,7 +20,7 @@ from .config import Config
 from .integrity import verify_file, write_id_gaps
 from .retry import NonRetryable
 from .rest_client import BinanceFuturesREST, GeoBlocked
-from .timeutil import DAY_MS, day_start_ms, from_ms, iso, month_bounds_ms, to_ms
+from .timeutil import DAY_MS, day_start_ms, from_ms, iso, month_bounds_ms
 from .vision_archive import VisionArchive, archive_key, RemoteFile
 
 log = logging.getLogger("goldflow.acquire")

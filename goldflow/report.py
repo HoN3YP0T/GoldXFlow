@@ -7,7 +7,7 @@ Checks across all units of a dataset:
   * trades vs aggTrades: trade ids referenced by aggTrades vs ids present in trades
 """
 from __future__ import annotations
-import json, time, zipfile
+import json, time
 from pathlib import Path
 import numpy as np
 

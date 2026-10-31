@@ -1,0 +1,74 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "goldflow"
+version = "0.5.0"
+description = "Gold orderflow engine: Binance XAUUSDT data foundation (acquisition, validation, replay)"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Hrithik Ganguli" }]
+# Compatible ranges; tested with pyarrow 25-26, numpy 2.2-2.5, pandas 2.x-3.0, pydantic 2.13 (Linux; Windows via WSL/VM)
+dependencies = [
+  "pyarrow>=15,<27",
+  "numpy>=1.26,<3",
+  "pandas>=2.1,<4",
+  "requests>=2.31,<3",
+  "pydantic>=2.5,<3",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10", "ruff>=0.6", "mypy>=1.10"]
+
+[project.scripts]
+goldflow = "goldflow.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["goldflow*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = ["ignore::DeprecationWarning"]
+
+# ---- Lint: the whole package is checked for real errors (pyflakes, syntax, mutable defaults, bare except).
+# Style rules (one statement per line, import order) are enforced only on modules written from Phase 1 onward;
+# the Phase 2-4 modules keep their compact style so their bytes (and the Phase 3 code_version) stay unchanged.
+[tool.ruff]
+line-length = 130
+target-version = "py310"
+extend-exclude = ["data"]
+
+[tool.ruff.lint]
+select = ["F", "E9", "B006", "B008", "E722"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B008"]
+# These four modules define the Phase 3 code_version (their bytes decide whether normalised days must be rebuilt).
+# Their only findings are unused imports/locals; they are cleaned up the next time the modules change for a real reason.
+"goldflow/normalize.py" = ["F401", "F841"]
+"goldflow/integrity.py" = ["F401", "F841"]
+"goldflow/catalog.py" = ["F401", "F841"]
+"goldflow/schemas.py" = ["F401", "F841"]
+
+# ---- Types: strict on the Phase 1 foundation modules; earlier modules are checked for gross errors only.
+[tool.mypy]
+# Analysis target only: numpy>=2.3 ships stubs that need 3.12 syntax to parse. Runtime support stays >=3.10
+# (enforced by ruff target-version = py310 and by running the test suite on the PC's Python 3.10).
+python_version = "3.12"
+warn_unused_configs = true
+ignore_missing_imports = true
+files = ["goldflow/settings.py", "goldflow/profiles.py", "goldflow/observability.py", "goldflow/migrations.py",
+         "goldflow/providers"]
+
+[[tool.mypy.overrides]]
+module = ["goldflow.settings", "goldflow.profiles", "goldflow.observability", "goldflow.migrations", "goldflow.providers.*"]
+strict = true
+
+[[tool.mypy.overrides]]
+module = ["goldflow.acquire", "goldflow.catalog", "goldflow.normalize", "goldflow.integrity", "goldflow.report",
+          "goldflow.replay", "goldflow.rest_client", "goldflow.vision_archive", "goldflow.checkpoint", "goldflow.cli",
+          "goldflow.dataset_report", "goldflow.schemas", "goldflow.config", "goldflow.timeutil", "goldflow.retry",
+          "goldflow.fsutil"]
+ignore_errors = true

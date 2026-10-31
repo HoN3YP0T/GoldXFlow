@@ -10,9 +10,8 @@ Exit code 1 if any unit failed or any interval of a primary dataset is uncovered
 """
 from __future__ import annotations
 import argparse, json, logging, sys
-from pathlib import Path
 
-from .acquire import list_dataset, make_archive, make_rest, run
+from .acquire import list_dataset, make_archive, run
 from .checkpoint import Checkpoint
 from .config import Config
 from .report import build_manifest
@@ -33,15 +32,17 @@ def _range(cfg: Config, a) -> tuple[int, int]:
 
 def discover(cfg: Config) -> dict:
     out = {"symbol": cfg.symbol, "market": cfg.market, "checked_utc": iso(to_ms(utcnow()))}
-    rest = make_rest(cfg)
+    from .providers import ProviderUnavailable, create_provider
+    prov = create_provider(cfg)
+    rest = prov.rest
     try:
-        spec = rest.symbol_spec(cfg.symbol)
+        spec = prov.discover_instrument(cfg.symbol).raw
         problems = []
         if spec["status"] != "TRADING": problems.append(f"status {spec['status']}")
         if spec["contract_type"] != cfg["expected_contract_type"]: problems.append(f"contract type {spec['contract_type']}")
         if spec["underlying_type"] != cfg["expected_underlying_type"]: problems.append(f"underlying {spec['underlying_type']}")
         out["rest"] = {"base_url": rest.base, "ok": not problems, "problems": problems, "spec": spec}
-    except GeoBlocked as e:
+    except (GeoBlocked, ProviderUnavailable) as e:
         out["rest"] = {"base_url": rest.base, "ok": False, "geo_blocked": True, "error": str(e)}
     arch = make_archive(cfg); avail = {}
     for ds, opt in cfg["datasets"].items():
@@ -63,7 +64,7 @@ def _phase3_report(cfg, summary, budget=None):
 
 def _replay_cmd(cfg, a, log) -> int:
     """Phase 4 replay. Ctrl-C / SIGTERM / --budget stop gracefully at a checkpoint; --resume continues exactly."""
-    import signal, threading, time as _t
+    import signal, threading
     from .replay import ReplayEngine, ChainHasher, IntegrityChecker
     streams = None
     if a.streams:
@@ -87,9 +88,37 @@ def _replay_cmd(cfg, a, log) -> int:
     if checker.violations: return 1
     return 0 if res["status"] == "completed" else 3
 
+def _status(cfg, profile) -> int:
+    """Validate configuration and report the non-trading state (Phase 1 acceptance: starts in non-trading mode)."""
+    from .fsutil import connect
+    from .migrations import current_version
+    from .profiles import live_gate_status, trading_mode
+    from .providers import create_provider
+    st = {"config": "VALID", "config_hash": cfg.config_hash[:16], "profile": profile.value,
+          "trading_mode": trading_mode(profile), "live_trading_enabled": cfg.settings.execution.live_trading_enabled,
+          "live_gate": live_gate_status(cfg.data_root), "instrument": cfg.symbol, "provider": cfg["source"],
+          "state_db": str(cfg.state_db), "schema_migration_version": current_version(connect(cfg.state_db))}
+    prov = create_provider(cfg, profile)
+    st["provider_health"] = prov.health().__dict__
+    st["capabilities"] = {k: v["availability"] for k, v in prov.capabilities().as_dict().items()}
+    print(json.dumps(st, indent=1, default=str))
+    return 0
+
+def _providers(cfg, profile) -> int:
+    from .providers import available_providers
+    out = {}
+    for pid, cls in sorted(available_providers().items()):
+        caps = cls.capabilities(cls.__new__(cls))  # capability sets are static declarations
+        out[pid] = {"synthetic": cls.synthetic, "allowed_in_profile": (not cls.synthetic) or profile.value == "test",
+                    "capabilities": caps.as_dict()}
+    print(json.dumps(out, indent=1))
+    return 0
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="goldflow")
-    ap.add_argument("cmd", choices=["discover", "acquire", "rest", "manifest", "normalize", "validate", "report", "replay"])
+    ap.add_argument("cmd", choices=["status", "providers", "discover", "acquire", "rest", "manifest", "normalize",
+                                    "validate", "report", "replay"])
+    ap.add_argument("--profile", help="research (default) | test | live; or env GOLDFLOW_PROFILE")
     ap.add_argument("--config", default="config/binance_xauusdt.json")
     ap.add_argument("--months", type=int); ap.add_argument("--start"); ap.add_argument("--end")
     ap.add_argument("--new-range", action="store_true"); ap.add_argument("--no-rest", action="store_true")
@@ -107,12 +136,30 @@ def main(argv=None) -> int:
     ap.add_argument("--until", help="replay: stop before this UTC time (resumable)")
     ap.add_argument("--streams", nargs="*", help="replay: enable only these streams (default: config)")
     a = ap.parse_args(argv)
-    cfg = Config.load(a.config)
+    from .migrations import apply_migrations
+    from .observability import new_run_id, setup_logging
+    from .profiles import LiveTradingLocked, assert_profile_allowed, resolve_profile
+    from .settings import ConfigError
+    try:
+        profile = resolve_profile(a.profile)
+        cfg = Config.load(a.config)              # validates; invalid or conflicting settings stop here
+        assert_profile_allowed(profile, cfg.settings, cfg.data_root)
+    except (ConfigError, ValueError, LiveTradingLocked) as e:
+        print(f"goldflow: {e}", file=sys.stderr)
+        return 2
     (cfg.data_root / "state").mkdir(parents=True, exist_ok=True)
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s",
-                        handlers=[logging.StreamHandler(sys.stdout),
-                                  logging.FileHandler(cfg.data_root / "state" / "acquisition.log")])
+    run_id = new_run_id(a.cmd)
+    setup_logging(cfg.data_root / "state", run_id, profile.value, cfg["source"], cfg.symbol)
+    for h in logging.getLogger().handlers:      # console to stdout, as before (wrappers capture stdout)
+        if type(h) is logging.StreamHandler: h.setStream(sys.stdout)
+    from .fsutil import connect
+    _db = connect(cfg.state_db); apply_migrations(_db); _db.close()
     log = logging.getLogger("goldflow")
+    log.info("start cmd=%s profile=%s config_hash=%s", a.cmd, profile.value, cfg.config_hash[:16])
+    if a.cmd == "status":
+        return _status(cfg, profile)
+    if a.cmd == "providers":
+        return _providers(cfg, profile)
     if a.cmd == "discover":
         print(json.dumps(discover(cfg), indent=1, default=str)[:4000]); return 0
     if a.cmd in ("normalize", "validate"):

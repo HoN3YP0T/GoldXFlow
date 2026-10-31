@@ -1,5 +1,5 @@
 """Unit tests: range arithmetic, planner fallbacks, and verifier failure detection."""
-import io, json, sys, zipfile
+import json, sys, zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))

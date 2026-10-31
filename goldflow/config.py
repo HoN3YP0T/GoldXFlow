@@ -11,9 +11,28 @@ class Config:
     base_dir: Path
 
     @classmethod
-    def load(cls, path: str | Path) -> "Config":
+    def load(cls, path: str | Path, validate: bool = True) -> "Config":
+        """Load and (by default) validate. Invalid or conflicting settings raise settings.ConfigError."""
         p = Path(path).resolve()
-        return cls(json.loads(p.read_text()), p.parent.parent)
+        cfg = cls(json.loads(p.read_text()), p.parent.parent)
+        if validate:
+            cfg.validate()
+        return cfg
+
+    def validate(self, check_discovery: bool = True):
+        from .settings import validate_config
+        self._settings = validate_config(self.raw, self.base_dir, check_discovery)
+        return self._settings
+
+    @property
+    def settings(self):
+        s = getattr(self, "_settings", None)
+        return s if s is not None else self.validate()
+
+    @property
+    def config_hash(self) -> str:
+        from .settings import config_hash
+        return config_hash(self.raw)
 
     def __getitem__(self, k: str) -> Any:
         return self.raw[k]

@@ -1,5 +1,5 @@
 """Phase 4 tests: determinism, resume exactness, availability (no look-ahead), tie order, controls, guards."""
-import copy, json, sqlite3, sys, threading, time
+import copy, json, sqlite3, sys, time
 from datetime import date
 from pathlib import Path
 import numpy as np

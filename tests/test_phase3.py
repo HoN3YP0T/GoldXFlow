@@ -1,6 +1,6 @@
 """Phase 3 tests: record validation, quarantine reasons, duplicates, ordering, recovery, idempotency."""
 import sys, zipfile, json
-from datetime import datetime, timezone, date
+from datetime import date
 from pathlib import Path
 import numpy as np
 import pyarrow.parquet as pq
@@ -141,7 +141,6 @@ def test_schemas_label_every_field():
 
 def test_midnight_straddling_aggtrade_resolves_across_days(tmp_path):
     from goldflow.catalog import resolve_midnight
-    import hashlib
     d2 = date(2026, 6, 4); E0 = day_start_ms(d2)
     day1 = {"trades": zcsv(tmp_path, "t1", TH, [trow(10, DAY_MS - 100), trow(11, DAY_MS - 60)]),
             "aggTrades": zcsv(tmp_path, "a1", AH, [f"500,4000.00,0.100,10,10,{D1 - 100},false",

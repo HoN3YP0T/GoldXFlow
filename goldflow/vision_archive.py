@@ -5,7 +5,7 @@
 - Verifies every zip against Binance's published SHA-256 `.CHECKSUM` file.
 """
 from __future__ import annotations
-import hashlib, logging, os, re, time
+import hashlib, logging, os, re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable

@@ -9,6 +9,7 @@ from __future__ import annotations
 import logging, os, threading, time
 from typing import Any, Iterator
 import requests
+from .observability import metrics
 from .retry import NonRetryable, backoff_sleep
 
 log = logging.getLogger("goldflow.rest")
@@ -52,8 +53,11 @@ class BinanceFuturesREST:
         for attempt in range(self.max_attempts):
             self._throttle(w)
             try:
+                t_req = time.monotonic()
                 r = self.s.get(self.base + path, params=params, timeout=self.timeout)
                 self.requests_made += 1
+                metrics.observe("rest_latency_s", time.monotonic() - t_req, provider="binance", path=path)
+                metrics.inc("rest_requests", provider="binance", path=path, status=str(r.status_code))
                 uw = r.headers.get("X-MBX-USED-WEIGHT-1M") or r.headers.get("x-mbx-used-weight-1m")
                 if uw:
                     with self._lock: self.used_weight = max(self.used_weight, int(uw))

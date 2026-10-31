@@ -1,4 +1,4 @@
-# goldflow: Binance XAUUSDT gold orderflow data foundation (Phases 2–4)
+# goldflow: Binance XAUUSDT gold orderflow data foundation (Phases 1–4)
 
 Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions and Phase 4 replays it deterministically.
 
@@ -6,6 +6,19 @@ Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`**
 
 ## Build guide
 **[docs/BUILD_GUIDE.md](docs/BUILD_GUIDE.md)** is the complete phase-by-phase plan (Phases 0–17): what to build, how to build it, acceptance criteria, current status, goal traceability, milestone gates and open decisions.
+
+## Setup and foundation (Phase 1)
+```bash
+pip install -e ".[dev]"                     # pinned compatible ranges from pyproject.toml (Python >= 3.10)
+goldflow status                             # validates config; prints profile, trading mode (DISABLED), provider health, capabilities
+goldflow providers                          # registered data providers and their declared capabilities
+goldflow status --profile live              # refused (exit 2) until execution.live_trading_enabled AND the Phase 16 M7 gate
+scripts/check.sh                            # ruff + format + mypy --strict (foundation) + pytest
+```
+- **Profiles:** `research` (default), `test` (synthetic providers allowed) and `live` (locked). Select with `--profile` or `GOLDFLOW_PROFILE`.
+- **Configuration:** validated at startup (`goldflow/settings.py`). Every problem is listed and the CLI exits with code 2.
+- **Logs:** JSON lines in `data/state/goldflow.jsonl` (with run, event and correlation ids). The console stays human-readable.
+- **Providers:** implement `goldflow.providers.base.Provider` and declare capabilities honestly; see `docs/ADR-0002-foundation.md`.
 
 ## Layout
 ```

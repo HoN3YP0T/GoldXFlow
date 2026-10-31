@@ -212,11 +212,11 @@ mql5/   (Phase 16: EA executor source)
 | Phase | Name | Status | Milestone |
 |---|---|---|---|
 | 0 | Research, requirements and feasibility | **Done** (separate session; Phase 0 report) | – |
-| 1 | Project foundation and modular architecture | **Partly done.** Config, logging, tests and storage exist. Provider contract, validated config, structured logs, lint/type-check and pyproject are missing. **Recommended next.** | – |
+| 1 | Project foundation and modular architecture | **Done** (2026-10-31; see `docs/PHASE1_COMPLETION_REPORT.md`) | – |
 | 2 | Binance adapter and six-month acquisition | **Done** | M1 |
 | 3 | Validation, normalisation and storage | **Done** | M1 |
 | 4 | Deterministic historical replay | **Done** | M2 |
-| 5 | Trade processing, classification, price-level aggregation | Not started | M3 (begins) |
+| 5 | Trade processing, classification, price-level aggregation | Not started. **Next.** | M3 (begins) |
 | 6 | Volume Profile, POC, Value Area, HVN/LVN, VWAP | Not started | M3 |
 | 7 | Delta, CVD, imbalance, Big Trades, absorption, exhaustion | Not started | M3 |
 | 8 | Order-book reconstruction and liquidity | Not started (live-only; no historical L2) | M3 (live part) |
@@ -285,7 +285,7 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 1: Project foundation and modular architecture. **Status: Partly done. Recommended next.**
+### Phase 1: Project foundation and modular architecture. **Status: Done (2026-10-31)**
 **Objective.** A clean foundation every later module plugs into: validated configuration, provider contract, storage interfaces, structured logging and quality tooling.
 
 **Depends on.** Nothing. Must not change Phase 2–4 behaviour or digests.

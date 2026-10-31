@@ -14,7 +14,7 @@ stream (reading partitions D-1 and D for streams whose offset/latency can push e
 merged with a vectorised lexsort and handed to consumers in chunks. Memory is bounded by one day.
 """
 from __future__ import annotations
-import hashlib, json, os, resource, signal, sqlite3, threading, time
+import hashlib, json, resource, sqlite3, threading, time
 from dataclasses import dataclass, field
 from datetime import date, timedelta
 from pathlib import Path
@@ -25,6 +25,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 from .config import Config
+from .observability import metrics
 from .timeutil import DAY_MS, day_start_ms, from_ms, iso, parse_iso, to_ms
 
 QUALITY_RANK = 0
@@ -429,7 +430,11 @@ class ReplayEngine:
                         if delay > 0: time.sleep(min(delay, 5.0))
                     self.clock_ms = max(self.clock_ms, int(ck["avail"][-1]))
                     chunk = EventChunk(ck, rw, tables, self.stream_names, self.clock_ms, self.quality)
+                    t_c = time.monotonic()
                     for c in self.consumers: c.on_chunk(chunk)
+                    metrics.observe("replay_consumer_chunk_s", time.monotonic() - t_c)
+                    metrics.inc("replay_events", float(len(ck)))
+                    metrics.gauge("replay_sim_clock_ms", float(self.clock_ms))
                     self.last_key = (int(ck["avail"][-1]), int(ck["rank"][-1]), int(ck["seq"][-1]))
                     n = end - pos; self.emitted += n; self._since_ckpt += n; pos = end
                     ids, cnt = np.unique(ck["stream"], return_counts=True)
@@ -446,7 +451,6 @@ class ReplayEngine:
                     if self.progress_cb: self.progress_cb(self.metrics(t_run0, day=str(d)))
                 d += timedelta(days=1)
         finally:
-            done = not self._stop.is_set() or (until_ms is not None and self.clock_ms >= (until_ms - 1))
             self.status = "completed" if d > last_day else "stopped"
             self._checkpoint(self.status)
             ctx.update(self.metrics(t_run0)); ctx["status"] = self.status

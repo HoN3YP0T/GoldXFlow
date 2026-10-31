@@ -2,14 +2,12 @@
 from __future__ import annotations
 import csv, json, time
 from collections import Counter, defaultdict
-from pathlib import Path
 
 import pyarrow.parquet as pq
 
 from . import schemas as S
 from .catalog import Catalog, code_version
 from .config import Config
-from .timeutil import iso
 
 def build_phase3_reports(cfg: Config, summary: dict, overlaps: list, xc: list) -> dict:
     cat = Catalog(cfg); db = cat.db
