@@ -46,14 +46,14 @@
    "unresolved": []
   },
   "digest_differences_vs_catalog": [],
-  "run_id": "normalize-20261031T143933Z-5c61f6",
-  "result_digest": "3860107ab71445b3dfb6b6baadde4d6532f190d0372982dfa25c214acd9c32a1",
-  "compared_to": null,
-  "identical_to_previous_run": null,
+  "run_id": "validate-20261030T140300Z-877cc7",
+  "result_digest": "7eb02d132fe2a86bab6a6c821ae50897dcc92c10a08c255428fd8f595f8df704",
+  "compared_to": "normalize-20261030T135933Z-c5e646",
+  "identical_to_previous_run": 1,
   "raw_registry": {
-   "files": 932,
+   "files": 927,
    "by_role": {
-    "CANONICAL": 917,
+    "CANONICAL": 912,
     "CROSS_CHECK": 14,
     "REJECTED": 1
    },
@@ -61,8 +61,8 @@
    "hash_mismatch": []
   },
   "finalized": true,
-  "processed": 183,
-  "elapsed_s": 138
+  "processed": 72,
+  "elapsed_s": 113
  },
  "datasets": {
   "trades": {
@@ -4748,2282 +4748,2282 @@
    "hour_utc": "2026-05-01T19:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-03T22:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-04T15:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-05T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-06T05:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-07T11:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-07T12:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-07T13:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 7}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-07T15:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 10}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-07T16:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-07T17:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 16}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-07T18:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-07T19:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 3}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-07T20:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 3}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-08T01:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-08T05:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-08T06:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 15}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-08T07:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-08T10:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-08T12:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 5}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-08T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 11}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-08T16:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-08T18:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-08T19:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-10T03:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-10T20:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-10T22:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 3}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-11T01:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-11T02:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-11T07:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-11T12:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-11T13:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 3}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-11T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 3}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-11T16:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 3}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-11T19:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 5}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-11T20:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-12T01:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 5}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-12T02:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-12T05:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-12T07:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 13}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-12T10:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-12T12:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 3}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-12T13:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 17}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-12T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 5}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-12T15:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 24}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-12T16:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-13T01:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 6}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-13T08:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-13T12:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 17}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-13T13:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-13T15:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-13T16:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 10}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-13T17:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-14T02:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 3}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-14T03:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-14T07:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-14T11:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 5}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-14T13:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-14T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 18}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-14T15:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-14T16:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 3}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-15T00:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-15T01:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-15T02:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 8}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-15T07:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-15T08:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 5}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-15T09:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-15T10:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 6}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-15T12:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-15T13:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 44}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-15T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-15T17:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-15T19:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 22}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-16T06:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-16T07:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 8}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-16T09:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 6}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-17T23:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 18}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-18T00:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 5}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-18T01:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-18T05:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-18T07:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-18T11:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-18T13:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 18}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-18T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 8}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-18T15:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 11}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-18T16:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 15}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-18T17:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-18T18:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 5}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-18T19:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 32}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-19T00:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-19T02:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-19T05:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-19T09:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 14}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-19T10:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 5}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-19T12:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-19T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 10}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-19T15:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 10}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-19T19:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-20T00:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-20T01:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-20T02:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-20T13:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 7}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-20T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 10}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-20T15:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 14}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-20T17:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-20T18:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-20T19:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 44}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-21T11:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-21T12:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-21T13:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 18}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-21T16:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-21T17:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 6}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-21T18:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-22T08:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-22T12:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 7}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-22T13:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-22T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 5}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-22T17:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-23T00:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-23T07:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 12}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-23T20:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-23T21:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-23T22:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-23T23:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-24T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-25T00:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-25T06:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-25T07:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-26T00:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 9}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-26T09:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-26T12:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-26T13:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 7}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-26T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-26T17:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 3}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-26T18:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-26T23:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-27T03:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-27T06:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-27T07:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 5}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-27T10:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-27T12:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-27T13:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 8}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-27T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 13}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-27T15:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-27T19:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-28T01:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-28T02:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-28T03:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 10}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-28T04:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 40}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-28T05:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-28T06:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-28T07:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-28T10:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-28T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 16}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-28T15:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 6}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-28T22:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-29T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 5}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-29T15:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 23}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-29T16:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-29T17:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-29T18:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 15}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-30T05:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-31T09:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-31T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-05-31T20:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 18}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-01T00:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-01T01:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-01T07:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-01T09:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-01T13:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 6}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-01T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-01T15:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-01T16:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 3}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-01T17:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 7}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-01T23:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-02T02:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-02T06:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 3}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-02T08:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-02T09:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-02T11:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 9}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-02T12:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 3}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-02T13:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 3}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-02T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 28}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-02T15:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 22}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-02T16:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 54}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-02T17:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 7}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-02T18:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 7}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-02T19:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 10}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-02T20:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-02T22:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 15}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-02T23:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 29}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-03T00:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 3}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-03T01:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-03T03:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 49}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-03T04:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-03T05:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-03T06:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 10}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-03T07:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-03T09:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-03T10:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-03T12:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 6}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-03T13:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 6}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-03T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 15}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-03T15:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-03T16:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 7}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-03T18:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-03T19:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-03T20:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 8}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-03T22:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 7}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-04T00:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-04T01:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 44}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-04T02:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 247}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-04T03:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-04T04:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-04T06:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 3}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-04T08:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-04T09:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 8}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-04T11:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 10}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-04T12:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 17}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-04T13:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 15}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-04T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-04T15:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 17}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-04T16:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-04T18:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 21}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-04T19:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-04T20:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-04T21:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-04T22:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 8}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-04T23:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 5}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T00:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T01:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T02:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 15}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T03:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T04:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 6}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T05:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 7}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T06:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 58}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T07:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 16}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T08:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 8}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T09:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 49}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T10:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T11:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 18}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T12:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 61}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T13:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 34}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 23}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T15:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 30}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T16:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 59}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T17:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 8}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T18:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 18}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T19:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 18}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T20:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 20}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T21:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-05T22:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-06T00:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 3}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-06T01:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-06T02:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-06T04:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 7}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-06T05:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 36}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-06T06:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 7}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-06T07:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 5}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-06T08:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-06T10:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 12}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-06T12:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-06T15:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-06T16:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-06T17:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-06T18:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-06T20:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-07T05:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 20}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-07T06:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 13}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-07T08:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-07T10:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-07T12:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 25}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-07T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 5}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-07T15:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-07T19:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 5}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-07T20:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 4}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-07T22:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 27}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-08T00:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-08T01:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 6}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-08T02:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-08T04:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-08T05:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-08T07:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-08T09:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 3}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-08T10:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 6}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-08T11:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 12}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-08T12:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 3}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-08T13:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-08T14:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-08T15:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 25}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-08T17:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 5}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-08T18:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 5}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-08T19:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-08T23:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-09T00:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-09T01:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-09T02:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 2}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-06-09T03:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 1}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "aggTrades",
    "hour_utc": "2026-10-27T00:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"trades_absent\": 21346}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T00:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T01:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T02:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T03:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T04:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T05:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T06:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T07:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T08:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T09:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T10:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T11:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T12:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T13:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T14:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T15:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T16:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T17:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T18:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T19:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T20:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T21:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T22:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-28T23:00:00.000Z",
    "status": "UNVERIFIED",
    "detail_json": "{}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-29T21:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"evidence\": [\"agg_unmatched\", \"klines_mismatch\"], \"agg_rows_unmatched\": 8, \"lots_missing_vs_agg\": 4785, \"klines_minutes_mismatched\": 3}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-29T22:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"evidence\": [\"agg_unmatched\", \"klines_mismatch\"], \"agg_rows_unmatched\": 1884, \"lots_missing_vs_agg\": 8348996, \"klines_minutes_mismatched\": 60}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   },
   {
    "dataset": "trades",
    "hour_utc": "2026-10-29T23:00:00.000Z",
    "status": "PARTIAL",
    "detail_json": "{\"evidence\": [\"agg_unmatched\", \"klines_mismatch\"], \"agg_rows_unmatched\": 4927, \"lots_missing_vs_agg\": 10171214, \"klines_minutes_mismatched\": 60}",
-   "run_id": "normalize-20261031T143933Z-5c61f6"
+   "run_id": "normalize-20261030T135933Z-c5e646"
   }
  ],
  "quarantine_totals": [],
@@ -7123,14 +7123,74 @@
  "cross_partition_id_overlaps": [],
  "validation_runs": [
   {
-   "run_id": "normalize-20261031T143933Z-5c61f6",
+   "run_id": "normalize-20261030T125945Z-a79c44",
    "mode": "normalize",
-   "started_utc": "2026-10-31T14:39:34Z",
-   "finished_utc": "2026-10-31T14:39:34Z",
-   "code_version": "703a9b890a3e6a97",
-   "result_digest": "3860107ab71445b3dfb6b6baadde4d6532f190d0372982dfa25c214acd9c32a1",
+   "started_utc": "2026-10-30T12:59:45Z",
+   "finished_utc": "2026-10-30T13:04:39Z",
+   "code_version": "28d466adc9415685",
+   "result_digest": "e6680fc2219e3fb3541e5155e326a5efdae27970f0173bfb25de6cfeefe2c507",
    "compared_to": null,
    "identical": null
+  },
+  {
+   "run_id": "normalize-20261030T130730Z-bf443c",
+   "mode": "normalize",
+   "started_utc": "2026-10-30T13:07:30Z",
+   "finished_utc": "2026-10-30T13:12:17Z",
+   "code_version": "e5d7ee0e521aa1ed",
+   "result_digest": "e2cada6780e0e6cddb523ef489319018caf9b23f444be3ce49ca4dd4078cc3ae",
+   "compared_to": "normalize-20261030T125945Z-a79c44",
+   "identical": 0
+  },
+  {
+   "run_id": "validate-20261030T131341Z-b5b594",
+   "mode": "validate",
+   "started_utc": "2026-10-30T13:13:41Z",
+   "finished_utc": "2026-10-30T13:16:56Z",
+   "code_version": "e5d7ee0e521aa1ed",
+   "result_digest": "e2cada6780e0e6cddb523ef489319018caf9b23f444be3ce49ca4dd4078cc3ae",
+   "compared_to": "normalize-20261030T130730Z-bf443c",
+   "identical": 1
+  },
+  {
+   "run_id": "normalize-20261030T132015Z-30befb",
+   "mode": "normalize",
+   "started_utc": "2026-10-30T13:20:15Z",
+   "finished_utc": "2026-10-30T13:25:20Z",
+   "code_version": "3eac8d1e07c5e02a",
+   "result_digest": "e2cada6780e0e6cddb523ef489319018caf9b23f444be3ce49ca4dd4078cc3ae",
+   "compared_to": "validate-20261030T131341Z-b5b594",
+   "identical": 1
+  },
+  {
+   "run_id": "validate-20261030T132643Z-92a07e",
+   "mode": "validate",
+   "started_utc": "2026-10-30T13:26:43Z",
+   "finished_utc": "2026-10-30T13:30:08Z",
+   "code_version": "3eac8d1e07c5e02a",
+   "result_digest": "e2cada6780e0e6cddb523ef489319018caf9b23f444be3ce49ca4dd4078cc3ae",
+   "compared_to": "normalize-20261030T132015Z-30befb",
+   "identical": 1
+  },
+  {
+   "run_id": "normalize-20261030T135933Z-c5e646",
+   "mode": "normalize",
+   "started_utc": "2026-10-30T13:59:33Z",
+   "finished_utc": "2026-10-30T13:59:33Z",
+   "code_version": "994c9a1fc509f99a",
+   "result_digest": "7eb02d132fe2a86bab6a6c821ae50897dcc92c10a08c255428fd8f595f8df704",
+   "compared_to": "validate-20261030T132643Z-92a07e",
+   "identical": 0
+  },
+  {
+   "run_id": "validate-20261030T140300Z-877cc7",
+   "mode": "validate",
+   "started_utc": "2026-10-30T14:03:00Z",
+   "finished_utc": "2026-10-30T14:03:00Z",
+   "code_version": "994c9a1fc509f99a",
+   "result_digest": "7eb02d132fe2a86bab6a6c821ae50897dcc92c10a08c255428fd8f595f8df704",
+   "compared_to": "normalize-20261030T135933Z-c5e646",
+   "identical": 1
   }
  ]
 }

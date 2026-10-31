@@ -1,6 +1,6 @@
 # Phase 3 validation report
 
-Generated 2026-10-31T14:40:34Z · code 703a9b890a3e6a97 · schema v1
+Generated 2026-10-30T14:04:27Z · code 994c9a1fc509f99a · schema v1
 
 | Dataset | Partitions | Rows | Quarantined | Day status | Dataset status |
 |---|---|---|---|---|---|
@@ -173,4 +173,10 @@ Generated 2026-10-31T14:40:34Z · code 703a9b890a3e6a97 · schema v1
 
 ## Validation runs
 
-- normalize-20261031T143933Z-5c61f6 (normalize): digest 3860107ab71445b3… compared to - → identical=None
+- normalize-20261030T125945Z-a79c44 (normalize): digest e6680fc2219e3fb3… compared to - → identical=None
+- normalize-20261030T130730Z-bf443c (normalize): digest e2cada6780e0e6cd… compared to normalize-20261030T125945Z-a79c44 → identical=0
+- validate-20261030T131341Z-b5b594 (validate): digest e2cada6780e0e6cd… compared to normalize-20261030T130730Z-bf443c → identical=1
+- normalize-20261030T132015Z-30befb (normalize): digest e2cada6780e0e6cd… compared to validate-20261030T131341Z-b5b594 → identical=1
+- validate-20261030T132643Z-92a07e (validate): digest e2cada6780e0e6cd… compared to normalize-20261030T132015Z-30befb → identical=1
+- normalize-20261030T135933Z-c5e646 (normalize): digest 7eb02d132fe2a86b… compared to validate-20261030T132643Z-92a07e → identical=0
+- validate-20261030T140300Z-877cc7 (validate): digest 7eb02d132fe2a86b… compared to normalize-20261030T135933Z-c5e646 → identical=1
