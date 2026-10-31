@@ -219,7 +219,7 @@ mql5/   (Phase 16: EA executor source)
 | 4 | Deterministic historical replay | **Done** | M2 |
 | 5 | Trade processing, classification, price-level aggregation | **Done** (session times still PROPOSED, D4) | M3 (begins) |
 | 6 | Volume Profile, POC, Value Area, HVN/LVN, VWAP | Not started | M3 |
-| 7 | Delta, CVD, imbalance, Big Trades, absorption, exhaustion | Not started | M3 |
+| 7 | Delta, CVD, imbalance, Big Trades, absorption, exhaustion | **Done** (2026-10-31; see `docs/PHASE7_COMPLETION_REPORT.md`; built before Phase 6, which it uses only for optional context levels) | M3 |
 | 8 | Order-book reconstruction and liquidity | **Done** (2026-10-31; live-only, see `docs/PHASE8_COMPLETION_REPORT.md`). The recorder must run on the PC or a non-US VPS. | M3 (live part) |
 | 9 | Auction Market Theory and failed auctions | Not started | M3 |
 | 10 | Sessions, Initial Balance, IVB | Not started (IVB definition required from you) | M3 |
@@ -509,7 +509,8 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 7: Delta, CVD, imbalance, Big Trades, absorption and exhaustion. **Status: Not started**
+### Phase 7: Delta, CVD, imbalance, Big Trades, absorption and exhaustion. **Status: Done (2026-10-31)**
+**Built** (`goldflow/orderflow/`, `docs/METRICS_ORDERFLOW_V1.md`, `docs/PHASE7_COMPLETION_REPORT.md`): one Phase 5 sink with delta/CVD (day, trading-day, week, session and anchor resets), diagonal/horizontal and stacked footprint imbalance, taker-order reconstruction and Big Trades (absolute, notional, trailing-quantile and time-of-day thresholds), absorption candidates with confirmation, exhaustion, and price/CVD/delta divergence on confirmed swings. Includes a six-month event catalogue and an independent validation report. Phase 6 levels (POC/VA/HVN/VWAP) can be added later as context; nothing here depends on them.
 **Objective.** Transaction-based orderflow analytics with transparent classification and stated limits.
 
 **Depends on.** Phase 5 (sides, footprint) and Phase 6 (levels for context).

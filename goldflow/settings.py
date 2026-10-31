@@ -325,6 +325,15 @@ def validate_config(raw: dict[str, Any], base_dir: Path | None = None, check_dis
             ProcessingSettings.from_config(Config(raw, base_dir or Path(".")))
         except (ValueError, KeyError) as e:
             raise ConfigError([f"processing/sessions: {e}"]) from None
+    if raw.get("orderflow") is not None:
+        # Phase 7 block: imbalance/CVD/big-trade/absorption/exhaustion/divergence parameters (defaults live in code)
+        from .config import Config
+        from .orderflow.settings import OrderflowSettings
+
+        try:
+            OrderflowSettings.from_config(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError, TypeError) as e:
+            raise ConfigError([f"orderflow: {e}"]) from None
     if check_discovery and base_dir is not None:
         disc = base_dir / s.paths.data_root / "state" / "instrument_discovery.json"
         if disc.exists():

@@ -6,6 +6,8 @@
   python -m goldflow.cli manifest  --config ...
   python -m goldflow.cli process   --name p1 [--resume] [--dates ..] [--budget S]   # Phase 5 trade processor
   python -m goldflow.cli reconcile [--interval 1m]                              # Phase 5 footprint checks
+  python -m goldflow.cli orderflow --name o1 [--resume] [--dates ..]   # Phase 7 orderflow event catalogue
+  python -m goldflow.cli orderflow-validate [--dates ..]              # Phase 7 independent real-data checks
   python -m goldflow.cli depth-record [--duration S]   # Phase 8 live L2 recorder (non-US host)
   python -m goldflow.cli depth-replay | depth-normalize
 The acquisition range is frozen in data/state/range.json on first run so that resumed runs
@@ -146,11 +148,39 @@ def _process_cmd(cfg, a, log) -> int:
     bad = checker.violations or (out.get("reconciliation") or {}).get("fail")
     return 1 if bad else (0 if res["status"] == "completed" else 3)
 
+def _orderflow_cmd(cfg, a, log) -> int:
+    """Phase 7: replay -> TradeProcessor -> OrderflowAnalytics -> event catalogue + validation report. Resumable."""
+    import signal, threading
+    from .replay import ReplayEngine, ChainHasher, IntegrityChecker
+    from .processing.trade_processor import TradeProcessor
+    from .orderflow.engine import OrderflowAnalytics
+    from .orderflow.report import build_report
+    name = a.name or "orderflow"
+    of = OrderflowAnalytics(cfg)
+    proc = TradeProcessor(cfg, sinks=[of]); hasher, checker = ChainHasher(), IntegrityChecker()
+    prog = lambda m: log.info("orderflow %s day=%s events=%d clock=%s %.0f ev/s rss=%dMB", name, m.get("day"), m["events"],
+                              m["sim_clock"], m["events_per_s"] or 0, m["peak_rss_mb"])
+    eng = ReplayEngine(cfg, [hasher, checker, proc], start=a.start, end=a.end, dates=a.dates, name=name, progress=prog)
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        signal.signal(sig, lambda *_: (log.info("stop requested; checkpointing"), eng.stop()))
+    if a.budget: threading.Timer(a.budget, eng.stop).start()
+    res = eng.run(resume=a.resume, until=a.until)
+    out = {"name": name, "status": res["status"], "events": res["events"], "events_this_run": res["events_this_run"],
+           "wall_s": res["wall_s"], "events_per_s": res["events_per_s"], "peak_rss_mb": res["peak_rss_mb"],
+           "sequence_digest": hasher.digest, "integrity_violations": checker.violations, "processor": proc.summary(),
+           "orderflow": dict(of.counters)}
+    if res["status"] == "completed":
+        rep = build_report(cfg, of.manifest, of.events())
+        out["report"] = rep["summary"]
+    print(json.dumps(out, indent=1, default=str))
+    bad = checker.violations or of.counters["confirm_before_evidence_end"] or (out.get("report") or {}).get("fail")
+    return 1 if bad else (0 if res["status"] == "completed" else 3)
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="goldflow")
     ap.add_argument("cmd", choices=["status", "providers", "discover", "acquire", "rest", "manifest", "normalize",
                                     "validate", "report", "replay", "process", "reconcile",
-                                    "depth-record", "depth-replay", "depth-normalize"])
+                                    "depth-record", "depth-replay", "depth-normalize", "orderflow", "orderflow-validate"])
     ap.add_argument("--profile", help="research (default) | test | live; or env GOLDFLOW_PROFILE")
     ap.add_argument("--config", default="config/binance_xauusdt.json")
     ap.add_argument("--months", type=int); ap.add_argument("--start"); ap.add_argument("--end")
@@ -220,6 +250,12 @@ def main(argv=None) -> int:
         from .processing.reconcile import reconcile
         rep = reconcile(cfg, interval=a.interval)
         print(json.dumps(rep["summary"], indent=1)); return 1 if rep["summary"]["fail"] else 0
+    if a.cmd == "orderflow":
+        return _orderflow_cmd(cfg, a, log)
+    if a.cmd == "orderflow-validate":   # independent checks on real days (taker orders vs aggTrades, CVD, imbalances)
+        from .orderflow.validate import validate_days
+        rep = validate_days(cfg, a.dates)
+        print(json.dumps(rep["summary"], indent=1, default=str)); return 1 if rep["summary"]["fail"] else 0
     if a.cmd.startswith("depth-"):   # Phase 8: live L2 recorder, capture replay, DepthEvent normalisation
         from .liquidity.commands import run_depth_command
         return run_depth_command(cfg, a)

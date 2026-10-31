@@ -1,4 +1,4 @@
-# goldflow: Binance XAUUSDT gold orderflow engine (Phases 1–5, 8)
+# goldflow: Binance XAUUSDT gold orderflow engine (Phases 1–5, 7, 8)
 
 Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions, Phase 4 replays it deterministically, and Phase 5 turns the replayed trades into exact price-level and footprint aggregates.
 
@@ -102,6 +102,14 @@ data/derived/.../footprint/interval=1m/_manifest.json      per-date totals, dige
 data/reports/processing_reconciliation_1m.{md,json}       exact checks vs trades partitions and Binance 1m klines
 ```
 Exchange-reported aggressor sides only (UNKNOWN is never reassigned), integer lots and ticks, duplicate-safe, bars finalised only after their end (no look-ahead), sessions in named time zones with DST, and snapshot/restore equal to an uninterrupted run. Settings live in the `processing` and `sessions` config blocks; the session times are **proposed** defaults (decision D4). See `docs/PROCESSING_V1.md`. Python API: `goldflow.processing.TradeProcessor` with `ProcessorSink` subclasses for downstream analytics.
+
+## Phase 7: orderflow analytics (delta, CVD, imbalance, Big Trades, absorption, exhaustion, divergence)
+```bash
+python -m goldflow.cli orderflow --name o1               # replay -> TradeProcessor -> OrderflowAnalytics -> event catalogue
+python -m goldflow.cli orderflow --name o1 --resume      # after --until / --budget / Ctrl-C
+python -m goldflow.cli orderflow-validate                # independent recomputation on sample days (CVD, imbalances, taker orders vs aggTrades)
+```
+Outputs `data/derived/.../orderflow/{events,imbalances,cvd}/date=D/` with a manifest, plus `data/reports/orderflow_catalogue.{md,json}` and `orderflow_validation.{md,json}`. Every event carries its evidence window, a confirmation time that is never earlier than the evidence end, source trade ids, unknown-side volume, sessions, weekend, data-quality and coverage labels. Thresholds are research defaults (`goldflow/orderflow/settings.py`), not tuned values. See `docs/METRICS_ORDERFLOW_V1.md`.
 
 ## Phase 8: live order book (L2) recorder and liquidity metrics
 There is no historical price-level book for this dataset, so depth history starts the day the recorder starts. Run it where `fapi.binance.com` REST is reachable (the trading PC or a non-US VPS). A US host gets HTTP 451 on the snapshot, and the recorder stops with exit code 4.

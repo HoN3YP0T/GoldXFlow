@@ -50,9 +50,15 @@ class ProcessorSink:
 
     on_bars(interval, bars, levels, final_upto_ms)  finalised bars (columns) and their footprint levels
     on_window(summary, levels)                      a finalised window (totals dict and its 1-tick level columns)
+    on_trades(t, ids, p, q, side, rec)              accepted (deduplicated, classified) trades in delivery order
+    on_advance(time_floor_ms)                       every trade with time < time_floor_ms has been delivered;
+                                                    called before bars ending at or before it are finalised
     """
     name = "sink"
     def on_start(self, ctx: dict[str, Any], proc: "TradeProcessor") -> None: pass
+    def on_trades(self, t: NDArray[Any], ids: NDArray[Any], p: NDArray[Any], q: NDArray[Any], side: NDArray[Any],
+                  rec: NDArray[Any]) -> None: pass
+    def on_advance(self, time_floor_ms: int) -> None: pass
     def on_bars(self, interval: str, bars: dict[str, Any], levels: dict[str, Any], final_upto_ms: int) -> None: pass
     def on_window(self, summary: dict[str, Any], levels: dict[str, Any]) -> None: pass
     def on_seek(self, t_ms: int) -> None: pass
@@ -276,6 +282,7 @@ class TradeProcessor(Consumer):
         self._ring_add(ids); self.watermark = max(self.watermark, int(ids.max()))
         seq = np.arange(self.seq, self.seq + m, dtype=np.int64); self.seq += m
         q = q.astype(np.int64); p = p.astype(np.int64)
+        for sk in self.sinks: sk.on_trades(t, ids, p, q, side, rec)   # Phase 7: trade-level analytics (taker orders)
         isb, iss, isu = side == 1, side == -1, side == 0
         z = np.zeros(m, np.int64)
         if st.inferred_enabled:
@@ -343,6 +350,7 @@ class TradeProcessor(Consumer):
         if self.time_floor is not None and X > self.time_floor:
             self._open_windows(self.time_floor, X - 1)
         self.time_floor = X if self.time_floor is None else max(self.time_floor, X)
+        for sk in self.sinks: sk.on_advance(self.time_floor)
         for n in st.intervals:
             I = st.interval_ms[n]
             fu = (X // I) * I
