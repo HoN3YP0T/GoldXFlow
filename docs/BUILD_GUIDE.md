@@ -196,9 +196,10 @@ goldflow/                     current package
              events.py, flow_engine.py, flow_store.py, flow_verify.py, flow_settings.py}                  (Phase 7)
   liquidity/{book.py, recorder.py, capture.py, dataset.py, metrics.py, coverage.py, registry.py, ...}     (Phase 8)
   cli.py      discover | acquire | rest | manifest | normalize | validate | report | replay | process | reconcile |
-              vprofile[-verify|-export] | orderflow[-verify] | depth-record | depth-replay | depth-normalize
+              vprofile[-verify|-export] | orderflow[-verify] | auction[-verify|-review] | depth-record | depth-replay | depth-normalize
+  orderflow/{auction.py, failed_auction.py, auction_engine.py, auction_verify.py, auction_review.py, auction_settings.py}  (Phase 9)
   — to add —
-  orderflow/{auction.py, failed_auction.py, initial_balance.py, ivb.py}                    (Ph 9–10)
+  orderflow/{initial_balance.py, ivb.py}                                                   (Phase 10)
   strategies/  signals/                                                                    (Phase 11)
   backtesting/{engine.py, simulator.py, costs.py, ledger.py}                               (Phase 12)
   research/{splits.py, walkforward.py, montecarlo.py, ledger.py}                          (Phase 13)
@@ -224,7 +225,7 @@ mql5/   (Phase 16: EA executor source)
 | 6 | Volume Profile, POC, Value Area, HVN/LVN, VWAP | **Done** (2026-10-31; see `docs/PHASE6_COMPLETION_REPORT.md`; v1 node/VA parameters PROPOSED) | M3 |
 | 7 | Delta, CVD, imbalance, Big Trades, absorption, exhaustion | **Done** (2026-10-31; see `docs/PHASE7_COMPLETION_REPORT.md`; detector parameters PROPOSED, D11) | M3 |
 | 8 | Order-book reconstruction and liquidity | **Done** (2026-10-31; live-only, see `docs/PHASE8_COMPLETION_REPORT.md`). The recorder must run on the PC or a non-US VPS. | M3 (live part) |
-| 9 | Auction Market Theory and failed auctions | Not started | M3 |
+| 9 | Auction Market Theory and failed auctions | **Done** (2026-10-31; see `docs/PHASE9_COMPLETION_REPORT.md`; thresholds PROPOSED, D12; IB levels arrive with Phase 10) | M3 |
 | 10 | Sessions, Initial Balance, IVB | Not started (IVB definition required from you) | M3 |
 | 11 | Strategy interface and signal generation | Not started | – |
 | 12 | Event-driven backtesting and execution simulation | Not started (needs broker tick history) | M4 |
@@ -257,7 +258,7 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 | §3 volume and market profile | Ph6 | `docs/METRICS_PROFILE_V1.md`; hand-computed POC/VA/prominence tests; six-month from-scratch parity (`data/reports/profile_verification.md`) |
 | §3 VWAP and volume analytics | Ph6 | Exact integer VWAP sums; float64 recomputation from decimal prices within 1e-9 relative |
 | §3 trade and orderflow analysis | Ph5, Ph7, Ph8 | `docs/METRICS_ORDERFLOW_V1.md`; hand-computed imbalance/quantile/event tests; `orderflow-verify` exact recomputation from trades (bars, CVD, imbalances, every big trade and fill id, event evidence and resolutions) |
-| §3 Auction Market Theory | Ph9 | – |
+| §3 Auction Market Theory | Ph9 | `docs/METRICS_AUCTION_V1.md`; hand-computed episode/failed-auction/shape tests; replay clock check; `auction-verify` exact re-derivation from trades; `auction-review` charts |
 | §3 Initial Balance and IVB | Ph10 | IVB enabled only after its formula is approved |
 | §4 signal generation with evidence, SL/TP, R:R, score, reason | Ph11 | Signal schema; reproducibility tests |
 | §5 MT5 lifecycle, risk, reconciliation, recovery | Ph16 | – |
@@ -586,7 +587,9 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 9: Auction Market Theory and failed-auction analytics. **Status: Not started**
+### Phase 9: Auction Market Theory and failed-auction analytics. **Status: Done (2026-10-31)**
+**Built** (`orderflow/auction*.py`, `failed_auction.py`; spec `docs/METRICS_AUCTION_V1.md`; report `docs/PHASE9_COMPLETION_REPORT.md`): `AuctionEngine(ProcessorSink)` after the `ProfileEngine`. Reference levels from the previous full profile instance (high, low, POC, VAH, VAL, VWAP, bands, HVN/LVN, user levels; exact rationals, never from a partial window); acceptance / return / rejection episodes; failed auctions with weak-participation evidence and a held return; outcome rows at 15/30/60 min; auction state (balance, imbalance, transition); initiative vs responsive activity; excess, poor extremes and a labelled single-print proxy. Commands: `auction`, `auction-verify`, `auction-review` (CSV + SVG charts from raw trades). Evidence (4 real days): exact independent re-derivation 4/4 days, state digest reproduced after stop/resume. Open: D12, IB levels (Phase 10).
+
 **Objective.** Rule-based acceptance, rejection, auction state and failed-auction detection from measurable evidence.
 
 **Depends on.** Phases 5–7 (profile, VWAP, delta) and Phase 10 sessions. The Phase 10 session calendar may be built first or in parallel.
@@ -941,6 +944,7 @@ DQ gating (Ph11) → simulated risk (Ph12) → feed staleness (Ph14) → pre-tra
 | D8 | **Approval criteria numbers** | Phase 13 | You | See Phase 13 proposals |
 | D9 | **Data backup location** | Now | You | External drive or cloud storage for `Documents\python\goldflow` |
 | D10 | **Repository visibility** | Now | You | Private is recommended for strategy code |
+| D12 | **Phase 9 auction thresholds** (probe bins, acceptance time/volume, failed-auction volume share and hold, state rules, shape fractions) | Phase 11/13 | You | Keep the v1 defaults for research; review with Phase 13 out-of-sample outcomes |
 | D11 | **Phase 7 detector parameters** (imbalance ratio/min lots, Big Trade quantile, absorption/exhaustion/divergence settings) | Phase 11/13 | You | Keep the v1 defaults for research; review them with Phase 13 out-of-sample results, never by in-sample outcome |
 
 ---
@@ -962,7 +966,7 @@ Every phase ends with a report containing:
 **Standing instruction (append to every phase request):**
 > Execute only the current phase. First inspect the repository and identify what is already implemented. Do not rewrite working components unnecessarily. Implement real functionality; no placeholder calculations or fabricated market data. Run unit, integration, regression and data-integrity tests (including the digest regression checks). Inspect actual outputs, fix critical errors, update documentation, and provide evidence. If data or credentials are unavailable, document the limitation and stop the dependent task. Summarise the phase contents before starting. Stop after the phase with the completion report.
 
-Completed reports: `docs/PHASE2_ACQUISITION_REPORT.md`, `docs/PHASE3_COMPLETION_REPORT.md`, `docs/PHASE4_COMPLETION_REPORT.md`, `docs/PHASE5_COMPLETION_REPORT.md`, `docs/PHASE7_COMPLETION_REPORT.md`, `docs/PHASE8_COMPLETION_REPORT.md`.
+Completed reports: `docs/PHASE2_ACQUISITION_REPORT.md`, `docs/PHASE3_COMPLETION_REPORT.md`, `docs/PHASE4_COMPLETION_REPORT.md`, `docs/PHASE5_COMPLETION_REPORT.md`, `docs/PHASE7_COMPLETION_REPORT.md`, `docs/PHASE8_COMPLETION_REPORT.md`, `docs/PHASE9_COMPLETION_REPORT.md`.
 
 ---
 

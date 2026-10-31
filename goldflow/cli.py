@@ -10,6 +10,7 @@
   python -m goldflow.cli vprofile-verify [--sample-hours 6] | vprofile-export --window KEY --bin 10 [--as-of ISO]
   python -m goldflow.cli orderflow --name o1 [--resume]                       # Phase 7 delta/CVD/imbalance/big trades/events
   python -m goldflow.cli orderflow-verify [--dates ..]                        # Phase 7 independent recomputation
+  python -m goldflow.cli auction --name a1 [--resume] | auction-verify | auction-review [--limit N]   # Phase 9 AMT
   python -m goldflow.cli depth-record [--duration S]   # Phase 8 live L2 recorder (non-US host)
   python -m goldflow.cli depth-replay | depth-normalize
 The acquisition range is frozen in data/state/range.json on first run so that resumed runs
@@ -185,6 +186,7 @@ def main(argv=None) -> int:
     ap.add_argument("cmd", choices=["status", "providers", "discover", "acquire", "rest", "manifest", "normalize",
                                     "validate", "report", "replay", "process", "reconcile",
                                     "vprofile", "vprofile-verify", "vprofile-export", "orderflow", "orderflow-verify",
+                                    "auction", "auction-verify", "auction-review",
                                     "depth-record", "depth-replay", "depth-normalize"])
     ap.add_argument("--profile", help="research (default) | test | live; or env GOLDFLOW_PROFILE")
     ap.add_argument("--config", default="config/binance_xauusdt.json")
@@ -210,6 +212,7 @@ def main(argv=None) -> int:
     ap.add_argument("--window", help="vprofile-export: window key, e.g. session:london:2026-10-26")
     ap.add_argument("--bin", type=int, default=10, help="vprofile-export: profile bin size in ticks")
     ap.add_argument("--as-of", help="vprofile-export: developing snapshot time (UTC ISO); default = latest/final")
+    ap.add_argument("--limit", type=int, default=120, help="auction-review: number of event charts")
     ap.add_argument("--duration", type=float, help="depth-record: stop after this many seconds (default: run until Ctrl-C)")
     a = ap.parse_args(argv)
     from .migrations import apply_migrations
@@ -272,6 +275,15 @@ def main(argv=None) -> int:
         from .orderflow.flow_verify import verify as of_verify
         rep = of_verify(cfg, dates=a.dates)
         print(json.dumps(rep["summary"], indent=1)); return 1 if rep["summary"]["fail"] else 0
+    if a.cmd == "auction":
+        return _auction_cmd(cfg, a, log)
+    if a.cmd == "auction-verify":
+        from .orderflow.auction_verify import verify as au_verify
+        rep = au_verify(cfg, dates=a.dates)
+        print(json.dumps(rep["summary"], indent=1)); return 1 if rep["summary"]["fail"] else 0
+    if a.cmd == "auction-review":
+        from .orderflow.auction_review import review
+        print(json.dumps(review(cfg, limit=a.limit), indent=1)); return 0
     if a.cmd == "vprofile-export":
         from .orderflow.export import export_window
         if not a.window: print("goldflow: vprofile-export needs --window", file=sys.stderr); return 2
@@ -329,6 +341,35 @@ def _orderflow_cmd(cfg, a, log) -> int:
            "processor_state_digest": proc.state_digest(), "orderflow": engine.summary()}
     if res["status"] == "completed" and not a.no_reconcile:
         out["verification"] = of_verify(cfg)["summary"]
+    print(json.dumps(out, indent=1, default=str))
+    bad = checker.violations or (out.get("verification") or {}).get("fail")
+    return 1 if bad else (0 if res["status"] == "completed" else 3)
+
+def _auction_cmd(cfg, a, log) -> int:
+    """Phase 9: replay -> TradeProcessor -> ProfileEngine -> AuctionEngine -> auction Parquet, then verification."""
+    import signal, threading
+    from .replay import ReplayEngine, ChainHasher, IntegrityChecker
+    from .processing.trade_processor import TradeProcessor
+    from .orderflow.engine import ProfileEngine
+    from .orderflow.auction_engine import AuctionEngine, AuctionStore
+    from .orderflow.auction_verify import verify as au_verify
+    name = a.name or "auction"
+    prof = ProfileEngine(cfg)            # in memory only: the profile dataset is written by vprofile
+    engine = AuctionEngine(cfg, prof, store=AuctionStore(cfg.data_root, cfg.symbol, replace=not a.resume))
+    proc = TradeProcessor(cfg, sinks=[prof, engine]); hasher, checker = ChainHasher(), IntegrityChecker()
+    prog = lambda m: log.info("auction %s day=%s events=%d clock=%s %.0f ev/s rss=%dMB", name, m.get("day"), m["events"],
+                              m["sim_clock"], m["events_per_s"] or 0, m["peak_rss_mb"])
+    eng = ReplayEngine(cfg, [hasher, checker, proc], start=a.start, end=a.end, dates=a.dates, name=name, progress=prog)
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        signal.signal(sig, lambda *_: (log.info("stop requested; checkpointing"), eng.stop()))
+    if a.budget: threading.Timer(a.budget, eng.stop).start()
+    res = eng.run(resume=a.resume, until=a.until)
+    out = {"name": name, "status": res["status"], "events": res["events"], "events_this_run": res["events_this_run"],
+           "sim_clock": res["sim_clock"], "wall_s": res["wall_s"], "events_per_s": res["events_per_s"],
+           "peak_rss_mb": res["peak_rss_mb"], "sequence_digest": hasher.digest, "integrity_violations": checker.violations,
+           "processor_state_digest": proc.state_digest(), "profile_state_digest": prof.state_digest(), "auction": engine.summary()}
+    if res["status"] == "completed" and not a.no_reconcile:
+        out["verification"] = au_verify(cfg)["summary"]
     print(json.dumps(out, indent=1, default=str))
     bad = checker.violations or (out.get("verification") or {}).get("fail")
     return 1 if bad else (0 if res["status"] == "completed" else 3)

@@ -336,5 +336,72 @@
       "track_bars": 48
     },
     "persist": true
+  },
+  "auction": {
+    "_doc": "Phase 9 Auction Market Theory (docs/METRICS_AUCTION_V1.md). Levels come from the final Phase 6 profile of the previous instance of each source window. Every threshold is a v1 default: PROPOSED (decision D12).",
+    "version": 1,
+    "interval": "1m",
+    "bin_ticks": 10,
+    "levels": {
+      "sources": [
+        "trading_day",
+        "session"
+      ],
+      "types": [
+        "HIGH",
+        "LOW",
+        "POC",
+        "VAH",
+        "VAL",
+        "VWAP"
+      ],
+      "band_k": [
+        1,
+        2
+      ],
+      "user": [],
+      "_doc": "user levels: [{\"name\": \"round-4000\", \"price\": \"4000.00\"}] (USDT, exact decimal string)"
+    },
+    "acceptance": {
+      "accept_time": "15m",
+      "accept_vol_frac": "0.10",
+      "_doc": "15 consecutive 1m closes beyond, or a close beyond with volume beyond >= 10 % of the source window's volume"
+    },
+    "rejection": {
+      "probe_bins": 3,
+      "reject_time": "30m"
+    },
+    "failed_auction": {
+      "fa_vol_frac": "0.25",
+      "fa_return_time": "30m",
+      "fa_hold_bars": 5,
+      "outcome_minutes": [
+        15,
+        30,
+        60
+      ]
+    },
+    "state": {
+      "series": [
+        "trading_day"
+      ],
+      "every": "15m",
+      "rot_n": 2,
+      "ov_frac": "0.5",
+      "poc_shift_bins": 5
+    },
+    "profile_shape": {
+      "windows": [
+        "trading_day",
+        "session"
+      ],
+      "poor_frac": "0.9",
+      "excess_bins": 3,
+      "tail_frac": "0.25",
+      "excess_time": "5m",
+      "single_print_frac": "0.1",
+      "single_print_min_bins": 2
+    },
+    "persist": true
   }
 }

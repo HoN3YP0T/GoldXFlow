@@ -1,6 +1,6 @@
 # goldflow: Binance XAUUSDT gold orderflow engine (Phases 1–6, 8)
 
-Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions, Phase 4 replays it deterministically, Phase 5 turns the replayed trades into exact price-level and footprint aggregates, Phase 6 builds volume profiles (POC, value area, HVN/LVN) and VWAP with bands on top of them, and Phase 7 adds delta, CVD, footprint imbalances, Big Trades (rebuilt taker orders) and absorption / exhaustion / divergence events.
+Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions, Phase 4 replays it deterministically, Phase 5 turns the replayed trades into exact price-level and footprint aggregates, Phase 6 builds volume profiles (POC, value area, HVN/LVN) and VWAP with bands on top of them, Phase 7 adds delta, CVD, footprint imbalances, Big Trades (rebuilt taker orders) and absorption / exhaustion / divergence events, and Phase 9 adds Auction Market Theory: acceptance, rejection and failed auctions at reference levels, auction state, activity and profile shape.
 
 **No market data is committed to this repository.** Rebuild it with `python -m goldflow.cli acquire` then `python -m goldflow.cli normalize`. The frozen range in `data/state/range.json` reproduces the exact dataset, and the partition digests in `data/manifests/dataset_manifest.json` let you verify it.
 
@@ -39,10 +39,12 @@ goldflow/
                     store.py, rebuild.py (from-scratch rebuild), verify.py, export.py (chart JSON), settings.py
                     Phase 7: delta.py, cvd.py, imbalance.py, big_trades.py, absorption.py, exhaustion.py, divergence.py,
                     events.py, flow_engine.py (OrderflowEngine sink), flow_store.py, flow_verify.py, flow_settings.py
+                    Phase 9: auction.py, failed_auction.py, auction_engine.py (AuctionEngine sink), auction_verify.py,
+                    auction_review.py (CSV + SVG charts), auction_settings.py
   cli.py            discover | acquire | rest | manifest | normalize | validate | report | replay | process | reconcile |
-                    vprofile | vprofile-verify | vprofile-export | orderflow | orderflow-verify
-docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, METRICS_PROFILE_V1.md, METRICS_ORDERFLOW_V1.md, PHASE*_REPORT.md
-tests/test_core.py, test_phase3.py, test_replay.py, test_processing.py, test_profile.py, test_orderflow.py
+                    vprofile | vprofile-verify | vprofile-export | orderflow | orderflow-verify | auction | auction-verify | auction-review
+docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, METRICS_PROFILE_V1.md, METRICS_ORDERFLOW_V1.md, METRICS_AUCTION_V1.md, PHASE*_REPORT.md
+tests/test_core.py, test_phase3.py, test_replay.py, test_processing.py, test_profile.py, test_orderflow.py, test_auction.py
 data/raw/binance/futures_um/XAUUSDT/<dataset>/<daily|monthly|rest>/   raw zips + .CHECKSUM (+ _verify sidecars)
 data/state/   acquisition.sqlite, range.json, plan-*.json, progress.json, acquisition.log, instrument_discovery.json
 data/manifest.json
@@ -172,3 +174,19 @@ scripts/pc_run.sh 165 report --budget 95                                        
 scripts/pc_run.sh 165 process --name pc-p5 --budget 130 ; scripts/pc_run.sh 165 process --name pc-p5 --resume --budget 130 ...
 ```
 The working DB lives on local disk (`$HOME/gf_state`) and a consistent snapshot is saved to `data/state/acquisition.sqlite`. Files that would be deleted are moved to `data/_to_delete/`. Code updates are applied with `python3 scripts/apply_update.py update.tgz`.
+
+## Phase 9: Auction Market Theory and failed auctions
+```bash
+python -m goldflow.cli auction --name a1                 # replay -> TradeProcessor -> ProfileEngine -> AuctionEngine -> auction Parquet -> verification
+python -m goldflow.cli auction --name a1 --resume
+python -m goldflow.cli auction-verify [--dates D ...]    # exact re-derivation from trades + catalogue with outcome statistics by session
+python -m goldflow.cli auction-review --limit 120        # data/reports/auction_review.csv + SVG charts drawn from raw trades
+```
+Outputs: `data/derived/.../auction/date=YYYY-MM-DD/{levels,events,outcomes,states,activity}.parquet`, `.../auction/charts/*.svg`, `data/reports/auction_verification.{md,json}`, `data/reports/auction_review.csv`.
+- **Levels:** the previous full session and trading-day high, low, POC, VAH, VAL and VWAP (optionally bands and HVN/LVN), plus user levels. Prices are exact. A level is used only after its window has closed.
+- **Events:**
+  - acceptance (time or volume with closes beyond), return and rejection;
+  - failed auctions: a probe, weak participation or responsive delta, a quick return, and a held return;
+  - outcome rows at 15/30/60 min, for review only.
+- **Context:** balance / imbalance / transition state every 15 minutes, initiative vs responsive activity per bar, excess, poor highs/lows and a labelled single-print proxy.
+- **Settings:** the `auction` config block; thresholds are **proposed** (decision D12). See `docs/METRICS_AUCTION_V1.md`.

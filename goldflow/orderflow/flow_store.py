@@ -104,9 +104,9 @@ def _day_end(d: str) -> int:
     return (date.fromisoformat(d).toordinal() - date(1970, 1, 1).toordinal() + 1) * DAY_MS
 
 
-def to_table(table: str, rows: list[dict[str, Any]]) -> pa.Table:
+def to_table(table: str, rows: list[dict[str, Any]], fields_map: dict[str, list[tuple[str, Any]]] | None = None) -> pa.Table:
     cols = []
-    fields = FIELDS[table]
+    fields = (fields_map or FIELDS)[table]
     for name, typ in fields:
         vals = [r.get(name) for r in rows]
         if pa.types.is_timestamp(typ):
@@ -116,11 +116,22 @@ def to_table(table: str, rows: list[dict[str, Any]]) -> pa.Table:
     return pa.Table.from_arrays(cols, schema=pa.schema([pa.field(n, t) for n, t in fields]))
 
 
-class OrderflowStore:
+class DerivedStore:
+    """Dated Parquet dataset staged at replay checkpoints. Subclasses set the dataset name, tables, sort keys and the
+    manifest keys that must match for a dataset to be extended rather than replaced."""
+
+    NAME = "orderflow"
+    SCHEMA = "Orderflow"
+    FIELDS: dict[str, list[tuple[str, Any]]] = FIELDS
+    SORT: dict[str, list[tuple[str, str]]] = SORT
+    DOC: dict[str, str] = DOC
+    MATCH_KEYS: tuple[str, ...] = ("orderflow_settings_hash", "processing_settings_hash", "source_dataset_version")
+
     def __init__(self, data_root: Path, symbol: str, replace: bool = False) -> None:
-        self.base = orderflow_root(data_root, symbol)
+        self.base = orderflow_root(data_root, symbol).with_name(self.NAME)
         self.replace = replace
-        self.buf: dict[str, dict[str, list[dict[str, Any]]]] = {t: {} for t in TABLES}
+        self.tables = tuple(self.FIELDS)
+        self.buf: dict[str, dict[str, list[dict[str, Any]]]] = {t: {} for t in self.tables}
         self.staged: dict[str, list[str]] = {}
         self.written: dict[str, Any] = {}
         self.meta: dict[str, Any] = {}
@@ -132,12 +143,9 @@ class OrderflowStore:
         mp = self.base / "_manifest.json"
         if mp.exists():
             m = json.loads(mp.read_text())
-            keys = ("orderflow_settings_hash", "processing_settings_hash", "source_dataset_version")
-            same = all(m.get(k) == meta[k] for k in keys)
+            same = all(m.get(k) == meta[k] for k in self.MATCH_KEYS)
             if not same and not self.replace:
-                raise ReplayGuardError(
-                    f"{mp} was built with different settings or source data; run a fresh (non-resumed) orderflow run"
-                )
+                raise ReplayGuardError(f"{mp} was built with different settings or source data; run a fresh (non-resumed) run")
             if resumed:
                 return
             if same and not self.replace:
@@ -151,32 +159,32 @@ class OrderflowStore:
         for r in rows:
             d = row_date(int(r["available_at"]))
             if d in self.done_this_run:
-                raise RuntimeError(f"orderflow {table} rows for {d} arrived after that date was written as complete")
+                raise RuntimeError(f"{self.NAME} {table} rows for {d} arrived after that date was written as complete")
             self.buf[table].setdefault(d, []).append(r)
 
     def flush_complete(self, upto_ms: int, force: bool = False) -> None:
-        dates = sorted({d for t in TABLES for d in self.buf[t]} | set(self.staged))
+        dates = sorted({d for t in self.tables for d in self.buf[t]} | set(self.staged))
         for d in dates:
             end = _day_end(d)
             if force or end <= upto_ms:
                 self._write_date(d, complete=end <= upto_ms)
 
     def discard_unwritten(self) -> None:
-        self.buf = {t: {} for t in TABLES}
+        self.buf = {t: {} for t in self.tables}
         for d in list(self.staged):
             self._clear_staging(d)
         self.staged = {}
 
     def get_state(self) -> dict[str, Any]:
-        dates = sorted({d for t in TABLES for d in self.buf[t]})
+        dates = sorted({d for t in self.tables for d in self.buf[t]})
         for d in dates:
-            rows = {t: self.buf[t].pop(d, []) for t in TABLES}
+            rows = {t: self.buf[t].pop(d, []) for t in self.tables}
             if not any(rows.values()):
                 continue
             stem = f"{len(self.staged.get(d, []))}"
             sd = self._ddir(d) / "_staging"
-            for t in TABLES:
-                write_atomic(to_table(t, rows[t]), sd / f"{t}-{stem}.parquet")
+            for t in self.tables:
+                write_atomic(to_table(t, rows[t], self.FIELDS), sd / f"{t}-{stem}.parquet")
             self.staged.setdefault(d, []).append(stem)
         return {"staged": self.staged, "written": self.written, "done": sorted(self.done_this_run)}
 
@@ -186,7 +194,7 @@ class OrderflowStore:
         self.staged = {d: list(v) for d, v in s.get("staged", {}).items()}
         self.written = s.get("written", {})
         self.done_this_run = set(s.get("done", []))
-        self.buf = {t: {} for t in TABLES}
+        self.buf = {t: {} for t in self.tables}
 
     def _ddir(self, d: str) -> Path:
         return self.base / f"date={d}"
@@ -198,20 +206,20 @@ class OrderflowStore:
                 safe_remove(f)
 
     def _write_date(self, d: str, complete: bool) -> None:
-        parts: dict[str, list[pa.Table]] = {t: [] for t in TABLES}
+        parts: dict[str, list[pa.Table]] = {t: [] for t in self.tables}
         for stem in self.staged.get(d, []):
-            for t in TABLES:
+            for t in self.tables:
                 parts[t].append(pq.read_table(self._ddir(d) / "_staging" / f"{t}-{stem}.parquet"))
-        for t in TABLES:
+        for t in self.tables:
             rows = self.buf[t].pop(d, [])
             if rows:
-                parts[t].append(to_table(t, rows))
+                parts[t].append(to_table(t, rows, self.FIELDS))
         if not any(p.num_rows for ps in parts.values() for p in ps):
             self._clear_staging(d)
             self.staged.pop(d, None)
             return
         meta = {
-            "goldflow.schema": "Orderflow",
+            "goldflow.schema": self.SCHEMA,
             "goldflow.schema_version": str(SCHEMA_VERSION),
             "goldflow.date": d,
             "goldflow.date_complete": str(complete),
@@ -219,9 +227,13 @@ class OrderflowStore:
             **{f"goldflow.{k}": str(v) for k, v in self.meta.items()},
         }
         entry: dict[str, Any] = {"date_complete": complete}
-        for t in TABLES:
-            tbl = pa.concat_tables([x.replace_schema_metadata(None) for x in parts[t]]) if parts[t] else to_table(t, [])
-            tbl = tbl.sort_by(SORT[t]).replace_schema_metadata({**meta, "goldflow.table": t})
+        for t in self.tables:
+            tbl = (
+                pa.concat_tables([x.replace_schema_metadata(None) for x in parts[t]])
+                if parts[t]
+                else to_table(t, [], self.FIELDS)
+            )
+            tbl = tbl.sort_by(self.SORT[t]).replace_schema_metadata({**meta, "goldflow.table": t})
             sha = write_atomic(tbl, self._ddir(d) / f"{t}.parquet")
             entry[t] = {"rows": tbl.num_rows, "logical_digest": logical_digest(tbl), "sha256": sha}
         self._clear_staging(d)
@@ -244,6 +256,10 @@ class OrderflowStore:
         tmp = p.with_name(p.name + ".tmp")
         tmp.write_text(json.dumps(m, indent=1, default=str))
         os.replace(tmp, p)
+
+
+class OrderflowStore(DerivedStore):
+    """Phase 7 dataset: bars, cvd, imbalances, stacked, big_trades, events."""
 
 
 def read_manifest(data_root: Path, symbol: str) -> dict[str, Any]:

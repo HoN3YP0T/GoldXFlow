@@ -343,6 +343,15 @@ def validate_config(raw: dict[str, Any], base_dir: Path | None = None, check_dis
             OrderflowSettings.from_config(Config(raw, base_dir or Path(".")))
         except (ValueError, KeyError, TypeError) as e:
             raise ConfigError([f"orderflow: {e}"]) from None
+    if raw.get("auction") is not None:
+        # Phase 9 block: reference levels, acceptance/rejection, failed auctions, auction state, profile shape
+        from .config import Config
+        from .orderflow.auction_settings import AuctionSettings
+
+        try:
+            AuctionSettings.from_config(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError, TypeError) as e:
+            raise ConfigError([f"auction: {e}"]) from None
     if check_discovery and base_dir is not None:
         disc = base_dir / s.paths.data_root / "state" / "instrument_discovery.json"
         if disc.exists():
