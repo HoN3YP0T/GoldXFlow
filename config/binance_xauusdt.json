@@ -248,5 +248,87 @@
     ],
     "anchors": [],
     "persist": true
+  },
+  "calendar": {
+    "_doc": "Phase 10 holiday calendar v1 (docs/METRICS_IB_V1.md). Dates are computed from the US holiday rules; CME metals trading hours on those days are NOT verified (status UNVERIFIED). Verify each from CME's holiday notice and add an override {date, status: CLOSED|EARLY_HALT|OPEN, halt_local, tz, source}. Holidays only label outputs.",
+    "version": "1",
+    "tz": "America/New_York",
+    "years": [
+      2025,
+      2026,
+      2027
+    ],
+    "rules": [
+      "new_year",
+      "mlk_day",
+      "presidents_day",
+      "good_friday",
+      "memorial_day",
+      "juneteenth",
+      "independence_day",
+      "labor_day",
+      "thanksgiving",
+      "christmas"
+    ],
+    "overrides": []
+  },
+  "initial_balance": {
+    "_doc": "Phase 10 Initial Balance (docs/METRICS_IB_V1.md). STATUS: PROPOSED (decision D4 open): New York IB = first 60 min from 08:20 America/New_York (COMEX), London IB = 08:00-09:00 Europe/London. IVB is disabled until decision D1.",
+    "version": 1,
+    "definitions": [
+      {
+        "name": "new_york",
+        "tz": "America/New_York",
+        "start": "08:20",
+        "minutes": 60,
+        "session_end": "17:00",
+        "weekdays": [
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri"
+        ]
+      },
+      {
+        "name": "london",
+        "tz": "Europe/London",
+        "start": "08:00",
+        "minutes": 60,
+        "session_end": "16:00",
+        "weekdays": [
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri"
+        ]
+      }
+    ],
+    "extensions": [
+      "0.5",
+      "1",
+      "1.5",
+      "2",
+      "3"
+    ],
+    "formation_interval": "1m",
+    "behaviour_interval": "5m",
+    "failed_break_window": "30m",
+    "acceptance": {
+      "_doc": "the Phase 9 acceptance rule: consecutive closes beyond the level for accept_time, or lots beyond the level during that stretch >= accept_vol_frac x window volume",
+      "close_interval": "1m",
+      "accept_time": "15m",
+      "accept_vol_frac": "0.30"
+    },
+    "filters": {
+      "_doc": "documented boolean labels on breakouts only; they never gate an event",
+      "breakout_vol_mult": "1.5"
+    },
+    "ivb": {
+      "enabled": false,
+      "_doc": "decision D1: supply the exact meaning, formula, inputs, window and interpretation (with a worked example). Enabling it before then is refused at startup."
+    },
+    "persist": true
   }
 }

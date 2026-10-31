@@ -53,7 +53,7 @@ class ProcessorSink:
     on_trades(t, ids, p, q, side, rec)              accepted (deduplicated, classified) trades in delivery order
     on_advance(time_floor_ms)                       every trade with time < time_floor_ms has been delivered;
                                                     called before bars ending at or before it are finalised
-    on_after_advance(proc)                          end of every clock advance, after bars and windows (Phase 6)
+    on_after_advance(proc)                          end of every clock advance, after bars and windows (Phases 6, 10)
     on_dq(start_ms, end_ms, status)                 a data-quality interval became known (Phase 3 catalog)
     """
     name = "sink"

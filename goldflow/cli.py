@@ -10,6 +10,7 @@
   python -m goldflow.cli vprofile-verify [--sample-hours 6] | vprofile-export --window KEY --bin 10 [--as-of ISO]
   python -m goldflow.cli orderflow --name o1 [--resume] [--dates ..]   # Phase 7 orderflow event catalogue
   python -m goldflow.cli orderflow-validate [--dates ..]              # Phase 7 independent real-data checks
+  python -m goldflow.cli ib --name i1 [--resume] | ib-verify                 # Phase 10 Initial Balance + behaviour
   python -m goldflow.cli depth-record [--duration S]   # Phase 8 live L2 recorder (non-US host)
   python -m goldflow.cli depth-replay | depth-normalize
 The acquisition range is frozen in data/state/range.json on first run so that resumed runs
@@ -208,12 +209,40 @@ def _vprofile_cmd(cfg, a, log) -> int:
     bad = checker.violations or engine.stats["final_parity_mismatch"] or (out.get("verification") or {}).get("fail")
     return 1 if bad else (0 if res["status"] == "completed" else 3)
 
+def _ib_cmd(cfg, a, log) -> int:
+    """Phase 10: replay -> TradeProcessor -> IBEngine -> IB Parquet, then independent verification. Resumable."""
+    import signal, threading
+    from .replay import ReplayEngine, ChainHasher, IntegrityChecker
+    from .processing.trade_processor import TradeProcessor
+    from .ib.engine import IBEngine
+    from .ib.store import IBStore
+    from .ib.verify import verify
+    name = a.name or "ib"
+    engine = IBEngine(cfg, store=IBStore(cfg.data_root, cfg.symbol, replace=not a.resume))
+    proc = TradeProcessor(cfg, sinks=[engine]); hasher, checker = ChainHasher(), IntegrityChecker()
+    prog = lambda m: log.info("ib %s day=%s events=%d clock=%s %.0f ev/s rss=%dMB", name, m.get("day"), m["events"],
+                              m["sim_clock"], m["events_per_s"] or 0, m["peak_rss_mb"])
+    eng = ReplayEngine(cfg, [hasher, checker, proc], start=a.start, end=a.end, dates=a.dates, name=name, progress=prog)
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        signal.signal(sig, lambda *_: (log.info("stop requested; checkpointing"), eng.stop()))
+    if a.budget: threading.Timer(a.budget, eng.stop).start()
+    res = eng.run(resume=a.resume, until=a.until)
+    out = {"name": name, "status": res["status"], "events": res["events"], "events_this_run": res["events_this_run"],
+           "wall_s": res["wall_s"], "events_per_s": res["events_per_s"], "peak_rss_mb": res["peak_rss_mb"],
+           "sequence_digest": hasher.digest, "integrity_violations": checker.violations,
+           "processor_state_digest": proc.state_digest(), "ib": engine.summary()}
+    if res["status"] == "completed" and not a.no_reconcile:
+        out["verification"] = verify(cfg)["summary"]
+    print(json.dumps(out, indent=1, default=str))
+    bad = checker.violations or (out.get("verification") or {}).get("mismatches")
+    return 1 if bad else (0 if res["status"] == "completed" else 3)
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="goldflow")
     ap.add_argument("cmd", choices=["status", "providers", "discover", "acquire", "rest", "manifest", "normalize",
                                     "validate", "report", "replay", "process", "reconcile",
                                     "depth-record", "depth-replay", "depth-normalize", "orderflow", "orderflow-validate",
-                                    "vprofile", "vprofile-verify", "vprofile-export"])
+                                    "vprofile", "vprofile-verify", "vprofile-export", "ib", "ib-verify"])
     ap.add_argument("--profile", help="research (default) | test | live; or env GOLDFLOW_PROFILE")
     ap.add_argument("--config", default="config/binance_xauusdt.json")
     ap.add_argument("--months", type=int); ap.add_argument("--start"); ap.add_argument("--end")
@@ -299,6 +328,12 @@ def main(argv=None) -> int:
         if not a.window: print("goldflow: vprofile-export needs --window", file=sys.stderr); return 2
         p = export_window(cfg, a.window, a.bin, to_ms(parse_iso(a.as_of)) if a.as_of else None)
         print(str(p)); return 0
+    if a.cmd == "ib":
+        return _ib_cmd(cfg, a, log)
+    if a.cmd == "ib-verify":
+        from .ib.verify import verify as ib_verify
+        rep = ib_verify(cfg)
+        print(json.dumps(rep["summary"], indent=1)); return 0 if rep["summary"]["pass"] else 1
     if a.cmd == "orderflow":
         return _orderflow_cmd(cfg, a, log)
     if a.cmd == "orderflow-validate":   # independent checks on real days (taker orders vs aggTrades, CVD, imbalances)

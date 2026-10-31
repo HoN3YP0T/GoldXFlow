@@ -343,6 +343,15 @@ def validate_config(raw: dict[str, Any], base_dir: Path | None = None, check_dis
             ProfileSettings.from_config(Config(raw, base_dir or Path(".")))
         except (ValueError, KeyError, TypeError) as e:
             raise ConfigError([f"volume_profile: {e}"]) from None
+    if raw.get("initial_balance") is not None or raw.get("calendar") is not None:
+        # Phase 10 blocks: IB definitions (zoneinfo, DST gaps), behaviour rules, holiday calendar; IVB must stay disabled
+        from .config import Config
+        from .ib.settings import IBSettings
+
+        try:
+            IBSettings.from_config(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError, TypeError) as e:
+            raise ConfigError([f"initial_balance/calendar: {e}"]) from None
     if check_discovery and base_dir is not None:
         disc = base_dir / s.paths.data_root / "state" / "instrument_discovery.json"
         if disc.exists():

@@ -222,7 +222,7 @@ mql5/   (Phase 16: EA executor source)
 | 7 | Delta, CVD, imbalance, Big Trades, absorption, exhaustion | **Done** (2026-10-31; see `docs/PHASE7_COMPLETION_REPORT.md`; built before Phase 6, which it uses only for optional context levels) | M3 |
 | 8 | Order-book reconstruction and liquidity | **Done** (2026-10-31; live-only, see `docs/PHASE8_COMPLETION_REPORT.md`). The recorder must run on the PC or a non-US VPS. | M3 (live part) |
 | 9 | Auction Market Theory and failed auctions | Not started | M3 |
-| 10 | Sessions, Initial Balance, IVB | Not started (IVB definition required from you) | M3 |
+| 10 | Sessions, Initial Balance, IVB | **Done except IVB** (2026-10-31; see `docs/PHASE10_COMPLETION_REPORT.md`; IVB disabled until D1; IB windows PROPOSED, D4; CME holiday hours unverified) | M3 |
 | 11 | Strategy interface and signal generation | Not started | – |
 | 12 | Event-driven backtesting and execution simulation | Not started (needs broker tick history) | M4 |
 | 13 | Reports, validation, walk-forward, research | Not started | M5 |
@@ -255,7 +255,7 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 | §3 VWAP and volume analytics | Ph6 | Exact integer VWAP sums; float64 recomputation from decimal prices within 1e-9 relative |
 | §3 trade and orderflow analysis | Ph5, Ph7, Ph8 | – |
 | §3 Auction Market Theory | Ph9 | – |
-| §3 Initial Balance and IVB | Ph10 | IVB enabled only after its formula is approved |
+| §3 Initial Balance and IVB | Ph10 | `docs/METRICS_IB_V1.md`; six-month IB rebuild from raw trades (`data/reports/ib_verification.md`); IVB enabled only after its formula is approved |
 | §4 signal generation with evidence, SL/TP, R:R, score, reason | Ph11 | Signal schema; reproducibility tests |
 | §5 MT5 lifecycle, risk, reconciliation, recovery | Ph16 | – |
 | §6 backtest/live parity, costs, walk-forward, reports | Ph12, Ph13, Ph14 | – |
@@ -637,7 +637,19 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 10: Sessions, Initial Balance and IVB. **Status: Not started. IVB definition required.**
+### Phase 10: Sessions, Initial Balance and IVB. **Status: Done except IVB (2026-10-31). IVB definition required (D1).**
+**Built** (`goldflow/ib/`, spec `docs/METRICS_IB_V1.md`, report `docs/PHASE10_COMPLETION_REPORT.md`):
+- **Calendar:** the Phase 5 calendar plus a holiday calendar with rule-computed dates. CME holiday hours are UNVERIFIED and used as labels only.
+- **IB:** New York and London IBs (PROPOSED, D4) with developing values and extensions.
+- **Behaviour:** breakouts, failed and held breaks, acceptance outside by the Phase 9 rule, range expansion and session summaries.
+- **Engine:** `IBEngine`, a Phase 5 sink.
+- **IVB:** no code path; enabling it is refused at startup.
+
+**Evidence (six months):** 262/262 IB sessions rebuilt from raw trades with 0 mismatches; 633k events/s; replay and processor digests unchanged.
+
+**Commands.** `python -m goldflow.cli ib --name i1 [--resume]`; `ib-verify`.
+
+**Original specification:**
 **Objective.** Session-aware opening range and initial-session analytics.
 
 **What to build.**

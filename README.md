@@ -1,6 +1,6 @@
-# goldflow: Binance XAUUSDT gold orderflow engine (Phases 1–8)
+# goldflow: Binance XAUUSDT gold orderflow engine (Phases 1–8, 10)
 
-Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions, Phase 4 replays it deterministically, Phase 5 turns the replayed trades into exact price-level and footprint aggregates, Phase 6 builds volume profiles (POC, value area, HVN/LVN) and VWAP with bands, and Phase 7 adds transaction-based orderflow analytics.
+Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions, Phase 4 replays it deterministically, Phase 5 turns the replayed trades into exact price-level and footprint aggregates, Phase 6 builds volume profiles (POC, value area, HVN/LVN) and VWAP with bands, Phase 7 adds transaction-based orderflow analytics, and Phase 10 adds sessions, a holiday calendar and the Initial Balance.
 
 **No market data is committed to this repository.** Rebuild it with `python -m goldflow.cli acquire` then `python -m goldflow.cli normalize`. The frozen range in `data/state/range.json` reproduces the exact dataset, and the partition digests in `data/manifests/dataset_manifest.json` let you verify it.
 
@@ -38,8 +38,10 @@ goldflow/
   orderflow/        Phase 6: volume_profile.py (POC, value area, HVN/LVN), vwap.py, profile_engine.py (ProfileEngine sink),
                     profile_store.py, profile_rebuild.py, profile_verify.py, profile_export.py (chart JSON), profile_settings.py
                     Phase 7: engine.py (OrderflowAnalytics sink), delta, cvd, imbalance, big_trades, absorption, exhaustion, divergence
+  ib/               Phase 10: holidays.py (rule-computed calendar), tracker.py (IB state machine), engine.py (IBEngine sink),
+                    settings.py, store.py, verify.py
   cli.py            discover | acquire | rest | manifest | normalize | validate | report | replay | process | reconcile
-docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, METRICS_PROFILE_V1.md, METRICS_ORDERFLOW_V1.md, PHASE*_REPORT.md
+docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, METRICS_PROFILE_V1.md, METRICS_ORDERFLOW_V1.md, METRICS_IB_V1.md, PHASE*_REPORT.md
 tests/test_core.py, test_phase3.py, test_replay.py, test_processing.py
 data/raw/binance/futures_um/XAUUSDT/<dataset>/<daily|monthly|rest>/   raw zips + .CHECKSUM (+ _verify sidecars)
 data/state/   acquisition.sqlite, range.json, plan-*.json, progress.json, acquisition.log, instrument_discovery.json
@@ -135,6 +137,23 @@ python -m goldflow.cli orderflow --name o1 --resume      # after --until / --bud
 python -m goldflow.cli orderflow-validate                # independent recomputation on sample days (CVD, imbalances, taker orders vs aggTrades)
 ```
 Outputs `data/derived/.../orderflow/{events,imbalances,cvd}/date=D/` with a manifest, plus `data/reports/orderflow_catalogue.{md,json}` and `orderflow_validation.{md,json}`. Every event carries its evidence window, a confirmation time that is never earlier than the evidence end, source trade ids, unknown-side volume, sessions, weekend, data-quality and coverage labels. Thresholds are research defaults (`goldflow/orderflow/settings.py`), not tuned values. See `docs/METRICS_ORDERFLOW_V1.md`.
+
+## Phase 10: sessions, holiday calendar and Initial Balance (IVB disabled)
+```bash
+python -m goldflow.cli ib --name i1             # replay -> TradeProcessor -> IBEngine -> IB Parquet -> verification against raw trades
+python -m goldflow.cli ib --name i1 --resume    # continue after --until / --budget / Ctrl-C
+python -m goldflow.cli ib-verify                # IB extremes from raw trades + full rebuild from bars recomputed from raw trades
+```
+Outputs:
+- `data/derived/.../initial_balance/date=D/{events,developing,sessions}.parquet` with a manifest;
+- `data/reports/ib_verification.{md,json}`.
+
+**What it builds:**
+- **IB:** New York (08:20–09:20 America/New_York) and London (08:00–09:00 Europe/London) IBs, with DST through zoneinfo. These are **proposed** defaults (decision D4).
+- **Levels and events:** IB high, low, mid and range, extensions at 0.5/1/1.5/2/3 × range, developing values every minute, breakouts on 5-minute closes, failed breaks within 30 minutes, held breakouts, acceptance outside (the Phase 9 time/volume rule), range expansion and session summaries.
+- **Holiday calendar:** dates are computed from the US holiday rules. CME hours on those days are **unverified**, so holidays only label rows.
+
+**IVB** stays disabled until its definition is supplied (decision D1). Enabling it is refused at startup. See `docs/METRICS_IB_V1.md`.
 
 ## Phase 8: live order book (L2) recorder and liquidity metrics
 There is no historical price-level book for this dataset, so depth history starts the day the recorder starts. Run it where `fapi.binance.com` REST is reachable (the trading PC or a non-US VPS). A US host gets HTTP 451 on the snapshot, and the recorder stops with exit code 4.
