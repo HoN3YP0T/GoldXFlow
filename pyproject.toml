@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "goldflow"
-version = "0.5.0"
-description = "Gold orderflow engine: Binance XAUUSDT data foundation (acquisition, validation, replay)"
+version = "0.7.0"
+description = "Gold orderflow engine: Binance XAUUSDT data foundation (acquisition, validation, replay) and orderflow analytics"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "Hrithik Ganguli" }]

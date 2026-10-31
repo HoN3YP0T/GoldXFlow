@@ -6,6 +6,8 @@
   python -m goldflow.cli manifest  --config ...
   python -m goldflow.cli process   --name p1 [--resume] [--dates ..] [--budget S]   # Phase 5 trade processor
   python -m goldflow.cli reconcile [--interval 1m]                              # Phase 5 footprint checks
+  python -m goldflow.cli vprofile  --name v1 [--resume] [--footprint]          # Phase 6 volume profile / VWAP snapshots
+  python -m goldflow.cli vprofile-verify [--sample-hours 6] | vprofile-export --window KEY --bin 10 [--as-of ISO]
   python -m goldflow.cli orderflow --name o1 [--resume] [--dates ..]   # Phase 7 orderflow event catalogue
   python -m goldflow.cli orderflow-validate [--dates ..]              # Phase 7 independent real-data checks
   python -m goldflow.cli depth-record [--duration S]   # Phase 8 live L2 recorder (non-US host)
@@ -176,11 +178,42 @@ def _orderflow_cmd(cfg, a, log) -> int:
     bad = checker.violations or of.counters["confirm_before_evidence_end"] or (out.get("report") or {}).get("fail")
     return 1 if bad else (0 if res["status"] == "completed" else 3)
 
+def _vprofile_cmd(cfg, a, log) -> int:
+    """Phase 6: replay -> TradeProcessor -> ProfileEngine (+ optional footprint) -> profile Parquet, then verification."""
+    import signal, threading
+    from .replay import ReplayEngine, ChainHasher, IntegrityChecker
+    from .processing.trade_processor import TradeProcessor
+    from .processing.footprint_store import FootprintWriter
+    from .orderflow.profile_engine import ProfileEngine
+    from .orderflow.profile_store import ProfileStore
+    from .orderflow.profile_verify import verify
+    name = a.name or "vprofile"
+    engine = ProfileEngine(cfg, store=ProfileStore(cfg.data_root, cfg.symbol, replace=not a.resume))
+    sinks = [engine] + ([FootprintWriter(cfg.data_root, cfg.symbol, replace=not a.resume)] if a.footprint else [])
+    proc = TradeProcessor(cfg, sinks=sinks); hasher, checker = ChainHasher(), IntegrityChecker()
+    prog = lambda m: log.info("vprofile %s day=%s events=%d clock=%s %.0f ev/s rss=%dMB", name, m.get("day"), m["events"],
+                              m["sim_clock"], m["events_per_s"] or 0, m["peak_rss_mb"])
+    eng = ReplayEngine(cfg, [hasher, checker, proc], start=a.start, end=a.end, dates=a.dates, name=name, progress=prog)
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        signal.signal(sig, lambda *_: (log.info("stop requested; checkpointing"), eng.stop()))
+    if a.budget: threading.Timer(a.budget, eng.stop).start()
+    res = eng.run(resume=a.resume, until=a.until)
+    out = {"name": name, "status": res["status"], "events": res["events"], "events_this_run": res["events_this_run"],
+           "sim_clock": res["sim_clock"], "wall_s": res["wall_s"], "events_per_s": res["events_per_s"],
+           "peak_rss_mb": res["peak_rss_mb"], "sequence_digest": hasher.digest, "integrity_violations": checker.violations,
+           "processor_state_digest": proc.state_digest(), "profile": engine.summary()}
+    if res["status"] == "completed" and not a.no_reconcile:
+        out["verification"] = verify(cfg, sample_hours=a.sample_hours)["summary"]
+    print(json.dumps(out, indent=1, default=str))
+    bad = checker.violations or engine.stats["final_parity_mismatch"] or (out.get("verification") or {}).get("fail")
+    return 1 if bad else (0 if res["status"] == "completed" else 3)
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="goldflow")
     ap.add_argument("cmd", choices=["status", "providers", "discover", "acquire", "rest", "manifest", "normalize",
                                     "validate", "report", "replay", "process", "reconcile",
-                                    "depth-record", "depth-replay", "depth-normalize", "orderflow", "orderflow-validate"])
+                                    "depth-record", "depth-replay", "depth-normalize", "orderflow", "orderflow-validate",
+                                    "vprofile", "vprofile-verify", "vprofile-export"])
     ap.add_argument("--profile", help="research (default) | test | live; or env GOLDFLOW_PROFILE")
     ap.add_argument("--config", default="config/binance_xauusdt.json")
     ap.add_argument("--months", type=int); ap.add_argument("--start"); ap.add_argument("--end")
@@ -200,6 +233,11 @@ def main(argv=None) -> int:
     ap.add_argument("--streams", nargs="*", help="replay: enable only these streams (default: config)")
     ap.add_argument("--no-reconcile", action="store_true", help="process: skip the reconciliation after completion")
     ap.add_argument("--interval", default="1m", help="reconcile: footprint interval to check")
+    ap.add_argument("--footprint", action="store_true", help="vprofile: also write the Phase 5 footprint dataset")
+    ap.add_argument("--sample-hours", type=int, default=6, help="vprofile-verify: rebuild developing snapshots every N hours")
+    ap.add_argument("--window", help="vprofile-export: window key, e.g. session:london:2026-10-26")
+    ap.add_argument("--bin", type=int, default=10, help="vprofile-export: profile bin size in ticks")
+    ap.add_argument("--as-of", help="vprofile-export: developing snapshot time (UTC ISO); default = latest/final")
     ap.add_argument("--duration", type=float, help="depth-record: stop after this many seconds (default: run until Ctrl-C)")
     a = ap.parse_args(argv)
     from .migrations import apply_migrations
@@ -250,6 +288,17 @@ def main(argv=None) -> int:
         from .processing.reconcile import reconcile
         rep = reconcile(cfg, interval=a.interval)
         print(json.dumps(rep["summary"], indent=1)); return 1 if rep["summary"]["fail"] else 0
+    if a.cmd == "vprofile":
+        return _vprofile_cmd(cfg, a, log)
+    if a.cmd == "vprofile-verify":
+        from .orderflow.profile_verify import verify
+        rep = verify(cfg, dates=a.dates, sample_hours=a.sample_hours)
+        print(json.dumps(rep["summary"], indent=1)); return 1 if rep["summary"]["fail"] else 0
+    if a.cmd == "vprofile-export":
+        from .orderflow.profile_export import export_window
+        if not a.window: print("goldflow: vprofile-export needs --window", file=sys.stderr); return 2
+        p = export_window(cfg, a.window, a.bin, to_ms(parse_iso(a.as_of)) if a.as_of else None)
+        print(str(p)); return 0
     if a.cmd == "orderflow":
         return _orderflow_cmd(cfg, a, log)
     if a.cmd == "orderflow-validate":   # independent checks on real days (taker orders vs aggTrades, CVD, imbalances)

@@ -206,5 +206,47 @@
         "_doc": "COMEX gold pit hours"
       }
     ]
+  },
+  "volume_profile": {
+    "_doc": "Phase 6 profile engine (docs/METRICS_PROFILE_V1.md). Volumes in lots, prices in ticks. Fractions are decimal strings so they are exact. Node and VA parameters are v1 defaults: PROPOSED until reviewed (see the Phase 6 report).",
+    "version": 1,
+    "bin_ticks": [
+      10
+    ],
+    "value_area": {
+      "pct": "0.70",
+      "method": "pair",
+      "_doc": "pair = CBOT-style two-bin expansion (default); single = one bin at a time"
+    },
+    "nodes": {
+      "smooth_bins": 5,
+      "truncate_sigmas": 4,
+      "kernel_scale_bits": 20,
+      "prom_frac": "0.10",
+      "hvn_min_vol_frac": "1.0",
+      "lvn_max_vol_frac": "0.5",
+      "min_separation_bins": 10,
+      "width_rel_height": "0.5",
+      "_doc": "integer Gaussian smoothing (sigma = smooth_bins bins); peaks need prominence >= prom_frac * max(smoothed); HVN smoothed >= hvn_min_vol_frac * mean bin volume, LVN <= lvn_max_vol_frac * mean"
+    },
+    "vwap": {
+      "band_k": [
+        1,
+        2,
+        3
+      ],
+      "variance": "population"
+    },
+    "snapshot_every": "1m",
+    "windows": [
+      "utc_day",
+      "trading_day",
+      "trading_week",
+      "session",
+      "custom",
+      "anchor"
+    ],
+    "anchors": [],
+    "persist": true
   }
 }
