@@ -1,6 +1,6 @@
 # goldflow: Binance XAUUSDT gold orderflow engine (Phases 1–6, 8)
 
-Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions, Phase 4 replays it deterministically, Phase 5 turns the replayed trades into exact price-level and footprint aggregates, Phase 6 builds volume profiles (POC, value area, HVN/LVN) and VWAP with bands on top of them, Phase 7 adds delta, CVD, footprint imbalances, Big Trades (rebuilt taker orders) and absorption / exhaustion / divergence events, Phase 9 adds Auction Market Theory: acceptance, rejection and failed auctions at reference levels, auction state, activity and profile shape. Phase 10 adds the Initial Balance (with extensions, breakouts and failed breaks) and a holiday calendar; IVB stays disabled until it is defined.
+Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions, Phase 4 replays it deterministically, Phase 5 turns the replayed trades into exact price-level and footprint aggregates, Phase 6 builds volume profiles (POC, value area, HVN/LVN) and VWAP with bands on top of them, Phase 7 adds delta, CVD, footprint imbalances, Big Trades (rebuilt taker orders) and absorption / exhaustion / divergence events, Phase 9 adds Auction Market Theory: acceptance, rejection and failed auctions at reference levels, auction state, activity and profile shape. Phase 10 adds the Initial Balance (with extensions, breakouts and failed breaks) and a holiday calendar; IVB stays disabled until it is defined. Phase 11 adds the strategy interface: research strategies turn that evidence into explainable, gated trading signals (proposals, not orders).
 
 **No market data is committed to this repository.** Rebuild it with `python -m goldflow.cli acquire` then `python -m goldflow.cli normalize`. The frozen range in `data/state/range.json` reproduces the exact dataset, and the partition digests in `data/manifests/dataset_manifest.json` let you verify it.
 
@@ -42,10 +42,12 @@ goldflow/
                     Phase 9: auction.py, failed_auction.py, auction_engine.py (AuctionEngine sink), auction_verify.py,
                     auction_review.py (CSV + SVG charts), auction_settings.py
                     Phase 10: initial_balance.py (IBEngine sink), ib_verify.py, ivb.py (disabled); processing/holidays.py
+  strategies/       Phase 11: signal.py (TradingSignal), base.py (Strategy contract), regime.py, library.py (examples),
+                    engine.py (StrategyEngine sink, gating), verify.py
   cli.py            discover | acquire | rest | manifest | normalize | validate | report | replay | process | reconcile |
-                    vprofile | vprofile-verify | vprofile-export | orderflow | orderflow-verify | auction | auction-verify | auction-review | ib | ib-verify
-docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, METRICS_PROFILE_V1.md, METRICS_ORDERFLOW_V1.md, METRICS_AUCTION_V1.md, METRICS_IB_V1.md, PHASE*_REPORT.md
-tests/test_core.py, test_phase3.py, test_replay.py, test_processing.py, test_profile.py, test_orderflow.py, test_auction.py, test_ib.py
+                    vprofile | vprofile-verify | vprofile-export | orderflow | orderflow-verify | auction | auction-verify | auction-review | ib | ib-verify | signals | signals-verify
+docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, METRICS_PROFILE_V1.md, METRICS_ORDERFLOW_V1.md, METRICS_AUCTION_V1.md, METRICS_IB_V1.md, SIGNALS_V1.md, PHASE*_REPORT.md
+tests/test_core.py, test_phase3.py, test_replay.py, test_processing.py, test_profile.py, test_orderflow.py, test_auction.py, test_ib.py, test_strategies.py
 data/raw/binance/futures_um/XAUUSDT/<dataset>/<daily|monthly|rest>/   raw zips + .CHECKSUM (+ _verify sidecars)
 data/state/   acquisition.sqlite, range.json, plan-*.json, progress.json, acquisition.log, instrument_discovery.json
 data/manifest.json
@@ -202,3 +204,12 @@ python -m goldflow.cli ib-verify                         # exact recomputation f
 - **Auction link:** IB high, low and mid are Phase 9 reference levels. Acceptance outside the IB is Phase 9's acceptance on them.
 - **Holidays:** the `holidays` block labels IB rows and skips the IB on CLOSED dates. It is **PROPOSED**: verify it against CME's published schedule.
 - **IVB:** **disabled**. `ivb.enabled: true` is refused until its definition is supplied and implemented (decision D1). See `docs/METRICS_IB_V1.md`.
+
+## Phase 11: Strategy interface and signals
+```bash
+python -m goldflow.cli signals --name s1 [--resume]      # full analytics pipeline in memory -> StrategyEngine -> signals Parquet -> verification
+python -m goldflow.cli signals-verify                    # re-derives every signal from its stored evidence
+```
+- **Signals:** each signal has an entry, stop, target, exact R:R, an uncalibrated score, an expiry and an evidence list (every item with its timestamp and source ids). They are in Binance ticks and are proposals, not orders.
+- **Gating:** suppress-only. Unsupported capabilities are refused at start; signals are suppressed during warm-up, open data-quality intervals, non-OK evidence and duplicate active setups.
+- **Example research strategies** (not assumed profitable): failed auction at VAH/VAL, absorption at an HVN or VWAP band, and IB failed break. Parameters are **proposed** (D13). See `docs/SIGNALS_V1.md`.

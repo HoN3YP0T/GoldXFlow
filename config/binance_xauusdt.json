@@ -497,5 +497,21 @@
     "_doc": "IVB is DISABLED until its definition is supplied and signed off (decision D1). It is never replaced by IB or another metric.",
     "enabled": false,
     "definition": null
+  },
+  "strategies": {
+    "_doc": "Phase 11 research strategies (docs/SIGNALS_V1.md). None is assumed profitable; parameters are PROPOSED (D13). Signals are proposals in Binance ticks, not orders.",
+    "version": 1,
+    "enabled": [
+      "fa_value_edge",
+      "absorption_level",
+      "ib_failed_break"
+    ],
+    "params": {},
+    "warmup": "24h",
+    "regime": {
+      "vol_bars": 12,
+      "volume_lookback_days": 20
+    },
+    "persist": true
   }
 }

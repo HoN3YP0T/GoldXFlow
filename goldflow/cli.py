@@ -12,6 +12,7 @@
   python -m goldflow.cli orderflow-verify [--dates ..]                        # Phase 7 independent recomputation
   python -m goldflow.cli auction --name a1 [--resume] | auction-verify | auction-review [--limit N]   # Phase 9 AMT
   python -m goldflow.cli ib --name i1 [--resume] | ib-verify                                        # Phase 10 Initial Balance
+  python -m goldflow.cli signals --name s1 [--resume] | signals-verify                              # Phase 11 strategy signals
   python -m goldflow.cli depth-record [--duration S]   # Phase 8 live L2 recorder (non-US host)
   python -m goldflow.cli depth-replay | depth-normalize
 The acquisition range is frozen in data/state/range.json on first run so that resumed runs
@@ -188,6 +189,7 @@ def main(argv=None) -> int:
                                     "validate", "report", "replay", "process", "reconcile",
                                     "vprofile", "vprofile-verify", "vprofile-export", "orderflow", "orderflow-verify",
                                     "auction", "auction-verify", "auction-review", "ib", "ib-verify",
+                                    "signals", "signals-verify",
                                     "depth-record", "depth-replay", "depth-normalize"])
     ap.add_argument("--profile", help="research (default) | test | live; or env GOLDFLOW_PROFILE")
     ap.add_argument("--config", default="config/binance_xauusdt.json")
@@ -287,6 +289,12 @@ def main(argv=None) -> int:
     if a.cmd == "ib-verify":
         from .orderflow.ib_verify import verify as ib_verify
         rep = ib_verify(cfg, dates=a.dates)
+        print(json.dumps(rep["summary"], indent=1)); return 1 if rep["summary"]["fail"] else 0
+    if a.cmd == "signals":
+        return _signals_cmd(cfg, a, log)
+    if a.cmd == "signals-verify":
+        from .strategies.verify import verify as sig_verify
+        rep = sig_verify(cfg)
         print(json.dumps(rep["summary"], indent=1)); return 1 if rep["summary"]["fail"] else 0
     if a.cmd == "auction-review":
         from .orderflow.auction_review import review
@@ -405,6 +413,38 @@ def _ib_cmd(cfg, a, log) -> int:
            "ib": engine.summary()}
     if res["status"] == "completed" and not a.no_reconcile:
         out["verification"] = ib_verify(cfg)["summary"]
+    print(json.dumps(out, indent=1, default=str))
+    bad = checker.violations or (out.get("verification") or {}).get("fail")
+    return 1 if bad else (0 if res["status"] == "completed" else 3)
+
+def _signals_cmd(cfg, a, log) -> int:
+    """Phase 11: replay -> TradeProcessor -> Profile/Orderflow/IB/Auction engines -> StrategyEngine -> signals Parquet."""
+    import signal, threading
+    from .replay import ReplayEngine, ChainHasher, IntegrityChecker
+    from .processing.trade_processor import TradeProcessor
+    from .orderflow.engine import ProfileEngine
+    from .orderflow.flow_engine import OrderflowEngine
+    from .orderflow.initial_balance import IBEngine
+    from .orderflow.auction_engine import AuctionEngine
+    from .strategies import SignalStore, StrategyEngine, build_strategies
+    from .strategies.verify import verify as sig_verify
+    name = a.name or "signals"
+    prof, flow, ib = ProfileEngine(cfg), OrderflowEngine(cfg), IBEngine(cfg)   # analytics in memory; their datasets come from their own commands
+    auc = AuctionEngine(cfg, prof, ib_engine=ib)
+    strat = StrategyEngine(cfg, build_strategies(cfg), {"profile": prof, "orderflow": flow, "ib": ib, "auction": auc},
+                           store=SignalStore(cfg.data_root, cfg.symbol, replace=not a.resume))
+    proc = TradeProcessor(cfg, sinks=[prof, flow, ib, auc, strat]); hasher, checker = ChainHasher(), IntegrityChecker()
+    eng = ReplayEngine(cfg, [hasher, checker, proc], start=a.start, end=a.end, dates=a.dates, name=name,
+                       progress=lambda m: log.info("signals %s day=%s events=%d clock=%s", name, m.get("day"), m["events"], m["sim_clock"]))
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        signal.signal(sig, lambda *_: (log.info("stop requested; checkpointing"), eng.stop()))
+    if a.budget: threading.Timer(a.budget, eng.stop).start()
+    res = eng.run(resume=a.resume, until=a.until)
+    out = {"name": name, "status": res["status"], "events": res["events"], "wall_s": res["wall_s"], "events_per_s": res["events_per_s"],
+           "peak_rss_mb": res["peak_rss_mb"], "sequence_digest": hasher.digest, "integrity_violations": checker.violations,
+           "strategies": strat.summary()}
+    if res["status"] == "completed" and not a.no_reconcile:
+        out["verification"] = sig_verify(cfg)["summary"]
     print(json.dumps(out, indent=1, default=str))
     bad = checker.violations or (out.get("verification") or {}).get("fail")
     return 1 if bad else (0 if res["status"] == "completed" else 3)

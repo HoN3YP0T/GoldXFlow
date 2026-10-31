@@ -361,6 +361,14 @@ def validate_config(raw: dict[str, Any], base_dir: Path | None = None, check_dis
             validate_ivb(raw.get("ivb"))
         except ValueError as e:
             raise ConfigError([f"ivb: {e}"]) from None
+    if raw.get("strategies") is not None:
+        from .config import Config
+        from .strategies.engine import strategy_settings
+
+        try:
+            strategy_settings(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError, TypeError) as e:
+            raise ConfigError([f"strategies: {e}"]) from None
     if raw.get("auction") is not None:
         # Phase 9 block: reference levels, acceptance/rejection, failed auctions, auction state, profile shape
         from .config import Config
