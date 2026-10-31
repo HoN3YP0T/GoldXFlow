@@ -218,7 +218,7 @@ mql5/   (Phase 16: EA executor source)
 | 3 | Validation, normalisation and storage | **Done** | M1 |
 | 4 | Deterministic historical replay | **Done** | M2 |
 | 5 | Trade processing, classification, price-level aggregation | **Done** (session times still PROPOSED, D4) | M3 (begins) |
-| 6 | Volume Profile, POC, Value Area, HVN/LVN, VWAP | Not started | M3 |
+| 6 | Volume Profile, POC, Value Area, HVN/LVN, VWAP | **Done** (2026-10-31; see `docs/PHASE6_COMPLETION_REPORT.md`; v1 node/VA parameters PROPOSED) | M3 |
 | 7 | Delta, CVD, imbalance, Big Trades, absorption, exhaustion | Not started | M3 |
 | 8 | Order-book reconstruction and liquidity | **Done** (2026-10-31; live-only, see `docs/PHASE8_COMPLETION_REPORT.md`). The recorder must run on the PC or a non-US VPS. | M3 (live part) |
 | 9 | Auction Market Theory and failed auctions | Not started | M3 |
@@ -251,8 +251,8 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 | S8 performance on unseen data | Ph13 | Out-of-sample and walk-forward metrics; research ledger; approval criteria |
 | §2 multi-source, configurable providers | Ph1 (contract), Ph14, Ph15 | Provider added without analytics changes |
 | §2 never merge unrelated books | Ph8, Ph15 | One book per venue; tests reject merged inputs |
-| §3 volume and market profile | Ph6 | – |
-| §3 VWAP and volume analytics | Ph6 | – |
+| §3 volume and market profile | Ph6 | `docs/METRICS_PROFILE_V1.md`; hand-computed POC/VA/prominence tests; six-month from-scratch parity (`data/reports/profile_verification.md`) |
+| §3 VWAP and volume analytics | Ph6 | Exact integer VWAP sums; float64 recomputation from decimal prices within 1e-9 relative |
 | §3 trade and orderflow analysis | Ph5, Ph7, Ph8 | – |
 | §3 Auction Market Theory | Ph9 | – |
 | §3 Initial Balance and IVB | Ph10 | IVB enabled only after its formula is approved |

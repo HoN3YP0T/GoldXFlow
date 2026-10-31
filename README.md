@@ -1,6 +1,6 @@
-# goldflow: Binance XAUUSDT gold orderflow engine (Phases 1–5, 8)
+# goldflow: Binance XAUUSDT gold orderflow engine (Phases 1–6, 8)
 
-Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions, Phase 4 replays it deterministically, and Phase 5 turns the replayed trades into exact price-level and footprint aggregates.
+Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions, Phase 4 replays it deterministically, Phase 5 turns the replayed trades into exact price-level and footprint aggregates, and Phase 6 builds volume profiles (POC, value area, HVN/LVN) and VWAP with bands on top of them.
 
 **No market data is committed to this repository.** Rebuild it with `python -m goldflow.cli acquire` then `python -m goldflow.cli normalize`. The frozen range in `data/state/range.json` reproduces the exact dataset, and the partition digests in `data/manifests/dataset_manifest.json` let you verify it.
 
@@ -35,9 +35,12 @@ goldflow/
   replay.py         Phase 4 deterministic replay (EventChunk / Consumer interface)
   processing/       Phase 5: trade_processor.py (TradeProcessor consumer), classify.py, aggregation.py,
                     sessions.py (zoneinfo calendar), settings.py, footprint_store.py, reconcile.py
-  cli.py            discover | acquire | rest | manifest | normalize | validate | report | replay | process | reconcile
-docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, PHASE*_REPORT.md
-tests/test_core.py, test_phase3.py, test_replay.py, test_processing.py
+  orderflow/        Phase 6: volume_profile.py (POC, value area, HVN/LVN), vwap.py, engine.py (ProfileEngine sink),
+                    store.py, rebuild.py (from-scratch rebuild), verify.py, export.py (chart JSON), settings.py
+  cli.py            discover | acquire | rest | manifest | normalize | validate | report | replay | process | reconcile |
+                    vprofile | vprofile-verify | vprofile-export
+docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, METRICS_PROFILE_V1.md, PHASE*_REPORT.md
+tests/test_core.py, test_phase3.py, test_replay.py, test_processing.py, test_profile.py
 data/raw/binance/futures_um/XAUUSDT/<dataset>/<daily|monthly|rest>/   raw zips + .CHECKSUM (+ _verify sidecars)
 data/state/   acquisition.sqlite, range.json, plan-*.json, progress.json, acquisition.log, instrument_discovery.json
 data/manifest.json
@@ -102,6 +105,28 @@ data/derived/.../footprint/interval=1m/_manifest.json      per-date totals, dige
 data/reports/processing_reconciliation_1m.{md,json}       exact checks vs trades partitions and Binance 1m klines
 ```
 Exchange-reported aggressor sides only (UNKNOWN is never reassigned), integer lots and ticks, duplicate-safe, bars finalised only after their end (no look-ahead), sessions in named time zones with DST, and snapshot/restore equal to an uninterrupted run. Settings live in the `processing` and `sessions` config blocks; the session times are **proposed** defaults (decision D4). See `docs/PROCESSING_V1.md`. Python API: `goldflow.processing.TradeProcessor` with `ProcessorSink` subclasses for downstream analytics.
+
+## Phase 6: Volume Profile, POC, Value Area, HVN/LVN and VWAP
+```bash
+python -m goldflow.cli vprofile --name v1                 # replay -> TradeProcessor -> ProfileEngine -> profile Parquet -> verification
+python -m goldflow.cli vprofile --name v1 --resume        # continue after --until / --budget / Ctrl-C
+python -m goldflow.cli vprofile --name v1 --footprint     # also (re)write the Phase 5 footprint in the same pass
+python -m goldflow.cli vprofile-verify --sample-hours 6   # rebuild snapshots from raw trades: exact parity, VWAP vs float64, Phase 5 totals
+python -m goldflow.cli vprofile-export --window session:london:2026-10-26 --bin 10 [--as-of 2026-10-26T09:00:00Z]   # chart JSON
+```
+Outputs:
+```
+data/derived/provider=binance/market=usdm_perpetual/instrument=XAUUSDT/profile/date=YYYY-MM-DD/{snapshots,nodes,levels}.parquet
+data/derived/.../profile/_manifest.json          per-date rows and digests, settings hashes, smoothing kernel, source dataset version
+data/derived/.../profile/charts/*.json           vprofile-export output
+data/reports/profile_verification.{md,json}     parity and VWAP-tolerance report
+```
+- **Windows:** profiles and VWAP for every UTC day, trading day, trading week, session, custom range and anchor.
+- **Snapshots:** developing snapshots every minute contain exactly the trades before `as_of`, so there is no look-ahead. A final snapshot is taken at each window end.
+- **Exactness:** POC, value area (CBOT pair rule) and HVN/LVN are decided in exact integer or rational arithmetic. VWAP and the population-σ bands come from exact integer sums.
+- **Settings:** the `volume_profile` config block. The defaults are **proposed** v1 parameters.
+
+See `docs/METRICS_PROFILE_V1.md`. Python API: `goldflow.orderflow.ProfileEngine` (a `ProcessorSink`; `listeners=[...]` receive every snapshot, `current(kind, name)` returns the latest developing one).
 
 ## Phase 8: live order book (L2) recorder and liquidity metrics
 There is no historical price-level book for this dataset, so depth history starts the day the recorder starts. Run it where `fapi.binance.com` REST is reachable (the trading PC or a non-US VPS). A US host gets HTTP 451 on the snapshot, and the recorder stops with exit code 4.

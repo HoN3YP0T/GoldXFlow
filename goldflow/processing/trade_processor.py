@@ -50,11 +50,15 @@ class ProcessorSink:
 
     on_bars(interval, bars, levels, final_upto_ms)  finalised bars (columns) and their footprint levels
     on_window(summary, levels)                      a finalised window (totals dict and its 1-tick level columns)
+    on_dq(start_ms, end_ms, status)                 a data-quality interval became known (Phase 3 catalog)
+    on_advance(proc)                                end of every clock advance, after bars and windows (Phase 6)
     """
     name = "sink"
     def on_start(self, ctx: dict[str, Any], proc: "TradeProcessor") -> None: pass
     def on_bars(self, interval: str, bars: dict[str, Any], levels: dict[str, Any], final_upto_ms: int) -> None: pass
     def on_window(self, summary: dict[str, Any], levels: dict[str, Any]) -> None: pass
+    def on_dq(self, start_ms: int, end_ms: int, status: str) -> None: pass
+    def on_advance(self, proc: "TradeProcessor") -> None: pass
     def on_seek(self, t_ms: int) -> None: pass
     def on_stop(self, ctx: dict[str, Any], proc: "TradeProcessor") -> None: pass
     def get_state(self) -> dict[str, Any]: return {}
@@ -171,6 +175,9 @@ class TradeProcessor(Consumer):
                 if e["type"] == "DQ_BEGIN" and e["dataset"] in self.st.dq_datasets and e["end_ms"] > self.observe_from:
                     self.dq.append([e["start_ms"], e["end_ms"], e["status"]])
         for s in self.sinks: s.on_start(ctx, self)
+        if not ctx.get("resumed"):
+            for x in self.dq:
+                for s in self.sinks: s.on_dq(x[0], x[1], x[2])
 
     def on_chunk(self, c: EventChunk) -> None:
         if "quality" in c.streams:
@@ -179,6 +186,7 @@ class TradeProcessor(Consumer):
                 e = c.quality[r]
                 if e["type"] == "DQ_BEGIN" and e["dataset"] in self.st.dq_datasets:
                     self.dq.append([e["start_ms"], e["end_ms"], e["status"]])
+                    for s in self.sinks: s.on_dq(e["start_ms"], e["end_ms"], e["status"])
         if "trades" in c.streams and "trades" in c.tables:
             rows = c.stream_rows("trades")
             if len(rows):
@@ -365,6 +373,7 @@ class TradeProcessor(Consumer):
                 del self.windows[k]
                 for s in self.sinks: s.on_window(summ, lv)
         self._prune_dq()
+        for s in self.sinks: s.on_advance(self)
 
     def _prune_dq(self) -> None:
         if not self.dq: return

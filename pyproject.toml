@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "goldflow"
-version = "0.5.0"
-description = "Gold orderflow engine: Binance XAUUSDT data foundation (acquisition, validation, replay)"
+version = "0.6.0"
+description = "Gold orderflow engine: Binance XAUUSDT data foundation (acquisition, validation, replay) and orderflow analytics"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "Hrithik Ganguli" }]
@@ -62,11 +62,11 @@ python_version = "3.12"
 warn_unused_configs = true
 ignore_missing_imports = true
 files = ["goldflow/settings.py", "goldflow/profiles.py", "goldflow/observability.py", "goldflow/migrations.py",
-         "goldflow/providers", "goldflow/processing", "goldflow/liquidity"]
+         "goldflow/providers", "goldflow/processing", "goldflow/liquidity", "goldflow/orderflow"]
 
 [[tool.mypy.overrides]]
 module = ["goldflow.settings", "goldflow.profiles", "goldflow.observability", "goldflow.migrations", "goldflow.providers.*",
-          "goldflow.processing.*", "goldflow.liquidity", "goldflow.liquidity.*"]
+          "goldflow.processing.*", "goldflow.liquidity", "goldflow.liquidity.*", "goldflow.orderflow", "goldflow.orderflow.*"]
 strict = true
 
 [[tool.mypy.overrides]]
