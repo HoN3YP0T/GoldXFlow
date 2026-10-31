@@ -188,14 +188,17 @@ goldflow/                     current package
   rest_client.py  vision_archive.py  checkpoint.py  acquire.py  integrity.py  report.py   (Phase 2)
   schemas.py  normalize.py  catalog.py  dataset_report.py                                  (Phase 3)
   replay.py                                                                                (Phase 4)
+  settings.py  profiles.py  observability.py  migrations.py  providers/{base.py, registry.py, binance/, dummy/}  (Phase 1)
   processing/{trade_processor.py, classify.py, aggregation.py, sessions.py, settings.py,
               footprint_store.py, reconcile.py}                                            (Phase 5)
-  cli.py                       discover | acquire | rest | manifest | normalize | validate | report | replay | process | reconcile
+  orderflow/{volume_profile.py, vwap.py, engine.py, store.py, rebuild.py, verify.py, export.py}            (Phase 6)
+  orderflow/{delta.py, cvd.py, imbalance.py, big_trades.py, absorption.py, exhaustion.py, divergence.py,
+             events.py, flow_engine.py, flow_store.py, flow_verify.py, flow_settings.py}                  (Phase 7)
+  liquidity/{book.py, recorder.py, capture.py, dataset.py, metrics.py, coverage.py, registry.py, ...}     (Phase 8)
+  cli.py      discover | acquire | rest | manifest | normalize | validate | report | replay | process | reconcile |
+              vprofile[-verify|-export] | orderflow[-verify] | depth-record | depth-replay | depth-normalize
   — to add —
-  providers/{base.py, registry.py, binance/, dummy/}                                       (Phase 1, 14, 15)
-  logging.py  settings.py (validated config)                                               (Phase 1)
-  orderflow/{volume_profile.py, vwap.py, delta.py, cvd.py, imbalance.py, big_trades.py,
-             absorption.py, liquidity.py, auction.py, failed_auction.py, initial_balance.py, ivb.py}  (Ph 6–10)
+  orderflow/{auction.py, failed_auction.py, initial_balance.py, ivb.py}                    (Ph 9–10)
   strategies/  signals/                                                                    (Phase 11)
   backtesting/{engine.py, simulator.py, costs.py, ledger.py}                               (Phase 12)
   research/{splits.py, walkforward.py, montecarlo.py, ledger.py}                          (Phase 13)
@@ -219,7 +222,7 @@ mql5/   (Phase 16: EA executor source)
 | 4 | Deterministic historical replay | **Done** | M2 |
 | 5 | Trade processing, classification, price-level aggregation | **Done** (session times still PROPOSED, D4) | M3 (begins) |
 | 6 | Volume Profile, POC, Value Area, HVN/LVN, VWAP | **Done** (2026-10-31; see `docs/PHASE6_COMPLETION_REPORT.md`; v1 node/VA parameters PROPOSED) | M3 |
-| 7 | Delta, CVD, imbalance, Big Trades, absorption, exhaustion | Not started | M3 |
+| 7 | Delta, CVD, imbalance, Big Trades, absorption, exhaustion | **Done** (2026-10-31; see `docs/PHASE7_COMPLETION_REPORT.md`; detector parameters PROPOSED, D11) | M3 |
 | 8 | Order-book reconstruction and liquidity | **Done** (2026-10-31; live-only, see `docs/PHASE8_COMPLETION_REPORT.md`). The recorder must run on the PC or a non-US VPS. | M3 (live part) |
 | 9 | Auction Market Theory and failed auctions | Not started | M3 |
 | 10 | Sessions, Initial Balance, IVB | Not started (IVB definition required from you) | M3 |
@@ -253,7 +256,7 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 | §2 never merge unrelated books | Ph8, Ph15 | One book per venue; tests reject merged inputs |
 | §3 volume and market profile | Ph6 | `docs/METRICS_PROFILE_V1.md`; hand-computed POC/VA/prominence tests; six-month from-scratch parity (`data/reports/profile_verification.md`) |
 | §3 VWAP and volume analytics | Ph6 | Exact integer VWAP sums; float64 recomputation from decimal prices within 1e-9 relative |
-| §3 trade and orderflow analysis | Ph5, Ph7, Ph8 | – |
+| §3 trade and orderflow analysis | Ph5, Ph7, Ph8 | `docs/METRICS_ORDERFLOW_V1.md`; hand-computed imbalance/quantile/event tests; `orderflow-verify` exact recomputation from trades (bars, CVD, imbalances, every big trade and fill id, event evidence and resolutions) |
 | §3 Auction Market Theory | Ph9 | – |
 | §3 Initial Balance and IVB | Ph10 | IVB enabled only after its formula is approved |
 | §4 signal generation with evidence, SL/TP, R:R, score, reason | Ph11 | Signal schema; reproducibility tests |
@@ -465,7 +468,7 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 6: Volume Profile, POC, Value Area, HVN/LVN and VWAP. **Status: Not started**
+### Phase 6: Volume Profile, POC, Value Area, HVN/LVN and VWAP. **Status: Done (2026-10-31)**
 **Objective.** The foundational profile and volume-weighted references, precisely defined and reproducible.
 
 **Depends on.** Phase 5 aggregates and sessions.
@@ -509,7 +512,9 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 7: Delta, CVD, imbalance, Big Trades, absorption and exhaustion. **Status: Not started**
+### Phase 7: Delta, CVD, imbalance, Big Trades, absorption and exhaustion. **Status: Done (2026-10-31)**
+**Built** (`goldflow/orderflow/` Phase 7 modules; spec `docs/METRICS_ORDERFLOW_V1.md`; report `docs/PHASE7_COMPLETION_REPORT.md`): `OrderflowEngine(ProcessorSink)` with flow bars (delta and intra-bar delta extremes), CVD per reset instance, diagonal/horizontal and stacked imbalance, taker-order reconstruction and Big Trades (absolute, notional, rolling and time-of-day quantiles on an exact histogram, every fill id stored), absorption, exhaustion and divergence with a CANDIDATE → CONFIRMED / INVALIDATED / EXPIRED lifecycle tracked strictly after the evidence window. Commands: `orderflow --name o1 [--resume]`, `orderflow-verify`. Evidence (4 real days in the cloud): exact verification 4/4 days, state digest reproduced after a stop/resume through the DST night, 296 k events/s. Six-month run: on the PC. Open: D11 (parameter review).
+
 **Objective.** Transaction-based orderflow analytics with transparent classification and stated limits.
 
 **Depends on.** Phase 5 (sides, footprint) and Phase 6 (levels for context).
@@ -936,6 +941,7 @@ DQ gating (Ph11) → simulated risk (Ph12) → feed staleness (Ph14) → pre-tra
 | D8 | **Approval criteria numbers** | Phase 13 | You | See Phase 13 proposals |
 | D9 | **Data backup location** | Now | You | External drive or cloud storage for `Documents\python\goldflow` |
 | D10 | **Repository visibility** | Now | You | Private is recommended for strategy code |
+| D11 | **Phase 7 detector parameters** (imbalance ratio/min lots, Big Trade quantile, absorption/exhaustion/divergence settings) | Phase 11/13 | You | Keep the v1 defaults for research; review them with Phase 13 out-of-sample results, never by in-sample outcome |
 
 ---
 
@@ -956,7 +962,7 @@ Every phase ends with a report containing:
 **Standing instruction (append to every phase request):**
 > Execute only the current phase. First inspect the repository and identify what is already implemented. Do not rewrite working components unnecessarily. Implement real functionality; no placeholder calculations or fabricated market data. Run unit, integration, regression and data-integrity tests (including the digest regression checks). Inspect actual outputs, fix critical errors, update documentation, and provide evidence. If data or credentials are unavailable, document the limitation and stop the dependent task. Summarise the phase contents before starting. Stop after the phase with the completion report.
 
-Completed reports: `docs/PHASE2_ACQUISITION_REPORT.md`, `docs/PHASE3_COMPLETION_REPORT.md`, `docs/PHASE4_COMPLETION_REPORT.md`, `docs/PHASE5_COMPLETION_REPORT.md`.
+Completed reports: `docs/PHASE2_ACQUISITION_REPORT.md`, `docs/PHASE3_COMPLETION_REPORT.md`, `docs/PHASE4_COMPLETION_REPORT.md`, `docs/PHASE5_COMPLETION_REPORT.md`, `docs/PHASE7_COMPLETION_REPORT.md`, `docs/PHASE8_COMPLETION_REPORT.md`.
 
 ---
 

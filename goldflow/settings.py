@@ -334,6 +334,15 @@ def validate_config(raw: dict[str, Any], base_dir: Path | None = None, check_dis
             ProfileSettings.from_config(Config(raw, base_dir or Path(".")))
         except (ValueError, KeyError, TypeError) as e:
             raise ConfigError([f"volume_profile: {e}"]) from None
+    if raw.get("orderflow") is not None:
+        # Phase 7 block: flow bars, CVD resets, imbalance, Big Trades thresholds, absorption/exhaustion/divergence
+        from .config import Config
+        from .orderflow.flow_settings import OrderflowSettings
+
+        try:
+            OrderflowSettings.from_config(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError, TypeError) as e:
+            raise ConfigError([f"orderflow: {e}"]) from None
     if check_discovery and base_dir is not None:
         disc = base_dir / s.paths.data_root / "state" / "instrument_discovery.json"
         if disc.exists():

@@ -52,6 +52,7 @@ class ProcessorSink:
     on_window(summary, levels)                      a finalised window (totals dict and its 1-tick level columns)
     on_dq(start_ms, end_ms, status)                 a data-quality interval became known (Phase 3 catalog)
     on_advance(proc)                                end of every clock advance, after bars and windows (Phase 6)
+    on_trades(t, ids, p, q, side)                   accepted trades (after dedup) in delivery order (Phase 7 taker orders)
     """
     name = "sink"
     def on_start(self, ctx: dict[str, Any], proc: "TradeProcessor") -> None: pass
@@ -59,6 +60,7 @@ class ProcessorSink:
     def on_window(self, summary: dict[str, Any], levels: dict[str, Any]) -> None: pass
     def on_dq(self, start_ms: int, end_ms: int, status: str) -> None: pass
     def on_advance(self, proc: "TradeProcessor") -> None: pass
+    def on_trades(self, t: NDArray[Any], ids: NDArray[Any], p: NDArray[Any], q: NDArray[Any], side: NDArray[Any]) -> None: pass
     def on_seek(self, t_ms: int) -> None: pass
     def on_stop(self, ctx: dict[str, Any], proc: "TradeProcessor") -> None: pass
     def get_state(self) -> dict[str, Any]: return {}
@@ -294,6 +296,7 @@ class TradeProcessor(Consumer):
         S["trades_processed"] += m; S["recovered_included"] += int(rec.sum()); S["unknown_side_trades"] += int(isu.sum())
         S["lots_processed"] += int(q.sum()); S["buy_lots"] += int(q[isb].sum()); S["sell_lots"] += int(q[iss].sum())
         S["unknown_lots"] += int(q[isu].sum())
+        for sk in self.sinks: sk.on_trades(t, ids, p, q, side)
         base = st.base_ms
         G = Rows({"bucket": t - t % base, "level": p, "buy": np.where(isb, q, 0), "sell": np.where(iss, q, 0),
                   "unk": np.where(isu, q, 0), "cnt": np.ones(m, np.int64), "bcnt": isb.astype(np.int64),

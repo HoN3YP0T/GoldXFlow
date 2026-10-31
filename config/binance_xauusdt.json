@@ -248,5 +248,93 @@
     ],
     "anchors": [],
     "persist": true
+  },
+  "orderflow": {
+    "_doc": "Phase 7 orderflow engine (docs/METRICS_ORDERFLOW_V1.md). Volumes in lots, prices in ticks. Fractions are decimal strings so they are exact. Every detector parameter is a v1 default: PROPOSED until reviewed (see docs/PHASE7_COMPLETION_REPORT.md).",
+    "version": 1,
+    "bar_intervals": [
+      "1m",
+      "5m"
+    ],
+    "cvd": {
+      "resets": [
+        "utc_day",
+        "trading_day",
+        "session"
+      ],
+      "anchors": [],
+      "_doc": "CVD = running exchange-reported delta, reset at the start of every instance of each listed window kind"
+    },
+    "max_unknown_share": "0.05",
+    "imbalance": {
+      "interval": "1m",
+      "bin_ticks": 10,
+      "method": "diagonal",
+      "ratio": "3",
+      "min_lots": 2000,
+      "zero_policy": "none",
+      "stack_n": 3,
+      "_doc": "diagonal: buy(p) vs sell(p-1 bin); min_lots 2000 = 2 oz; zero_policy none = never an imbalance against an empty bin"
+    },
+    "big_trades": {
+      "cluster_ms": 0,
+      "max_step_ticks": 25,
+      "combine": "any",
+      "min_qty_lots": null,
+      "min_notional_usdt": null,
+      "rolling_quantile": {
+        "enabled": true,
+        "q": "0.995",
+        "hours": 24,
+        "min_samples": 2000
+      },
+      "time_of_day": {
+        "enabled": false,
+        "q": "0.995",
+        "bucket": "30m",
+        "lookback_days": 20,
+        "min_samples": 200
+      },
+      "_doc": "taker order = consecutive fills, same side, same ms, price moving with the aggressor by <= max_step_ticks. Big if ANY enabled threshold passes."
+    },
+    "absorption": {
+      "enabled": true,
+      "interval": "1m",
+      "bin_ticks": 10,
+      "tol_bins": 1,
+      "min_zone_lots": null,
+      "zone_quantile": "0.95",
+      "quantile_hours": 24,
+      "min_samples": 360,
+      "max_progress_bins": 2,
+      "min_active_seconds": 3,
+      "max_second_share": "0.5",
+      "confirm_bins": 3,
+      "confirm_window": "5m"
+    },
+    "exhaustion": {
+      "enabled": true,
+      "interval": "1m",
+      "bin_ticks": 10,
+      "lookback_bars": 5,
+      "pushes": 3,
+      "max_span_bars": 30,
+      "cvd_reset": "trading_day",
+      "confirm_bins": 5,
+      "inval_bins": 1,
+      "confirm_window": "15m"
+    },
+    "divergence": {
+      "enabled": true,
+      "interval": "5m",
+      "bin_ticks": 10,
+      "swing_bars": 3,
+      "measure": "cvd",
+      "cvd_reset": "trading_day",
+      "max_gap_bars": 48,
+      "inval_bins": 3,
+      "track_bars": 48
+    },
+    "persist": true
   }
 }

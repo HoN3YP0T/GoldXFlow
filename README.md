@@ -1,6 +1,6 @@
 # goldflow: Binance XAUUSDT gold orderflow engine (Phases 1–6, 8)
 
-Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions, Phase 4 replays it deterministically, Phase 5 turns the replayed trades into exact price-level and footprint aggregates, and Phase 6 builds volume profiles (POC, value area, HVN/LVN) and VWAP with bands on top of them.
+Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions, Phase 4 replays it deterministically, Phase 5 turns the replayed trades into exact price-level and footprint aggregates, Phase 6 builds volume profiles (POC, value area, HVN/LVN) and VWAP with bands on top of them, and Phase 7 adds delta, CVD, footprint imbalances, Big Trades (rebuilt taker orders) and absorption / exhaustion / divergence events.
 
 **No market data is committed to this repository.** Rebuild it with `python -m goldflow.cli acquire` then `python -m goldflow.cli normalize`. The frozen range in `data/state/range.json` reproduces the exact dataset, and the partition digests in `data/manifests/dataset_manifest.json` let you verify it.
 
@@ -37,10 +37,12 @@ goldflow/
                     sessions.py (zoneinfo calendar), settings.py, footprint_store.py, reconcile.py
   orderflow/        Phase 6: volume_profile.py (POC, value area, HVN/LVN), vwap.py, engine.py (ProfileEngine sink),
                     store.py, rebuild.py (from-scratch rebuild), verify.py, export.py (chart JSON), settings.py
+                    Phase 7: delta.py, cvd.py, imbalance.py, big_trades.py, absorption.py, exhaustion.py, divergence.py,
+                    events.py, flow_engine.py (OrderflowEngine sink), flow_store.py, flow_verify.py, flow_settings.py
   cli.py            discover | acquire | rest | manifest | normalize | validate | report | replay | process | reconcile |
-                    vprofile | vprofile-verify | vprofile-export
-docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, METRICS_PROFILE_V1.md, PHASE*_REPORT.md
-tests/test_core.py, test_phase3.py, test_replay.py, test_processing.py, test_profile.py
+                    vprofile | vprofile-verify | vprofile-export | orderflow | orderflow-verify
+docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, METRICS_PROFILE_V1.md, METRICS_ORDERFLOW_V1.md, PHASE*_REPORT.md
+tests/test_core.py, test_phase3.py, test_replay.py, test_processing.py, test_profile.py, test_orderflow.py
 data/raw/binance/futures_um/XAUUSDT/<dataset>/<daily|monthly|rest>/   raw zips + .CHECKSUM (+ _verify sidecars)
 data/state/   acquisition.sqlite, range.json, plan-*.json, progress.json, acquisition.log, instrument_discovery.json
 data/manifest.json
@@ -127,6 +129,26 @@ data/reports/profile_verification.{md,json}     parity and VWAP-tolerance report
 - **Settings:** the `volume_profile` config block. The defaults are **proposed** v1 parameters.
 
 See `docs/METRICS_PROFILE_V1.md`. Python API: `goldflow.orderflow.ProfileEngine` (a `ProcessorSink`; `listeners=[...]` receive every snapshot, `current(kind, name)` returns the latest developing one).
+
+## Phase 7: Delta, CVD, imbalance, Big Trades, absorption, exhaustion, divergence
+```bash
+python -m goldflow.cli orderflow --name o1                # replay -> TradeProcessor -> OrderflowEngine -> orderflow Parquet -> verification
+python -m goldflow.cli orderflow --name o1 --resume       # continue after --until / --budget / Ctrl-C
+python -m goldflow.cli orderflow-verify [--dates D ...]   # independent exact recomputation from the trades partitions
+```
+Outputs:
+```
+data/derived/provider=binance/market=usdm_perpetual/instrument=XAUUSDT/orderflow/date=YYYY-MM-DD/
+    {bars,cvd,imbalances,stacked,big_trades,events}.parquet
+data/derived/.../orderflow/_manifest.json         per-date rows and digests, settings hashes, source dataset version
+data/reports/orderflow_verification.{md,json}     exact checks + event catalogue by session
+```
+- **Sides:** exchange-reported only. `unknown_lots` is shown on every output and never assigned; bars with too much unknown-side volume are not used by the detectors.
+- **Big Trades:** fills are first rebuilt into taker orders (same side, same millisecond, price moving with the aggressor). An order is big if it beats the configured thresholds (default: the 99.5 % rolling quantile of the previous 24 h). Every fill id is stored.
+- **Events:** absorption, exhaustion and divergence are emitted when their evidence is complete, then tracked strictly afterwards to CONFIRMED, INVALIDATED or EXPIRED. Nothing is back-dated, and a single large trade is never absorption.
+- **Settings:** the `orderflow` config block. All detector parameters are **proposed** v1 defaults (decision D11).
+
+See `docs/METRICS_ORDERFLOW_V1.md` and `docs/PHASE7_COMPLETION_REPORT.md`. Python API: `goldflow.orderflow.OrderflowEngine` (a `ProcessorSink`; `listeners=[...]` receive `(table, rows)` as rows become available).
 
 ## Phase 8: live order book (L2) recorder and liquidity metrics
 There is no historical price-level book for this dataset, so depth history starts the day the recorder starts. Run it where `fapi.binance.com` REST is reachable (the trading PC or a non-US VPS). A US host gets HTTP 451 on the snapshot, and the recorder stops with exit code 4.
