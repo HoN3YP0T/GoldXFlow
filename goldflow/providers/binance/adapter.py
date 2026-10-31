@@ -68,9 +68,11 @@ class BinanceUsdmProvider(Provider):
                 ),
                 Capability.HISTORICAL_BID_ASK: CapabilityInfo(A.UNAVAILABLE, "bookTicker not published for XAUUSDT"),
                 Capability.REALTIME_TRADES: CapabilityInfo(
-                    A.NOT_IMPLEMENTED, "Phase 14 (REST /fapi/v1/trades polling; RPI policy)"
+                    A.AVAILABLE, "Phase 14 live-run: REST /fapi/v1/trades polling incl. RPI; non-US host only (451)"
                 ),
-                Capability.REALTIME_AGGTRADES: CapabilityInfo(A.NOT_IMPLEMENTED, "Phase 14 (WebSocket aggTrade; excludes RPI)"),
+                Capability.REALTIME_AGGTRADES: CapabilityInfo(
+                    A.AVAILABLE, "Phase 14 monitor: /market/stream aggTrade; excludes RPI, never a trade source"
+                ),
                 Capability.REALTIME_L2_DEPTH: CapabilityInfo(
                     A.AVAILABLE, "Phase 8 recorder: depth@100ms + /fapi/v1/depth, U/u/pu checked; non-US host only (451)"
                 ),

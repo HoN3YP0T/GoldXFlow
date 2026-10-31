@@ -380,6 +380,15 @@ def validate_config(raw: dict[str, Any], base_dir: Path | None = None, check_dis
             ResearchSettings.from_config(Config(raw, base_dir or Path(".")))
         except (ValueError, KeyError, TypeError) as e:
             raise ConfigError([f"research: {e}"]) from None
+    if raw.get("venues") is not None:
+        from .config import Config
+        from .venues.mapping import basis_settings, venue_settings
+
+        try:
+            venue_settings(Config(raw, base_dir or Path(".")))
+            basis_settings(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError, TypeError, ZeroDivisionError) as e:
+            raise ConfigError([f"venues: {e}"]) from None
     if raw.get("live") is not None:
         from .config import Config
         from .live.runner import live_settings

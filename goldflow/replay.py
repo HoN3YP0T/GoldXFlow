@@ -230,7 +230,9 @@ class ReplayEngine:
                  checkpoint: bool = True, data_root: Path | None = None, progress: Callable[[dict], None] | None = None):
         rc = cfg["replay"]
         self.cfg = cfg
-        self.root = Path(data_root or cfg.data_root) / "normalized" / "provider=binance" / "market=usdm_perpetual" / f"instrument={cfg.symbol}"
+        from .schemas import VENUES, venue_of
+        pv = venue_of(cfg)
+        self.root = Path(data_root or cfg.data_root) / "normalized" / f"provider={pv}" / f"market={VENUES[pv][1]}" / f"instrument={cfg.symbol}"
         self.streams_cfg = {k: v for k, v in (streams or rc["streams"]).items() if v["enabled"]}
         for k, v in self.streams_cfg.items():
             if v["time_offset_ms"] + v["latency_ms"] >= DAY_MS or v["time_offset_ms"] + v["latency_ms"] < 0:

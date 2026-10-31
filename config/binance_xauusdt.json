@@ -615,5 +615,12 @@
     "ws_base_url": "wss://fstream.binance.com/market/stream",
     "checkpoint_s": 60,
     "backfill_max_pages": 50
+  },
+  "venues": {
+    "_doc": "Phase 15 venues (docs/VENUES_V1.md). One mapping record per venue; venues are separate markets and are never merged. Defaults (tick, step, ounces per quantity unit, session, price basis, specification source) live in goldflow/venues/mapping.py; override per venue here, e.g. {\"bybit\": {\"tick_size\": \"0.01\"}}.",
+    "basis": {
+      "grid_ms": 1000,
+      "max_age_ms": 5000
+    }
   }
 }

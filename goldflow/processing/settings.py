@@ -56,7 +56,7 @@ class ProcessingSettings:
 
     @classmethod
     def from_config(cls, cfg: Any) -> "ProcessingSettings":
-        from ..schemas import instrument_id
+        from ..schemas import PROVIDER_ID, instrument_id, venue_of
         raw = {**DEFAULT_PROCESSING, **(cfg.raw.get("processing") or {})}
         names = list(raw["intervals"])
         if not names: raise ValueError("processing.intervals is empty")
@@ -83,10 +83,13 @@ class ProcessingSettings:
         inst = cfg["instrument"]
         body = {"processing": raw, "sessions": sessions, "trade_time_col": tr["time_col"], "trade_shift_ms": shift,
                 "tick": inst["tick_size"], "step": inst["step_size"], "symbol": cfg.symbol}
+        pv = venue_of(cfg)
+        if pv != PROVIDER_ID:
+            body["provider"] = pv   # Phase 15: another venue's state can never be restored here (Binance hash unchanged)
         h = hashlib.sha256(json.dumps(body, sort_keys=True).encode()).hexdigest()
         st = cls(int(raw["version"]), tuple(names), ms, persist, fb, w, bool(raw["include_recovered"]), bool(inf.get("enabled")),
                  tuple(raw["dq_datasets"]), tr["time_col"], shift, str(inst["tick_size"]), str(inst["step_size"]),
-                 instrument_id(cfg.symbol), sessions, h)
+                 instrument_id(cfg.symbol, pv), sessions, h)
         # session boundaries must align with the base interval so window membership is exact per base bucket
         from .sessions import SessionCalendar
         cal = SessionCalendar.from_config(sessions)

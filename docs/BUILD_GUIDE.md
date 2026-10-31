@@ -204,6 +204,7 @@ goldflow/                     current package
   backtesting/{settings.py, broker.py, basis.py, simulator.py, engine.py}                  (Phase 12, built)
   research/{settings.py, metrics.py, ledger.py, runner.py, walkforward.py, study.py}         (Phase 13, built)
   live/{trades.py, bus.py, runner.py, parity.py}                                           (Phase 14, built)
+  venues/{mapping.py, archives.py, ingest.py, run.py, crossvenue.py, report.py}; providers/{okx,bybit,bitget}  (Phase 15, built)
   execution/{bridge.py, order_manager.py, positions.py}  risk/                             (Phase 16)
   monitoring/  dashboard/                                                                  (Phase 17)
 config/  docs/  scripts/  tests/  data/ (git-ignored except small reports, manifest and frozen range)
@@ -231,7 +232,7 @@ mql5/   (Phase 16: EA executor source)
 | 12 | Event-driven backtesting and execution simulation | **Built** (2026-10-31; see `docs/PHASE12_COMPLETION_REPORT.md`). Real backtests **blocked on D2** (broker spec + tick history) | M4 |
 | 13 | Reports, validation, walk-forward, research | **Built** (2026-10-31; see `docs/PHASE13_COMPLETION_REPORT.md`). Real studies blocked on D2; thresholds D8 | M5 |
 | 14 | Live Binance ingestion and historical/live parity | **Built** (2026-10-31; see `docs/PHASE14_COMPLETION_REPORT.md`). Parity exact on 4 real days; live REST needs a non-US host (D6) | M6 |
-| 15 | Additional providers and cross-market mapping | Not started | – |
+| 15 | Additional providers and cross-market mapping | **Done** (2026-10-31; see `docs/PHASE15_COMPLETION_REPORT.md`). OKX + Bybit history imported and run through the unchanged stack; Bitget discovery only | – |
 | 16 | MT5 execution bridge and risk controls | Not started | M7 |
 | 17 | Dashboard, observability, deployment, hardening | Not started | M8 |
 
@@ -788,7 +789,9 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 15: Additional providers and cross-market mapping. **Status: Not started**
+### Phase 15: Additional providers and cross-market mapping. **Status: Done (2026-10-31).**
+**Built** (`goldflow/venues/`, `goldflow/providers/{okx,bybit,bitget}/`; spec `docs/VENUES_V1.md`; report `docs/PHASE15_COMPLETION_REPORT.md`): per-venue identity, partitions and catalogs; mapping records checked against live discovery; OKX (contiguous ids, provable completeness, UTC+8 archive days) and Bybit (RPI flag; UNVERIFIED) archive import through the Phase 3 validator; the unchanged Phase 4–11 stack on each venue, reconciled; basis series (1 s, as-of strictly before, exact) and a labelled cross-venue ounce aggregate; `providers-report`. Real data, 4 days: OKX 509,207 trades (COMPLETE), Bybit 471,842 (RPI 17.8 % of volume); Binance trades $0.5–1.0 below both. Commands: `venue-import`, `venue-run`, `basis`, `volume-oz`, `providers-report`.
+
 **Objective.** Add sources without rewriting analytics or merging markets.
 
 **Candidates (from Phase 0).**

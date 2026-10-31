@@ -16,6 +16,8 @@
   python -m goldflow.cli broker-import --file F --format mt5|csv | backtest --name b1 [--resume]    # Phase 12 backtesting
   python -m goldflow.cli perf-report --name b1 | study --plan P.json --name s1 | ledger-verify     # Phase 13 research
   python -m goldflow.cli live-run --name L [--duration S] | parity --start ISO --end ISO [--from-capture]  # Phase 14 live
+  python -m goldflow.cli venue-import --provider okx|bybit --dates D.. | venue-run --provider P --name N    # Phase 15 venues
+  python -m goldflow.cli basis --pair binance:okx --dates D.. | volume-oz --venues binance okx bybit --dates D.. | providers-report
   python -m goldflow.cli depth-record [--duration S]   # Phase 8 live L2 recorder (non-US host)
   python -m goldflow.cli depth-replay | depth-normalize
 The acquisition range is frozen in data/state/range.json on first run so that resumed runs
@@ -195,6 +197,7 @@ def main(argv=None) -> int:
                                     "auction", "auction-verify", "auction-review", "ib", "ib-verify",
                                     "signals", "signals-verify", "broker-import", "backtest",
                                     "perf-report", "study", "ledger-verify", "live-run", "parity",
+                                    "venue-import", "venue-run", "basis", "volume-oz", "providers-report",
                                     "depth-record", "depth-replay", "depth-normalize"])
     ap.add_argument("--profile", help="research (default) | test | live; or env GOLDFLOW_PROFILE")
     ap.add_argument("--config", default="config/binance_xauusdt.json")
@@ -226,6 +229,10 @@ def main(argv=None) -> int:
     ap.add_argument("--limit", type=int, default=120, help="auction-review: number of event charts")
     ap.add_argument("--duration", type=float, help="depth-record/live-run: stop after this many seconds (default: run until Ctrl-C)")
     ap.add_argument("--from-capture", action="store_true", help="parity: use the trades recorded by live-run instead of the archive")
+    ap.add_argument("--provider", help="venue-import/venue-run: okx | bybit (Phase 15)")
+    ap.add_argument("--pair", help="basis: venue pair A:B, e.g. binance:okx")
+    ap.add_argument("--venues", nargs="*", help="volume-oz: venues to aggregate (labelled cross-venue aggregate)")
+    ap.add_argument("--no-probe", action="store_true", help="providers-report: skip the reachability probes")
     a = ap.parse_args(argv)
     from .migrations import apply_migrations
     from .observability import new_run_id, setup_logging
@@ -333,6 +340,8 @@ def main(argv=None) -> int:
         return _signals_cmd(cfg, a, log)
     if a.cmd == "live-run":
         return _live_cmd(cfg, a, log)
+    if a.cmd in ("venue-import", "venue-run", "basis", "volume-oz", "providers-report"):
+        return _venue_cmd(cfg, a, log)
     if a.cmd == "parity":
         from .live import capture_polls, run_parity
         if not (a.start and a.end):
@@ -499,6 +508,34 @@ def _signals_cmd(cfg, a, log) -> int:
     print(json.dumps(out, indent=1, default=str))
     bad = checker.violations or (out.get("verification") or {}).get("fail")
     return 1 if bad else (0 if res["status"] == "completed" else 3)
+
+def _days(a) -> list[str]:
+    if a.dates: return list(a.dates)
+    if a.start and a.end:
+        from datetime import date, timedelta
+        d, e = date.fromisoformat(a.start[:10]), date.fromisoformat(a.end[:10]); out = []
+        while d < e: out.append(str(d)); d += timedelta(days=1)
+        return out
+    raise SystemExit("goldflow: give --dates D.. or --start/--end (UTC days)")
+
+def _venue_cmd(cfg, a, log) -> int:
+    """Phase 15: other venues (separate markets; never merged)."""
+    from . import venues as V
+    if a.cmd == "providers-report":
+        rep = V.providers_report(cfg, probe=not a.no_probe)
+        print(json.dumps({p: {"health": v["health"], "coverage": v["coverage"]} for p, v in rep["providers"].items()}, indent=1, default=str)); return 0
+    if a.cmd == "venue-import":
+        if a.provider not in ("okx", "bybit"):
+            print("goldflow: venue-import --provider okx|bybit (Bitget: archive unreachable, see providers-report)", file=sys.stderr); return 2
+        out = V.venue_import(cfg, a.provider, _days(a)); print(json.dumps(out, indent=1, default=str))
+        return 0 if all(d["status"] != "MISSING" for d in out["days"].values()) else 1
+    if a.cmd == "venue-run":
+        out = V.venue_run(cfg, a.provider, a.name or "venue", a.start, a.end); print(json.dumps(out, indent=1, default=str))
+        return 0 if out["reconciliation"]["equal"] and out["status"] == "completed" else 1
+    if a.cmd == "basis":
+        x, y = (a.pair or "binance:okx").split(":")
+        out = V.basis(cfg, x, y, _days(a)); print(json.dumps({k: v for k, v in out.items() if k != "hourly"}, indent=1)); return 0
+    out = V.volume_oz(cfg, a.venues or ["binance", "okx", "bybit"], _days(a)); print(json.dumps(out, indent=1)); return 0
 
 def _live_cmd(cfg, a, log) -> int:
     """Phase 14 paper mode: REST trade poller + WebSocket monitor -> LiveBus -> the replay's analytics and strategy stack."""
