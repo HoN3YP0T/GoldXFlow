@@ -45,6 +45,20 @@ STAT_KEYS = ("trades_received", "trades_processed", "duplicates_ignored", "late_
              "developing_discarded_on_seek")
 
 
+def merge_dq(dq: list[list[Any]], start_ms: int, end_ms: int, status: str) -> bool:
+    """Add a data-quality interval. An interval with the same start and status as an existing one **replaces** its
+    end: that is how a live feed closes an interval it opened with an unknown end (Phase 14). Returns True if the list
+    changed. Historical quality events never repeat a (start, status) pair, so replay results are unaffected."""
+    for x in dq:
+        if x[0] == start_ms and x[2] == status:
+            if x[1] == end_ms:
+                return False
+            x[1] = end_ms
+            return True
+    dq.append([start_ms, end_ms, status])
+    return True
+
+
 class ProcessorSink:
     """Receives finalised outputs. Subclass and pass to ``TradeProcessor(sinks=[...])``.
 
@@ -175,7 +189,7 @@ class TradeProcessor(Consumer):
             self.filtered = bool(ctx.get("filtered"))
             for e in ctx.get("quality_before_start", []):
                 if e["type"] == "DQ_BEGIN" and e["dataset"] in self.st.dq_datasets and e["end_ms"] > self.observe_from:
-                    self.dq.append([e["start_ms"], e["end_ms"], e["status"]])
+                    merge_dq(self.dq, e["start_ms"], e["end_ms"], e["status"])
         for s in self.sinks: s.on_start(ctx, self)
         if not ctx.get("resumed"):
             for x in self.dq:
@@ -187,7 +201,7 @@ class TradeProcessor(Consumer):
             for r in c.rows[c.keys["stream"] == qid]:
                 e = c.quality[r]
                 if e["type"] == "DQ_BEGIN" and e["dataset"] in self.st.dq_datasets:
-                    self.dq.append([e["start_ms"], e["end_ms"], e["status"]])
+                    merge_dq(self.dq, e["start_ms"], e["end_ms"], e["status"])
                     for s in self.sinks: s.on_dq(e["start_ms"], e["end_ms"], e["status"])
         if "trades" in c.streams and "trades" in c.tables:
             rows = c.stream_rows("trades")
@@ -284,6 +298,20 @@ class TradeProcessor(Consumer):
         if self.observe_from is None:   # driven without on_start (live bus, direct use): coverage starts at the first trade
             self.observe_from = int(t.min()); self.time_floor = self.observe_from
         self._ring_add(ids); self.watermark = max(self.watermark, int(ids.max()))
+        # Phase 14 (live): a trade whose base bar is already final is excluded from every bar and every window, and
+        # counted (late_after_bar_final for each interval, late_after_window_final), so all aggregates stay consistent
+        # with each other (a coarse bar is still the sum of its base bars). A replay never delivers such a trade.
+        fb = self.final_upto[st.intervals[0]]          # the base interval (settings: intervals[0] is the base)
+        if fb is not None:
+            late = (t - t % st.base_ms) < fb
+            if late.any():
+                k = int(late.sum())
+                for n in st.intervals: self.late_after_bar_final[n] += k
+                self.late_after_window_final += k
+                keep = ~late
+                t, ids, p, q, side, rec = t[keep], ids[keep], p[keep], q[keep], side[keep], rec[keep]
+                m = len(ids)
+                if m == 0: return
         seq = np.arange(self.seq, self.seq + m, dtype=np.int64); self.seq += m
         q = q.astype(np.int64); p = p.astype(np.int64)
         isb, iss, isu = side == 1, side == -1, side == 0

@@ -15,6 +15,7 @@
   python -m goldflow.cli signals --name s1 [--resume] | signals-verify                              # Phase 11 strategy signals
   python -m goldflow.cli broker-import --file F --format mt5|csv | backtest --name b1 [--resume]    # Phase 12 backtesting
   python -m goldflow.cli perf-report --name b1 | study --plan P.json --name s1 | ledger-verify     # Phase 13 research
+  python -m goldflow.cli live-run --name L [--duration S] | parity --start ISO --end ISO [--from-capture]  # Phase 14 live
   python -m goldflow.cli depth-record [--duration S]   # Phase 8 live L2 recorder (non-US host)
   python -m goldflow.cli depth-replay | depth-normalize
 The acquisition range is frozen in data/state/range.json on first run so that resumed runs
@@ -193,7 +194,7 @@ def main(argv=None) -> int:
                                     "vprofile", "vprofile-verify", "vprofile-export", "orderflow", "orderflow-verify",
                                     "auction", "auction-verify", "auction-review", "ib", "ib-verify",
                                     "signals", "signals-verify", "broker-import", "backtest",
-                                    "perf-report", "study", "ledger-verify",
+                                    "perf-report", "study", "ledger-verify", "live-run", "parity",
                                     "depth-record", "depth-replay", "depth-normalize"])
     ap.add_argument("--profile", help="research (default) | test | live; or env GOLDFLOW_PROFILE")
     ap.add_argument("--config", default="config/binance_xauusdt.json")
@@ -223,7 +224,8 @@ def main(argv=None) -> int:
     ap.add_argument("--plan", help="study: research plan (JSON)")
     ap.add_argument("--format", default="mt5", help="broker-import: mt5 (terminal tick export) | csv (time_msc,bid,ask)")
     ap.add_argument("--limit", type=int, default=120, help="auction-review: number of event charts")
-    ap.add_argument("--duration", type=float, help="depth-record: stop after this many seconds (default: run until Ctrl-C)")
+    ap.add_argument("--duration", type=float, help="depth-record/live-run: stop after this many seconds (default: run until Ctrl-C)")
+    ap.add_argument("--from-capture", action="store_true", help="parity: use the trades recorded by live-run instead of the archive")
     a = ap.parse_args(argv)
     from .migrations import apply_migrations
     from .observability import new_run_id, setup_logging
@@ -329,6 +331,18 @@ def main(argv=None) -> int:
         print(json.dumps({"entries": len(es), "chain": "OK"}, indent=1)); return 0
     if a.cmd == "signals":
         return _signals_cmd(cfg, a, log)
+    if a.cmd == "live-run":
+        return _live_cmd(cfg, a, log)
+    if a.cmd == "parity":
+        from .live import capture_polls, run_parity
+        if not (a.start and a.end):
+            print("goldflow: parity needs --start and --end", file=sys.stderr); return 2
+        s0, e0 = to_ms(parse_iso(a.start)), to_ms(parse_iso(a.end))
+        polls = capture_polls(cfg, a.dates) if a.from_capture else None
+        out = run_parity(cfg, s0, e0, polls=polls)
+        print(json.dumps({k: v for k, v in out.items() if k != "tables"} | {"unequal": [t for t, v in out["tables"].items() if not v["equal"]]},
+                         indent=1, default=str))
+        return 0 if out["all_equal"] else 1
     if a.cmd == "signals-verify":
         from .strategies.verify import verify as sig_verify
         rep = sig_verify(cfg)
@@ -485,6 +499,31 @@ def _signals_cmd(cfg, a, log) -> int:
     print(json.dumps(out, indent=1, default=str))
     bad = checker.violations or (out.get("verification") or {}).get("fail")
     return 1 if bad else (0 if res["status"] == "completed" else 3)
+
+def _live_cmd(cfg, a, log) -> int:
+    """Phase 14 paper mode: REST trade poller + WebSocket monitor -> LiveBus -> the replay's analytics and strategy stack."""
+    import asyncio
+    from .processing.trade_processor import TradeProcessor
+    from .orderflow.engine import ProfileEngine
+    from .orderflow.flow_engine import OrderflowEngine
+    from .orderflow.initial_balance import IBEngine
+    from .orderflow.auction_engine import AuctionEngine
+    from .strategies import SignalStore, StrategyEngine, build_strategies
+    from .live import LiveRunner
+    name = a.name or "live"
+    prof, flow, ib = ProfileEngine(cfg), OrderflowEngine(cfg), IBEngine(cfg)
+    auc = AuctionEngine(cfg, prof, ib_engine=ib)
+    strat = StrategyEngine(cfg, build_strategies(cfg), {"profile": prof, "orderflow": flow, "ib": ib, "auction": auc},
+                           store=SignalStore(cfg.data_root / "live" / name, cfg.symbol, replace=False))
+    proc = TradeProcessor(cfg, sinks=[prof, flow, ib, auc, strat])
+    runner = LiveRunner(cfg, [proc], name)
+    try:
+        out = asyncio.run(runner.run(a.duration))
+    except KeyboardInterrupt:
+        runner.stop(); out = {"status": "stopped", "counters": runner.counters}
+    out["strategies"] = strat.summary()
+    print(json.dumps(out, indent=1, default=str))
+    return 2 if out["status"] == "geo_blocked" else 0
 
 def _backtest_cmd(cfg, a, log) -> int:
     """Phase 12: replay -> analytics -> StrategyEngine -> Backtester (fills on broker ticks) -> data/backtests/<name>/."""

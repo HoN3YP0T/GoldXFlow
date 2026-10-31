@@ -166,9 +166,12 @@ class DepthCfg(_Strict):
     """Phase 8 live price-level book recorder. Defaults live here (not in the JSON file) so the config hash is unchanged.
 
     Endpoints are configurable because Binance has changed WebSocket routing before: re-verify them on the recording host.
-    The RPI stream/endpoint names are unverified and therefore disabled by default."""
+    The RPI stream/endpoint names are unverified and therefore disabled by default.
 
-    ws_base_url: str = "wss://fstream.binance.com/stream"
+    Verified 2026-10-31: depth streams are served on ``/public/stream`` only; the legacy ``/stream`` path still accepts the
+    connection but delivers no messages (``/market/stream`` carries aggTrade/markPrice, not depth)."""
+
+    ws_base_url: str = "wss://fstream.binance.com/public/stream"
     stream: str = "{symbol}@depth@100ms"
     snapshot_path: str = "/fapi/v1/depth"
     snapshot_limit: Literal[5, 10, 20, 50, 100, 500, 1000] = 1000
@@ -377,6 +380,14 @@ def validate_config(raw: dict[str, Any], base_dir: Path | None = None, check_dis
             ResearchSettings.from_config(Config(raw, base_dir or Path(".")))
         except (ValueError, KeyError, TypeError) as e:
             raise ConfigError([f"research: {e}"]) from None
+    if raw.get("live") is not None:
+        from .config import Config
+        from .live.runner import live_settings
+
+        try:
+            live_settings(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError, TypeError) as e:
+            raise ConfigError([f"live: {e}"]) from None
     if raw.get("strategies") is not None:
         from .config import Config
         from .strategies.engine import strategy_settings

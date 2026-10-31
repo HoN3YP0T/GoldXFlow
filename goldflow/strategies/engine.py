@@ -31,7 +31,7 @@ from .. import schemas as S
 from ..orderflow.flow_store import DerivedStore
 from ..processing.aggregation import digest_tree
 from ..processing.settings import parse_interval
-from ..processing.trade_processor import ProcessorSink
+from ..processing.trade_processor import ProcessorSink, merge_dq
 from ..providers import create_provider
 from ..replay import ReplayGuardError
 from .base import AnalyticsState, Strategy
@@ -176,9 +176,8 @@ class StrategyEngine(ProcessorSink):
                               "strategies": [s.describe() for s in self.strategies], "observe_from": proc.observe_from}, bool(ctx.get("resumed")))  # fmt: skip
 
     def on_dq(self, start_ms: int, end_ms: int, status: str) -> None:
-        x = [int(start_ms), int(end_ms), str(status)]
-        if x not in self.dq and status != "OK":
-            self.dq.append(x)
+        if status != "OK":
+            merge_dq(self.dq, int(start_ms), int(end_ms), str(status))
 
     def on_advance(self, proc: Any) -> None:
         if not self.buf:

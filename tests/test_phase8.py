@@ -547,7 +547,7 @@ def test_depth_settings_defaults_and_validation():
     assert config_hash(RAW) == config_hash(json.loads((ROOT / "config/binance_xauusdt.json").read_text()))
     d = s.depth
     assert d.snapshot_limit == 1000 and not d.rpi_enabled
-    assert d.url("XAUUSDT") == "wss://fstream.binance.com/stream?streams=xauusdt@depth@100ms"
+    assert d.url("XAUUSDT") == "wss://fstream.binance.com/public/stream?streams=xauusdt@depth@100ms"
     assert validate_config({**RAW, "depth": {"rpi_enabled": True}}).depth.streams("XAUUSDT") == {
         "xauusdt@depth@100ms": "regular",
         "xauusdt@rpiDepth@500ms": "rpi",

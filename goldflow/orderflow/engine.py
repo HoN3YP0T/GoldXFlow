@@ -28,7 +28,7 @@ from numpy.typing import NDArray
 
 from ..processing.aggregation import decode_arrays, digest_tree, encode_arrays
 from ..processing.sessions import Instance
-from ..processing.trade_processor import DQ_NAMES, DQ_RANK, ProcessorSink
+from ..processing.trade_processor import DQ_NAMES, DQ_RANK, ProcessorSink, merge_dq
 from ..replay import ReplayGuardError
 from ..timeutil import DAY_MS, iso
 from .settings import ProfileSettings
@@ -188,9 +188,7 @@ class ProfileEngine(ProcessorSink):
             self.store.start(meta, self.ps.band_k, bool(ctx.get("resumed")))
 
     def on_dq(self, start_ms: int, end_ms: int, status: str) -> None:
-        x = [int(start_ms), int(end_ms), str(status)]
-        if x not in self.dq:
-            self.dq.append(x)
+        merge_dq(self.dq, int(start_ms), int(end_ms), str(status))
 
     def on_bars(self, interval: str, bars: dict[str, Any], levels: dict[str, Any], final_upto_ms: int) -> None:
         if interval != self.base or not len(levels["bar_start"]):

@@ -8,6 +8,7 @@ One JSON object per line:
   session  recorder session id (sortable: start time + random suffix); a new process = a new session
   seq      strictly increasing per session; a jump means lines are missing
   kind     "ws" (WebSocket message) | "snapshot" (REST depth response) | "conn" (connection lifecycle)
+           | "rest_trades" (Phase 14 live trade poll response; meta {"path", "params"})
   recv_ms  local receive time (ms, UTC)
   raw      the payload text exactly as received ("" for conn records)
   meta     small dict: snapshot {"book", "limit", "http_status"}; conn {"event", "reason"}
@@ -32,6 +33,8 @@ from pathlib import Path
 from typing import IO, Any
 
 CAPTURE_VERSION = 1
+# "rest_trades" records are written by the Phase 14 live runner into its own capture root, never the depth root.
+CAPTURE_KINDS = ("ws", "snapshot", "conn", "rest_trades")
 
 
 @dataclass(frozen=True)
@@ -81,7 +84,7 @@ class CaptureWriter:
         return hour, self.root / f"date={t.strftime('%Y-%m-%d')}" / f"{self.session}-{hour}.jsonl.gz"
 
     def write(self, kind: str, recv_ms: int, raw: str, meta: dict[str, Any] | None = None) -> CaptureRecord:
-        if kind not in ("ws", "snapshot", "conn"):
+        if kind not in CAPTURE_KINDS:
             raise ValueError(f"unknown capture kind {kind!r}")
         hour, path = self._path(recv_ms)
         if hour != self._hour:

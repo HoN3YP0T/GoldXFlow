@@ -203,7 +203,7 @@ goldflow/                     current package
   strategies/{signal.py, base.py, regime.py, library.py, engine.py, verify.py}             (Phase 11, built)
   backtesting/{settings.py, broker.py, basis.py, simulator.py, engine.py}                  (Phase 12, built)
   research/{settings.py, metrics.py, ledger.py, runner.py, walkforward.py, study.py}         (Phase 13, built)
-  live/{ws_client.py, recorder.py, parity.py}                                              (Phase 14)
+  live/{trades.py, bus.py, runner.py, parity.py}                                           (Phase 14, built)
   execution/{bridge.py, order_manager.py, positions.py}  risk/                             (Phase 16)
   monitoring/  dashboard/                                                                  (Phase 17)
 config/  docs/  scripts/  tests/  data/ (git-ignored except small reports, manifest and frozen range)
@@ -230,7 +230,7 @@ mql5/   (Phase 16: EA executor source)
 | 11 | Strategy interface and signal generation | **Done** (2026-10-31; see `docs/PHASE11_COMPLETION_REPORT.md`; example strategy parameters PROPOSED, D13) | – |
 | 12 | Event-driven backtesting and execution simulation | **Built** (2026-10-31; see `docs/PHASE12_COMPLETION_REPORT.md`). Real backtests **blocked on D2** (broker spec + tick history) | M4 |
 | 13 | Reports, validation, walk-forward, research | **Built** (2026-10-31; see `docs/PHASE13_COMPLETION_REPORT.md`). Real studies blocked on D2; thresholds D8 | M5 |
-| 14 | Live Binance ingestion and historical/live parity | Not started (start the depth recorder early) | M6 |
+| 14 | Live Binance ingestion and historical/live parity | **Built** (2026-10-31; see `docs/PHASE14_COMPLETION_REPORT.md`). Parity exact on 4 real days; live REST needs a non-US host (D6) | M6 |
 | 15 | Additional providers and cross-market mapping | Not started | – |
 | 16 | MT5 execution bridge and risk controls | Not started | M7 |
 | 17 | Dashboard, observability, deployment, hardening | Not started | M8 |
@@ -754,7 +754,9 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 14: Real-time Binance ingestion and historical/live parity. **Status: Not started. Start the recorder early.**
+### Phase 14: Real-time Binance ingestion and historical/live parity. **Status: Built (2026-10-31). Live REST needs a non-US host (D6).**
+**Built** (`goldflow/live/`; spec `docs/LIVE_V1.md`; report `docs/PHASE14_COMPLETION_REPORT.md`): option (a) REST trade poller incl. RPI, normalised by the Phase 3 validator; raw capture first; gap suspicion with `historicalTrades` backfill or a `GAP` interval; `LiveBus` with the same `EventChunk` interface and a clock held at the last successful poll minus a grace; per-stream staleness (`STALE` blocks signals); late trades excluded everywhere and counted; checkpoints with `RECOVERY` on restart; WebSocket monitor (aggTrade, markPrice). Parity harness: **exactly equal on 26 outputs over 3,197,220 real trades**. Found: the legacy `fstream.binance.com/stream` URL is silent; depth is on `/public/stream`, aggTrade/markPrice on `/market/stream` (Phase 8 default fixed). Commands: `live-run`, `parity`.
+
 **Objective.** Bring the pipeline online without a second, inconsistent implementation.
 
 **Host.** It must run where Binance is reachable: the trading PC (India) or a non-US VPS. US cloud hosts get HTTP 451.
@@ -874,12 +876,12 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ### 9.1 Data integrity: the eight layers (all phases)
 1. **Source validation:** checksums, schema and value rules (built: Phases 2–3).
-2. **Event identity and idempotency:** keys scoped by provider, market, instrument and source id (built for history; built for processing in Phase 5: watermark plus recent-id ring; Phase 14 for live).
+2. **Event identity and idempotency:** keys scoped by provider, market, instrument and source id (built for history; built for processing in Phase 5: watermark plus recent-id ring; built for live in Phase 14: the same processor behind the REST poller).
 3. **Sequence validation where the source provides it:** trade ids are not contiguous on Binance (unused ids), so completeness is proven with **kline counts** rather than id gaps. Depth uses `U/u/pu`.
-4. **Durable raw capture before transformation:** archive zips and REST JSONL (built); live capture (Phase 14).
+4. **Durable raw capture before transformation:** archive zips and REST JSONL (built); live capture (built, Phase 14).
 5. **Normalised validation and quarantine** (built).
-6. **Reconciliation and backfill:** aggTrades, klines, REST, midnight-straddle resolution (built); live backfill (Phase 14).
-7. **Capability and DQ gating downstream:** quality events (built); strategy gating (Phase 11); live staleness (Phase 14); risk engine (Phase 16).
+6. **Reconciliation and backfill:** aggTrades, klines, REST, midnight-straddle resolution (built); live backfill via historicalTrades (built, Phase 14).
+7. **Capability and DQ gating downstream:** quality events (built); strategy gating (Phase 11); live staleness, gaps, late trades and recovery (built, Phase 14); risk engine (Phase 16).
 8. **Audit reporting:** manifests, validation reports, run digests (built); execution audit (Phase 16).
 
 **Rule.** When integrity is uncertain, mark the interval, block only the calculations and signals that depend on it, and keep the unaffected ones running.

@@ -596,5 +596,24 @@
       "param_change": "0.2",
       "cost_multiplier": "1.5"
     }
+  },
+  "live": {
+    "_doc": "Phase 14 live ingestion (docs/LIVE_V1.md). Trade source: REST polling of individual trades incl. RPI (decision D3, option a), the same definition as the history. Paper mode: signals only. Run where fapi is reachable (not a US host: HTTP 451).",
+    "trade_source": "rest_poll",
+    "poll_ms": 750,
+    "rest_limit": 1000,
+    "grace_ms": 3000,
+    "stale_ms": {
+      "trades": 15000,
+      "aggTrade": 30000,
+      "markPrice": 10000
+    },
+    "ws_streams": [
+      "aggTrade",
+      "markPrice"
+    ],
+    "ws_base_url": "wss://fstream.binance.com/market/stream",
+    "checkpoint_s": 60,
+    "backfill_max_pages": 50
   }
 }

@@ -37,7 +37,7 @@ from .. import schemas as S
 from ..processing.aggregation import digest_tree
 from ..processing.holidays import HolidayCalendar
 from ..processing.sessions import local_date, local_to_ms
-from ..processing.trade_processor import ProcessorSink
+from ..processing.trade_processor import ProcessorSink, merge_dq
 from ..replay import ReplayGuardError
 from ..timeutil import DAY_MS
 from .events import worst_dq
@@ -276,9 +276,7 @@ class IBEngine(ProcessorSink):
                               "observe_from": proc.observe_from}, bool(ctx.get("resumed")))  # fmt: skip
 
     def on_dq(self, start_ms: int, end_ms: int, status: str) -> None:
-        x = [int(start_ms), int(end_ms), str(status)]
-        if x not in self.dq:
-            self.dq.append(x)
+        merge_dq(self.dq, int(start_ms), int(end_ms), str(status))
 
     def on_bars(self, interval: str, bars: dict[str, Any], levels: dict[str, Any], final_upto_ms: int) -> None:
         n = len(bars["bar_start"])

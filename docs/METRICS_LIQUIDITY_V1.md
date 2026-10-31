@@ -6,7 +6,7 @@ Package: `goldflow/liquidity/`. These metrics are **live-recorded only**. There 
 
 | Source | Use |
 |---|---|
-| WebSocket `<symbol>@depth@100ms` (combined stream `wss://fstream.binance.com/stream?streams=…`) | Diff events: `E` (event time), `T` (transaction time), `U` (first update id), `u` (final update id), `pu` (previous event's `u`), `b`/`a` (absolute quantities per price; `0` removes the level) |
+| WebSocket `<symbol>@depth@100ms` (combined stream `wss://fstream.binance.com/public/stream?streams=…`; the legacy `/stream` path connects but has delivered no messages since at least 2026-10-31) | Diff events: `E` (event time), `T` (transaction time), `U` (first update id), `u` (final update id), `pu` (previous event's `u`), `b`/`a` (absolute quantities per price; `0` removes the level) |
 | REST `GET /fapi/v1/depth?symbol=…&limit=1000` (weight 20) | Snapshot: `lastUpdateId`, `E`, `T`, up to 1,000 levels per side |
 | `<symbol>@rpiDepth@500ms` and `/fapi/v1/rpiDepth` | RPI liquidity. **Unverified names and format; disabled by default** (`depth.rpi_enabled`). If enabled, it builds a separate book (`book_kind = "rpi"`). If its messages don't follow the diff format, the book never becomes valid; nothing is guessed. |
 

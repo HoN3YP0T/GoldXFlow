@@ -30,7 +30,7 @@ from numpy.typing import NDArray
 from ..processing.aggregation import digest_tree
 from ..processing.sessions import Instance
 from ..processing.settings import ProcessingSettings
-from ..processing.trade_processor import DQ_NAMES, DQ_RANK, ProcessorSink
+from ..processing.trade_processor import DQ_NAMES, DQ_RANK, ProcessorSink, merge_dq
 from ..replay import ReplayGuardError
 from ..timeutil import DAY_MS, iso
 from .absorption import AbsorptionDetector
@@ -153,9 +153,7 @@ class OrderflowEngine(ProcessorSink):
             )
 
     def on_dq(self, start_ms: int, end_ms: int, status: str) -> None:
-        x = [int(start_ms), int(end_ms), str(status)]
-        if x not in self.dq:
-            self.dq.append(x)
+        merge_dq(self.dq, int(start_ms), int(end_ms), str(status))
 
     def on_trades(self, t: NDArray[Any], ids: NDArray[Any], p: NDArray[Any], q: NDArray[Any], side: NDArray[Any]) -> None:
         res = self.builder.ingest(t.astype(I64), ids.astype(I64), p.astype(I64), q.astype(I64), side.astype(np.int8))

@@ -1,6 +1,6 @@
 # goldflow: Binance XAUUSDT gold orderflow engine (Phases 1–6, 8)
 
-Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions, Phase 4 replays it deterministically, Phase 5 turns the replayed trades into exact price-level and footprint aggregates, Phase 6 builds volume profiles (POC, value area, HVN/LVN) and VWAP with bands on top of them, Phase 7 adds delta, CVD, footprint imbalances, Big Trades (rebuilt taker orders) and absorption / exhaustion / divergence events, Phase 9 adds Auction Market Theory: acceptance, rejection and failed auctions at reference levels, auction state, activity and profile shape. Phase 10 adds the Initial Balance (with extensions, breakouts and failed breaks) and a holiday calendar; IVB stays disabled until it is defined. Phase 11 adds the strategy interface: research strategies turn that evidence into explainable, gated trading signals (proposals, not orders). Phase 12 adds the event-driven backtester that fills those signals on your broker's XAUUSD bid/ask (it waits for the broker specification and tick history, decision D2). Phase 13 adds the research layer: walk-forward, robustness checks, a once-only test set, a hash-chained research ledger and approval criteria.
+Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`** (TradFi perpetual on spot gold). Raw data is kept exactly as Binance published it; Phase 3 normalises it into validated Parquet partitions, Phase 4 replays it deterministically, Phase 5 turns the replayed trades into exact price-level and footprint aggregates, Phase 6 builds volume profiles (POC, value area, HVN/LVN) and VWAP with bands on top of them, Phase 7 adds delta, CVD, footprint imbalances, Big Trades (rebuilt taker orders) and absorption / exhaustion / divergence events, Phase 9 adds Auction Market Theory: acceptance, rejection and failed auctions at reference levels, auction state, activity and profile shape. Phase 10 adds the Initial Balance (with extensions, breakouts and failed breaks) and a holiday calendar; IVB stays disabled until it is defined. Phase 11 adds the strategy interface: research strategies turn that evidence into explainable, gated trading signals (proposals, not orders). Phase 12 adds the event-driven backtester that fills those signals on your broker's XAUUSD bid/ask (it waits for the broker specification and tick history, decision D2). Phase 13 adds the research layer: walk-forward, robustness checks, a once-only test set, a hash-chained research ledger and approval criteria. Phase 14 brings the same pipeline online in paper mode: live individual trades (REST polling, RPI included, as in the history), feed health that blocks signals, restart recovery, and a parity harness that proves the live path gives exactly the replay's results.
 
 **No market data is committed to this repository.** Rebuild it with `python -m goldflow.cli acquire` then `python -m goldflow.cli normalize`. The frozen range in `data/state/range.json` reproduces the exact dataset, and the partition digests in `data/manifests/dataset_manifest.json` let you verify it.
 
@@ -47,10 +47,11 @@ goldflow/
   backtesting/      Phase 12: settings.py (broker spec, execution model), broker.py (MT5 tick import), basis.py,
                     simulator.py (fills, costs, risk, cents ledger), engine.py (Backtester sink, report)
   research/         Phase 13: metrics.py, ledger.py (research ledger, test lock), runner.py, walkforward.py, study.py
+  live/             Phase 14: trades.py (REST trades -> TradeEvent), bus.py (LiveBus, FeedHealth), runner.py (LiveRunner), parity.py
   cli.py            discover | acquire | rest | manifest | normalize | validate | report | replay | process | reconcile |
-                    vprofile | vprofile-verify | vprofile-export | orderflow | orderflow-verify | auction | auction-verify | auction-review | ib | ib-verify | signals | signals-verify | broker-import | backtest | perf-report | study | ledger-verify
-docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, METRICS_PROFILE_V1.md, METRICS_ORDERFLOW_V1.md, METRICS_AUCTION_V1.md, METRICS_IB_V1.md, SIGNALS_V1.md, BACKTEST_V1.md, RESEARCH_V1.md, PHASE*_REPORT.md
-tests/test_core.py, test_phase3.py, test_replay.py, test_processing.py, test_profile.py, test_orderflow.py, test_auction.py, test_ib.py, test_strategies.py, test_backtest.py, test_research.py
+                    vprofile | vprofile-verify | vprofile-export | orderflow | orderflow-verify | auction | auction-verify | auction-review | ib | ib-verify | signals | signals-verify | broker-import | backtest | perf-report | study | ledger-verify | live-run | parity
+docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, METRICS_PROFILE_V1.md, METRICS_ORDERFLOW_V1.md, METRICS_AUCTION_V1.md, METRICS_IB_V1.md, SIGNALS_V1.md, BACKTEST_V1.md, RESEARCH_V1.md, LIVE_V1.md, PHASE*_REPORT.md
+tests/test_core.py, test_phase3.py, test_replay.py, test_processing.py, test_profile.py, test_orderflow.py, test_auction.py, test_ib.py, test_strategies.py, test_backtest.py, test_research.py, test_live.py
 data/raw/binance/futures_um/XAUUSDT/<dataset>/<daily|monthly|rest>/   raw zips + .CHECKSUM (+ _verify sidecars)
 data/state/   acquisition.sqlite, range.json, plan-*.json, progress.json, acquisition.log, instrument_discovery.json
 data/manifest.json
@@ -240,3 +241,15 @@ python -m goldflow.cli ledger-verify                     # research ledger hash 
 - **Validation:** walk-forward (8 weeks in-sample / 2 weeks out-of-sample), ±20 % parameter stability, costs ×1.5, sensitivity heatmap, Monte Carlo.
 - **Research ledger:** hypotheses are recorded before any results.
 - **Approval:** thresholds are proposed (D8). `research.approval.max_oos_drawdown` must be set before anything can pass. See `docs/RESEARCH_V1.md`.
+
+
+## Phase 14: Live ingestion (paper mode) and historical/live parity
+```bash
+python -m goldflow.cli live-run --name L1 [--duration 3600]   # REST trade poller + WebSocket monitor -> the same analytics and strategies (signals only)
+python -m goldflow.cli parity --start 2026-10-23T00:00:00Z --end 2026-10-27T00:00:00Z   # live path vs replay, exact comparison
+python -m goldflow.cli parity --start ... --end ... --from-capture                      # the same, on trades recorded by live-run
+```
+- **Host:** Binance REST answers HTTP 451 to US hosts. Run `live-run` on the trading PC or a non-US VPS (D6). An API key (MARKET_DATA) enables gap backfill.
+- **Trade definition:** individual trades incl. RPI, as in the history (D3 option a). `aggTrade` is monitoring only.
+- **Safety:** stale feeds, gaps, late trades and restarts open data-quality intervals that block signals until they close.
+- **WebSocket endpoints:** depth on `wss://fstream.binance.com/public/stream`, aggTrade/markPrice on `/market/stream` (the old `/stream` path is silent). See `docs/LIVE_V1.md`.
