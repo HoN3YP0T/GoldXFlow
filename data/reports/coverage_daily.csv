@@ -1,0 +1,921 @@
+dataset,date,status,rows,quarantined,key_evidence
+aggTrades,2026-04-30,COMPLETE,253571,0,{}
+aggTrades,2026-05-01,PARTIAL,221102,0,{}
+aggTrades,2026-05-02,COMPLETE,16600,0,{}
+aggTrades,2026-05-03,PARTIAL,58093,0,{}
+aggTrades,2026-05-04,PARTIAL,286896,0,{}
+aggTrades,2026-05-05,PARTIAL,251492,0,{}
+aggTrades,2026-05-06,PARTIAL,305012,0,{}
+aggTrades,2026-05-07,PARTIAL,298435,0,{}
+aggTrades,2026-05-08,PARTIAL,232921,0,{}
+aggTrades,2026-05-09,COMPLETE,22182,0,{}
+aggTrades,2026-05-10,PARTIAL,59081,0,{}
+aggTrades,2026-05-11,PARTIAL,278229,0,{}
+aggTrades,2026-05-12,PARTIAL,348985,0,{}
+aggTrades,2026-05-13,PARTIAL,218026,0,{}
+aggTrades,2026-05-14,PARTIAL,263856,0,{}
+aggTrades,2026-05-15,PARTIAL,376915,0,{}
+aggTrades,2026-05-16,PARTIAL,59129,0,{}
+aggTrades,2026-05-17,PARTIAL,72642,0,{}
+aggTrades,2026-05-18,PARTIAL,350752,0,{}
+aggTrades,2026-05-19,PARTIAL,290711,0,{}
+aggTrades,2026-05-20,PARTIAL,300011,0,{}
+aggTrades,2026-05-21,PARTIAL,256671,0,{}
+aggTrades,2026-05-22,PARTIAL,181657,0,{}
+aggTrades,2026-05-23,PARTIAL,57446,0,{}
+aggTrades,2026-05-24,PARTIAL,91476,0,{}
+aggTrades,2026-05-25,PARTIAL,126830,0,{}
+aggTrades,2026-05-26,PARTIAL,199077,0,{}
+aggTrades,2026-05-27,PARTIAL,284537,0,{}
+aggTrades,2026-05-28,PARTIAL,326245,0,{}
+aggTrades,2026-05-29,PARTIAL,234912,0,{}
+aggTrades,2026-05-30,PARTIAL,45458,0,{}
+aggTrades,2026-05-31,PARTIAL,58091,0,{}
+aggTrades,2026-06-01,PARTIAL,229280,0,{}
+aggTrades,2026-06-02,PARTIAL,213349,0,{}
+aggTrades,2026-06-03,PARTIAL,236013,0,{}
+aggTrades,2026-06-04,PARTIAL,233807,0,{}
+aggTrades,2026-06-05,PARTIAL,313823,0,{}
+aggTrades,2026-06-06,PARTIAL,75716,0,{}
+aggTrades,2026-06-07,PARTIAL,108227,0,{}
+aggTrades,2026-06-08,PARTIAL,328555,0,{}
+aggTrades,2026-06-09,PARTIAL,362020,0,{}
+aggTrades,2026-06-10,COMPLETE,677066,0,{}
+aggTrades,2026-06-11,COMPLETE,673711,0,{}
+aggTrades,2026-06-12,COMPLETE,403694,0,{}
+aggTrades,2026-06-13,COMPLETE,39056,0,{}
+aggTrades,2026-06-14,COMPLETE,103154,0,{}
+aggTrades,2026-06-15,COMPLETE,293770,0,{}
+aggTrades,2026-06-16,COMPLETE,229653,0,{}
+aggTrades,2026-06-17,COMPLETE,441374,0,{}
+aggTrades,2026-06-18,COMPLETE,336763,0,{}
+aggTrades,2026-06-19,COMPLETE,242516,0,{}
+aggTrades,2026-06-20,COMPLETE,36346,0,{}
+aggTrades,2026-06-21,COMPLETE,65547,0,{}
+aggTrades,2026-06-22,COMPLETE,269700,0,{}
+aggTrades,2026-06-23,COMPLETE,466532,0,{}
+aggTrades,2026-06-24,COMPLETE,696110,0,{}
+aggTrades,2026-06-25,COMPLETE,592011,0,{}
+aggTrades,2026-06-26,COMPLETE,365361,0,{}
+aggTrades,2026-06-27,COMPLETE,46745,0,{}
+aggTrades,2026-06-28,COMPLETE,69177,0,{}
+aggTrades,2026-06-29,COMPLETE,332714,0,{}
+aggTrades,2026-06-30,COMPLETE,451288,0,{}
+aggTrades,2026-07-01,COMPLETE,436437,0,{}
+aggTrades,2026-07-02,COMPLETE,436324,0,{}
+aggTrades,2026-07-03,COMPLETE,232149,0,{}
+aggTrades,2026-07-04,COMPLETE,40569,0,{}
+aggTrades,2026-07-05,COMPLETE,63390,0,{}
+aggTrades,2026-07-06,COMPLETE,277559,0,{}
+aggTrades,2026-07-07,COMPLETE,402496,0,{}
+aggTrades,2026-07-08,COMPLETE,491069,0,{}
+aggTrades,2026-07-09,COMPLETE,341820,0,{}
+aggTrades,2026-07-10,COMPLETE,356227,0,{}
+aggTrades,2026-07-11,COMPLETE,56888,0,{}
+aggTrades,2026-07-12,COMPLETE,106534,0,{}
+aggTrades,2026-07-13,COMPLETE,531988,0,{}
+aggTrades,2026-07-14,COMPLETE,494986,0,{}
+aggTrades,2026-07-15,COMPLETE,429745,0,{}
+aggTrades,2026-07-16,COMPLETE,462330,0,{}
+aggTrades,2026-07-17,COMPLETE,458931,0,{}
+aggTrades,2026-07-18,COMPLETE,65401,0,{}
+aggTrades,2026-07-19,COMPLETE,83277,0,{}
+aggTrades,2026-07-20,COMPLETE,394819,0,{}
+aggTrades,2026-07-21,COMPLETE,357672,0,{}
+aggTrades,2026-07-22,COMPLETE,405838,0,{}
+aggTrades,2026-07-23,COMPLETE,371389,0,{}
+aggTrades,2026-07-24,COMPLETE,290622,0,{}
+aggTrades,2026-07-25,COMPLETE,87915,0,{}
+aggTrades,2026-07-26,COMPLETE,118532,0,{}
+aggTrades,2026-07-27,COMPLETE,328624,0,{}
+aggTrades,2026-07-28,COMPLETE,313028,0,{}
+aggTrades,2026-07-29,COMPLETE,483107,0,{}
+aggTrades,2026-07-30,COMPLETE,477238,0,{}
+aggTrades,2026-07-31,COMPLETE,327434,0,{}
+aggTrades,2026-08-01,COMPLETE,48474,0,{}
+aggTrades,2026-08-02,COMPLETE,87132,0,{}
+aggTrades,2026-08-03,COMPLETE,296720,0,{}
+aggTrades,2026-08-04,COMPLETE,313711,0,{}
+aggTrades,2026-08-05,COMPLETE,540353,0,{}
+aggTrades,2026-08-06,COMPLETE,471998,0,{}
+aggTrades,2026-08-07,COMPLETE,546782,0,{}
+aggTrades,2026-08-08,COMPLETE,75027,0,{}
+aggTrades,2026-08-09,COMPLETE,78089,0,{}
+aggTrades,2026-08-10,COMPLETE,391078,0,{}
+aggTrades,2026-08-11,COMPLETE,483149,0,{}
+aggTrades,2026-08-12,COMPLETE,479727,0,{}
+aggTrades,2026-08-13,COMPLETE,480194,0,{}
+aggTrades,2026-08-14,COMPLETE,367123,0,{}
+aggTrades,2026-08-15,COMPLETE,46446,0,{}
+aggTrades,2026-08-16,COMPLETE,62132,0,{}
+aggTrades,2026-08-17,COMPLETE,384458,0,{}
+aggTrades,2026-08-18,COMPLETE,459162,0,{}
+aggTrades,2026-08-19,COMPLETE,662428,0,{}
+aggTrades,2026-08-20,COMPLETE,511385,0,{}
+aggTrades,2026-08-21,COMPLETE,504895,0,{}
+aggTrades,2026-08-22,COMPLETE,80566,0,{}
+aggTrades,2026-08-23,COMPLETE,80848,0,{}
+aggTrades,2026-08-24,COMPLETE,642717,0,{}
+aggTrades,2026-08-25,COMPLETE,602070,0,{}
+aggTrades,2026-08-26,COMPLETE,500920,0,{}
+aggTrades,2026-08-27,COMPLETE,483182,0,{}
+aggTrades,2026-08-28,COMPLETE,816103,0,{}
+aggTrades,2026-08-29,COMPLETE,50581,0,{}
+aggTrades,2026-08-30,COMPLETE,113816,0,{}
+aggTrades,2026-08-31,COMPLETE,543036,0,{}
+aggTrades,2026-09-01,COMPLETE,661604,0,{}
+aggTrades,2026-09-02,COMPLETE,680352,0,{}
+aggTrades,2026-09-03,COMPLETE,645318,0,{}
+aggTrades,2026-09-04,COMPLETE,610988,0,{}
+aggTrades,2026-09-05,COMPLETE,57009,0,{}
+aggTrades,2026-09-06,COMPLETE,89794,0,{}
+aggTrades,2026-09-07,COMPLETE,363805,0,{}
+aggTrades,2026-09-08,COMPLETE,549781,0,{}
+aggTrades,2026-09-09,COMPLETE,511436,0,{}
+aggTrades,2026-09-10,COMPLETE,703564,0,{}
+aggTrades,2026-09-11,COMPLETE,705976,0,{}
+aggTrades,2026-09-12,COMPLETE,41089,0,{}
+aggTrades,2026-09-13,COMPLETE,95047,0,{}
+aggTrades,2026-09-14,COMPLETE,628673,0,{}
+aggTrades,2026-09-15,COMPLETE,441866,0,{}
+aggTrades,2026-09-16,COMPLETE,827598,0,{}
+aggTrades,2026-09-17,COMPLETE,593691,0,{}
+aggTrades,2026-09-18,COMPLETE,517391,0,{}
+aggTrades,2026-09-19,COMPLETE,50436,0,{}
+aggTrades,2026-09-20,COMPLETE,81192,0,{}
+aggTrades,2026-09-21,COMPLETE,542820,0,{}
+aggTrades,2026-09-22,COMPLETE,663137,0,{}
+aggTrades,2026-09-23,COMPLETE,482329,0,{}
+aggTrades,2026-09-24,COMPLETE,593501,0,{}
+aggTrades,2026-09-25,COMPLETE,517954,0,{}
+aggTrades,2026-09-26,COMPLETE,113998,0,{}
+aggTrades,2026-09-27,COMPLETE,98202,0,{}
+aggTrades,2026-09-28,COMPLETE,787531,0,{}
+aggTrades,2026-09-29,COMPLETE,568517,0,{}
+aggTrades,2026-09-30,COMPLETE,554674,0,{}
+aggTrades,2026-10-01,COMPLETE,565319,0,{}
+aggTrades,2026-10-02,COMPLETE,726530,0,{}
+aggTrades,2026-10-03,COMPLETE,45452,0,{}
+aggTrades,2026-10-04,COMPLETE,58140,0,{}
+aggTrades,2026-10-05,COMPLETE,422589,0,{}
+aggTrades,2026-10-06,COMPLETE,424879,0,{}
+aggTrades,2026-10-07,COMPLETE,496573,0,{}
+aggTrades,2026-10-08,COMPLETE,489683,0,{}
+aggTrades,2026-10-09,COMPLETE,355698,0,{}
+aggTrades,2026-10-10,COMPLETE,34518,0,{}
+aggTrades,2026-10-11,COMPLETE,61767,0,{}
+aggTrades,2026-10-12,COMPLETE,313015,0,{}
+aggTrades,2026-10-13,COMPLETE,383393,0,{}
+aggTrades,2026-10-14,COMPLETE,623364,0,{}
+aggTrades,2026-10-15,COMPLETE,524996,0,{}
+aggTrades,2026-10-16,COMPLETE,445716,0,{}
+aggTrades,2026-10-17,COMPLETE,68108,0,{}
+aggTrades,2026-10-18,COMPLETE,90524,0,{}
+aggTrades,2026-10-19,COMPLETE,376392,0,{}
+aggTrades,2026-10-20,COMPLETE,477404,0,{}
+aggTrades,2026-10-21,COMPLETE,448956,0,{}
+aggTrades,2026-10-22,COMPLETE,645701,0,{}
+aggTrades,2026-10-23,COMPLETE,563282,0,{}
+aggTrades,2026-10-24,COMPLETE,116667,0,{}
+aggTrades,2026-10-25,COMPLETE,113267,0,{}
+aggTrades,2026-10-26,COMPLETE,416588,0,{}
+aggTrades,2026-10-27,PARTIAL,422002,0,{}
+aggTrades,2026-10-28,MISSING,0,0,"{""reason"": ""file not published on data.binance.vision (listing has no key; HTTP 404)""}"
+aggTrades,2026-10-29,COMPLETE,587372,0,{}
+aggTrades,2026-10-30,MISSING,0,0,"{""reason"": ""day not complete at acquisition time; not yet archived on data.binance.vision""}"
+bookDepth,2026-04-30,PARTIAL,31584,0,"{""snapshots"": 2632, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 27, ""max_gap_s"": 212.0}"
+bookDepth,2026-05-01,PARTIAL,31920,0,"{""snapshots"": 2660, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 24, ""max_gap_s"": 240.0}"
+bookDepth,2026-05-02,PARTIAL,31992,0,"{""snapshots"": 2666, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 29, ""max_gap_s"": 241.0}"
+bookDepth,2026-05-03,PARTIAL,31548,0,"{""snapshots"": 2629, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 30, ""max_gap_s"": 239.0}"
+bookDepth,2026-05-04,PARTIAL,31800,0,"{""snapshots"": 2650, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 25, ""max_gap_s"": 214.0}"
+bookDepth,2026-05-05,PARTIAL,32052,0,"{""snapshots"": 2671, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 24, ""max_gap_s"": 208.0}"
+bookDepth,2026-05-06,PARTIAL,31956,0,"{""snapshots"": 2663, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 29, ""max_gap_s"": 245.0}"
+bookDepth,2026-05-07,PARTIAL,32160,0,"{""snapshots"": 2680, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 25, ""max_gap_s"": 210.0}"
+bookDepth,2026-05-08,PARTIAL,32700,0,"{""snapshots"": 2725, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 15, ""max_gap_s"": 236.0}"
+bookDepth,2026-05-09,PARTIAL,32988,0,"{""snapshots"": 2749, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 16, ""max_gap_s"": 241.0}"
+bookDepth,2026-05-10,PARTIAL,33024,0,"{""snapshots"": 2752, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 13, ""max_gap_s"": 240.0}"
+bookDepth,2026-05-11,PARTIAL,33408,0,"{""snapshots"": 2784, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 10, ""max_gap_s"": 214.0}"
+bookDepth,2026-05-12,PARTIAL,32856,0,"{""snapshots"": 2738, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 13, ""max_gap_s"": 235.0}"
+bookDepth,2026-05-13,PARTIAL,32592,0,"{""snapshots"": 2716, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 16, ""max_gap_s"": 237.0}"
+bookDepth,2026-05-14,PARTIAL,31884,0,"{""snapshots"": 2657, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 25, ""max_gap_s"": 212.0}"
+bookDepth,2026-05-15,PARTIAL,31332,0,"{""snapshots"": 2611, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 31, ""max_gap_s"": 241.0}"
+bookDepth,2026-05-16,PARTIAL,31824,0,"{""snapshots"": 2652, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 25, ""max_gap_s"": 239.0}"
+bookDepth,2026-05-17,PARTIAL,32292,0,"{""snapshots"": 2691, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 20, ""max_gap_s"": 238.0}"
+bookDepth,2026-05-18,PARTIAL,31788,0,"{""snapshots"": 2649, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 28, ""max_gap_s"": 236.0}"
+bookDepth,2026-05-19,PARTIAL,31740,0,"{""snapshots"": 2645, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 27, ""max_gap_s"": 241.0}"
+bookDepth,2026-05-20,PARTIAL,31656,0,"{""snapshots"": 2638, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 30, ""max_gap_s"": 241.0}"
+bookDepth,2026-05-21,PARTIAL,32052,0,"{""snapshots"": 2671, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 24, ""max_gap_s"": 212.0}"
+bookDepth,2026-05-22,PARTIAL,32040,0,"{""snapshots"": 2670, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 23, ""max_gap_s"": 244.0}"
+bookDepth,2026-05-23,PARTIAL,31908,0,"{""snapshots"": 2659, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 24, ""max_gap_s"": 244.0}"
+bookDepth,2026-05-24,PARTIAL,31512,0,"{""snapshots"": 2626, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 29, ""max_gap_s"": 236.0}"
+bookDepth,2026-05-25,PARTIAL,32136,0,"{""snapshots"": 2678, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 20, ""max_gap_s"": 241.0}"
+bookDepth,2026-05-26,PARTIAL,31716,0,"{""snapshots"": 2643, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 28, ""max_gap_s"": 243.0}"
+bookDepth,2026-05-27,PARTIAL,31956,0,"{""snapshots"": 2663, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 25, ""max_gap_s"": 212.0}"
+bookDepth,2026-05-28,PARTIAL,31644,0,"{""snapshots"": 2637, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 29, ""max_gap_s"": 241.0}"
+bookDepth,2026-05-29,PARTIAL,31608,0,"{""snapshots"": 2634, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 31, ""max_gap_s"": 239.0}"
+bookDepth,2026-05-30,PARTIAL,32088,0,"{""snapshots"": 2674, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 22, ""max_gap_s"": 243.0}"
+bookDepth,2026-05-31,PARTIAL,31104,0,"{""snapshots"": 2592, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 39, ""max_gap_s"": 233.0}"
+bookDepth,2026-06-01,PARTIAL,31536,0,"{""snapshots"": 2628, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 31, ""max_gap_s"": 240.0}"
+bookDepth,2026-06-02,PARTIAL,31488,0,"{""snapshots"": 2624, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 30, ""max_gap_s"": 234.0}"
+bookDepth,2026-06-03,PARTIAL,34140,0,"{""snapshots"": 2845, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 6, ""max_gap_s"": 238.0}"
+bookDepth,2026-06-04,COMPLETE,34548,0,"{""snapshots"": 2879, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 58.0}"
+bookDepth,2026-06-05,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 44.0}"
+bookDepth,2026-06-06,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 43.0}"
+bookDepth,2026-06-07,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 46.0}"
+bookDepth,2026-06-08,COMPLETE,34428,0,"{""snapshots"": 2869, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 114.0}"
+bookDepth,2026-06-09,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 33.0}"
+bookDepth,2026-06-10,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-06-11,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-06-12,COMPLETE,34416,0,"{""snapshots"": 2868, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 91.0}"
+bookDepth,2026-06-13,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-06-14,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-06-15,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-06-16,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-06-17,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-06-18,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 33.0}"
+bookDepth,2026-06-19,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-06-20,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-06-21,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-06-22,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 33.0}"
+bookDepth,2026-06-23,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-06-24,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-06-25,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-06-26,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-06-27,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-06-28,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 33.0}"
+bookDepth,2026-06-29,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-06-30,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-07-01,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-07-02,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-07-03,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 33.0}"
+bookDepth,2026-07-04,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-07-05,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 33.0}"
+bookDepth,2026-07-06,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-07-07,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-07-08,COMPLETE,34416,0,"{""snapshots"": 2868, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 91.0}"
+bookDepth,2026-07-09,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-07-10,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-07-11,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-07-12,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 33.0}"
+bookDepth,2026-07-13,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-07-14,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-07-15,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-07-16,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-07-17,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-07-18,COMPLETE,34548,0,"{""snapshots"": 2879, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 49.0}"
+bookDepth,2026-07-19,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-07-20,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-07-21,COMPLETE,34392,0,"{""snapshots"": 2866, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 120.0}"
+bookDepth,2026-07-22,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-07-23,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-07-24,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 37.0}"
+bookDepth,2026-07-25,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-07-26,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-07-27,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-07-28,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-07-29,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-07-30,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-07-31,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-08-01,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-08-02,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-08-03,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-08-04,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-08-05,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-08-06,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-08-07,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-08-08,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-08-09,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-08-10,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-08-11,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-08-12,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-08-13,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-08-14,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-08-15,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-08-16,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-08-17,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 43.0}"
+bookDepth,2026-08-18,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 44.0}"
+bookDepth,2026-08-19,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 46.0}"
+bookDepth,2026-08-20,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 42.0}"
+bookDepth,2026-08-21,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 39.0}"
+bookDepth,2026-08-22,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 39.0}"
+bookDepth,2026-08-23,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-08-24,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 37.0}"
+bookDepth,2026-08-25,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-08-26,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-08-27,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 40.0}"
+bookDepth,2026-08-28,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-08-29,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-08-30,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 37.0}"
+bookDepth,2026-08-31,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-09-01,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-09-02,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-09-03,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 39.0}"
+bookDepth,2026-09-04,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-09-05,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 43.0}"
+bookDepth,2026-09-06,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-09-07,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-09-08,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 37.0}"
+bookDepth,2026-09-09,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-09-10,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 38.0}"
+bookDepth,2026-09-11,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 38.0}"
+bookDepth,2026-09-12,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 37.0}"
+bookDepth,2026-09-13,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-09-14,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-09-15,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-09-16,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-09-17,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 37.0}"
+bookDepth,2026-09-18,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-09-19,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-09-20,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-09-21,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 39.0}"
+bookDepth,2026-09-22,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 42.0}"
+bookDepth,2026-09-23,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 38.0}"
+bookDepth,2026-09-24,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-09-25,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-09-26,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-09-27,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-09-28,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-09-29,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-09-30,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-10-01,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-10-02,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 37.0}"
+bookDepth,2026-10-03,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 37.0}"
+bookDepth,2026-10-04,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-10-05,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-10-06,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 37.0}"
+bookDepth,2026-10-07,PARTIAL,4068,0,"{""snapshots"": 339, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 1, ""max_gap_s"": 76260.0}"
+bookDepth,2026-10-08,MISSING,0,0,"{""reason"": ""file not published on data.binance.vision (listing has no key; HTTP 404)""}"
+bookDepth,2026-10-09,PARTIAL,28668,0,"{""snapshots"": 2389, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 1, ""max_gap_s"": 14731.0}"
+bookDepth,2026-10-10,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-10-11,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-10-12,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-10-13,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-10-14,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-10-15,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-10-16,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 38.0}"
+bookDepth,2026-10-17,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-10-18,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-10-19,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-10-20,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-10-21,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 36.0}"
+bookDepth,2026-10-22,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-10-23,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-10-24,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-10-25,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-10-26,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 34.0}"
+bookDepth,2026-10-27,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-10-28,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-10-29,COMPLETE,34560,0,"{""snapshots"": 2880, ""snapshots_missing_bands"": 0, ""holes_over_120s"": 0, ""max_gap_s"": 35.0}"
+bookDepth,2026-10-30,MISSING,0,0,"{""reason"": ""day not complete at acquisition time; not yet archived on data.binance.vision""}"
+klines_1m,2026-04-30,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-01,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-02,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-03,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-04,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-05,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-06,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-07,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-08,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-09,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-10,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-11,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-12,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-13,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-14,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-15,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-16,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-17,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-18,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-19,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-20,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-21,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-22,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-23,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-24,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-25,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-26,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-27,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-28,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-29,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-30,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-05-31,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-01,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-02,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-03,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-04,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-05,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-06,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-07,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-08,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-09,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-10,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-11,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-12,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-13,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-14,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-15,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-16,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-17,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-18,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-19,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-20,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-21,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-22,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-23,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-24,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-25,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-26,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-27,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-28,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-29,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-06-30,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-01,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-02,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-03,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-04,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-05,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-06,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-07,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-08,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-09,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-10,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-11,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-12,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-13,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-14,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-15,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-16,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-17,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-18,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-19,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-20,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-21,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-22,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-23,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-24,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-25,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-26,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-27,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-28,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-29,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-30,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-07-31,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-01,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-02,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-03,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-04,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-05,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-06,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-07,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-08,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-09,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-10,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-11,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-12,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-13,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-14,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-15,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-16,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-17,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-18,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-19,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-20,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-21,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-22,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-23,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-24,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-25,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-26,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-27,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-28,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-29,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-30,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-08-31,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-01,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-02,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-03,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-04,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-05,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-06,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-07,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-08,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-09,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-10,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-11,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-12,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-13,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-14,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-15,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-16,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-17,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-18,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-19,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-20,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-21,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-22,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-23,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-24,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-25,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-26,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-27,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-28,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-29,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-09-30,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-01,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-02,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-03,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-04,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-05,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-06,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-07,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-08,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-09,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-10,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-11,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-12,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-13,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-14,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-15,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-16,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-17,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-18,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-19,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-20,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-21,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-22,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-23,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-24,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-25,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-26,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-27,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-28,MISSING,0,0,"{""reason"": ""file not published on data.binance.vision (listing has no key; HTTP 404)""}"
+klines_1m,2026-10-29,COMPLETE,1440,0,"{""minutes"": 1440, ""missing_minutes"": 0}"
+klines_1m,2026-10-30,MISSING,0,0,"{""reason"": ""day not complete at acquisition time; not yet archived on data.binance.vision""}"
+metrics,2026-04-30,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-01,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-02,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-03,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-04,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-05,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-06,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-07,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-08,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-09,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-10,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-11,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-12,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-13,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-14,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-15,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-16,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-17,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-18,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-19,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-20,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-21,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-22,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-23,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-24,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-25,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-26,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-27,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-28,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-29,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-30,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-05-31,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-01,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-02,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-03,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-04,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-05,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-06,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-07,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-08,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-09,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-10,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-11,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-12,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-13,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-14,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-15,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-16,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-17,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-18,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-19,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-20,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-21,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-22,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-23,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-24,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-25,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-26,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-27,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-28,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-29,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-06-30,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-01,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-02,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-03,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-04,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-05,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-06,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-07,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-08,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-09,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-10,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-11,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-12,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-13,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-14,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-15,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-16,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-17,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-18,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-19,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-20,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-21,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-22,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-23,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-24,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-25,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-26,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-27,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-28,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-29,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-30,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-07-31,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-01,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-02,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-03,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-04,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-05,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-06,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-07,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-08,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-09,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-10,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-11,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-12,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-13,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-14,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-15,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-16,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-17,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-18,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-19,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-20,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-21,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-22,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-23,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-24,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-25,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-26,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-27,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-28,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-29,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-30,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-08-31,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-01,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-02,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-03,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-04,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-05,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-06,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-07,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-08,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-09,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-10,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-11,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-12,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-13,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-14,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-15,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-16,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-17,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-18,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-19,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-20,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-21,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-22,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-23,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-24,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-25,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-26,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-27,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-28,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-29,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-09-30,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-01,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-02,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-03,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-04,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-05,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-06,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-07,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-08,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-09,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-10,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-11,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-12,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-13,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-14,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-15,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-16,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-17,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-18,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-19,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-20,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-21,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-22,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-23,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-24,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-25,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-26,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-27,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-28,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-29,COMPLETE,288,0,"{""rows"": 288, ""missing_5m_slots"": 0}"
+metrics,2026-10-30,MISSING,0,0,"{""reason"": ""day not complete at acquisition time; not yet archived on data.binance.vision""}"
+trades,2026-04-30,COMPLETE,620360,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-01,COMPLETE,571835,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-02,COMPLETE,25894,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-03,COMPLETE,111705,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-04,COMPLETE,597610,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-05,COMPLETE,679678,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-06,COMPLETE,726261,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-07,COMPLETE,638432,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-08,COMPLETE,488097,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-09,COMPLETE,39547,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-10,COMPLETE,124767,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-11,COMPLETE,595588,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-12,COMPLETE,951149,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-13,COMPLETE,483327,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-14,COMPLETE,635325,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-15,COMPLETE,898169,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-16,COMPLETE,102497,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-17,COMPLETE,129712,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-18,COMPLETE,721611,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-19,COMPLETE,601726,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-20,COMPLETE,619742,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-21,COMPLETE,533174,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-22,COMPLETE,378221,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-23,COMPLETE,104890,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-24,COMPLETE,191044,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-25,COMPLETE,270968,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-26,COMPLETE,413974,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-27,COMPLETE,634455,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-28,COMPLETE,681689,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-29,COMPLETE,477194,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-30,COMPLETE,77854,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-05-31,COMPLETE,106241,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-01,COMPLETE,444397,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-02,COMPLETE,424438,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-03,COMPLETE,465718,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-04,COMPLETE,471160,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-05,COMPLETE,622461,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-06,COMPLETE,134002,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-07,COMPLETE,209315,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-08,COMPLETE,658860,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-09,COMPLETE,741125,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-10,COMPLETE,1352406,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-11,COMPLETE,1336900,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-12,COMPLETE,779973,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-13,COMPLETE,74275,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-14,COMPLETE,204643,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-15,COMPLETE,602791,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-16,COMPLETE,465883,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-17,COMPLETE,904315,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-18,COMPLETE,711742,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-19,COMPLETE,501551,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-20,COMPLETE,72724,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-21,COMPLETE,133212,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-22,COMPLETE,550160,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-23,COMPLETE,959860,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-24,COMPLETE,1485921,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-25,COMPLETE,1187735,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-26,COMPLETE,712956,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-27,COMPLETE,93584,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-28,COMPLETE,147517,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-29,COMPLETE,648026,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-06-30,COMPLETE,914587,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-01,COMPLETE,962610,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-02,COMPLETE,901319,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-03,COMPLETE,468890,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-04,COMPLETE,73791,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-05,COMPLETE,136248,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-06,COMPLETE,561826,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-07,COMPLETE,826800,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-08,COMPLETE,1005201,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-09,COMPLETE,680744,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-10,COMPLETE,707139,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-11,COMPLETE,112442,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-12,COMPLETE,216238,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-13,COMPLETE,1094655,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-14,COMPLETE,968026,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-15,COMPLETE,913738,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-16,COMPLETE,1033030,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-17,COMPLETE,1050936,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-18,COMPLETE,108881,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-19,COMPLETE,155351,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-20,COMPLETE,864521,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-21,COMPLETE,796022,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-22,COMPLETE,912059,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-23,COMPLETE,855730,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-24,COMPLETE,623694,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-25,COMPLETE,128878,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-26,COMPLETE,219538,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-27,COMPLETE,768114,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-28,COMPLETE,709768,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-29,COMPLETE,1170623,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-30,COMPLETE,1281351,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-07-31,COMPLETE,857162,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-01,COMPLETE,89890,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-02,COMPLETE,189534,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-03,COMPLETE,812001,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-04,COMPLETE,815566,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-05,COMPLETE,1397673,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-06,COMPLETE,1198571,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-07,COMPLETE,1357392,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-08,COMPLETE,164056,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-09,COMPLETE,186674,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-10,COMPLETE,1046656,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-11,COMPLETE,1315670,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-12,COMPLETE,1216872,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-13,COMPLETE,1286811,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-14,COMPLETE,1022175,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-15,COMPLETE,98331,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-16,COMPLETE,142952,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-17,COMPLETE,1007537,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-18,COMPLETE,1239390,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-19,COMPLETE,1886895,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-20,COMPLETE,1278212,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-21,COMPLETE,1307600,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-22,COMPLETE,188606,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-23,COMPLETE,202616,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-24,COMPLETE,1682166,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-25,COMPLETE,1481401,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-26,COMPLETE,1257674,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-27,COMPLETE,1211138,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-28,COMPLETE,2096322,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-29,COMPLETE,119043,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-30,COMPLETE,303728,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-08-31,COMPLETE,1366146,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-01,COMPLETE,1760008,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-02,COMPLETE,1805918,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-03,COMPLETE,1543638,0,klines=MATCH agg=CONSISTENT recovered=1
+trades,2026-09-04,COMPLETE,1440053,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-05,COMPLETE,107509,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-06,COMPLETE,201934,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-07,COMPLETE,910794,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-08,COMPLETE,1373825,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-09,COMPLETE,1275636,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-10,COMPLETE,1664305,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-11,COMPLETE,1752481,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-12,COMPLETE,80443,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-13,COMPLETE,243692,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-14,COMPLETE,1508022,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-15,COMPLETE,1093228,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-16,COMPLETE,2044713,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-17,COMPLETE,1573796,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-18,COMPLETE,1413943,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-19,COMPLETE,125829,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-20,COMPLETE,216614,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-21,COMPLETE,1549769,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-22,COMPLETE,1824414,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-23,COMPLETE,1368168,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-24,COMPLETE,1682679,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-25,COMPLETE,1442248,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-26,COMPLETE,200563,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-27,COMPLETE,247641,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-28,COMPLETE,2370263,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-29,COMPLETE,1639354,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-09-30,COMPLETE,1553047,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-01,COMPLETE,1684831,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-02,COMPLETE,1998250,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-03,COMPLETE,119138,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-04,COMPLETE,168927,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-05,COMPLETE,1185437,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-06,COMPLETE,1252949,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-07,COMPLETE,1467428,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-08,COMPLETE,1484361,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-09,COMPLETE,1032636,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-10,COMPLETE,84129,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-11,COMPLETE,169545,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-12,COMPLETE,891582,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-13,COMPLETE,1095480,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-14,COMPLETE,1893693,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-15,COMPLETE,1612631,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-16,COMPLETE,1341857,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-17,COMPLETE,161336,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-18,COMPLETE,237739,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-19,COMPLETE,1047478,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-20,COMPLETE,1361542,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-21,COMPLETE,1277479,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-22,COMPLETE,1809926,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-23,COMPLETE,1513252,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-24,COMPLETE,300096,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-25,COMPLETE,282600,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-26,COMPLETE,1101272,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-27,COMPLETE,1172828,0,klines=MATCH agg=CONSISTENT recovered=0
+trades,2026-10-28,UNVERIFIED,1603503,0,klines=UNAVAILABLE agg=UNAVAILABLE recovered=0
+trades,2026-10-29,PARTIAL,1769768,0,klines=MISMATCH agg=TRADES_MISSING recovered=4767
+trades,2026-10-30,MISSING,0,0,"{""reason"": ""day not complete at acquisition time; not yet archived on data.binance.vision""}"

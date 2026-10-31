@@ -1,0 +1,126 @@
+{
+  "source": "binance",
+  "market": "futures_um",
+  "symbol": "XAUUSDT",
+  "expected_contract_type": "TRADIFI_PERPETUAL",
+  "expected_underlying_type": "COMMODITY",
+  "range": {
+    "months": 6,
+    "start": null,
+    "end": null
+  },
+  "datasets": {
+    "trades": {
+      "monthly": true,
+      "daily": true,
+      "rest_tail": true,
+      "role": "primary",
+      "prefer_daily": true
+    },
+    "aggTrades": {
+      "monthly": true,
+      "daily": true,
+      "rest_tail": true,
+      "role": "secondary",
+      "prefer_daily": true
+    },
+    "klines_1m": {
+      "monthly": true,
+      "daily": true,
+      "rest_tail": false,
+      "role": "cross_check",
+      "prefer_daily": true
+    },
+    "bookDepth": {
+      "monthly": false,
+      "daily": true,
+      "rest_tail": false,
+      "role": "depth_snapshot"
+    },
+    "metrics": {
+      "monthly": false,
+      "daily": true,
+      "rest_tail": false,
+      "role": "context"
+    }
+  },
+  "paths": {
+    "data_root": "data",
+    "state_db": "data/state/acquisition.sqlite"
+  },
+  "archive": {
+    "base_url": "https://data.binance.vision",
+    "list_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision",
+    "max_workers": 4,
+    "max_attempts": 8,
+    "backoff_base_s": 1.0,
+    "backoff_cap_s": 60.0,
+    "timeout_s": 60,
+    "chunk_bytes": 1048576
+  },
+  "rest": {
+    "base_url": "https://fapi.binance.com",
+    "weight_limit_per_min": 2400,
+    "weight_budget_fraction": 0.6,
+    "max_attempts": 8,
+    "backoff_base_s": 1.0,
+    "backoff_cap_s": 60.0,
+    "timeout_s": 30,
+    "api_key_env": "BINANCE_API_KEY"
+  },
+  "instrument": {
+    "tick_size": "0.01",
+    "step_size": "0.001",
+    "onboard_ms": 1765440300000,
+    "spec_source": "Binance exchangeInfo XAUUSDT (Phase 0 verification 2026-10-30, project doc data-sources-binance.md). fapi exchangeInfo is HTTP 451 from the cloud host; re-verify with `discover` from a permitted host. Phase 3 independently confirms every price/qty in the dataset is an exact multiple."
+  },
+  "replay": {
+    "_doc": "availability_ms = <time_col> + time_offset_ms + latency_ms. Ties on availability_ms are broken by rank (lower first), then by the stream's sequence (partition date, row order from Phase 3 sorting).",
+    "streams": {
+      "klines_1m": {
+        "enabled": true,
+        "time_col": "close_time_utc",
+        "time_offset_ms": 1,
+        "latency_ms": 0,
+        "rank": 10,
+        "why": "a 1m candle is only known once its minute has closed: close_time (xx:59.999) + 1 ms"
+      },
+      "metrics": {
+        "enabled": true,
+        "time_col": "create_time_utc",
+        "time_offset_ms": 0,
+        "latency_ms": 0,
+        "rank": 20,
+        "why": "5-min OI/ratio stats stamped at create_time; Binance publication delay unknown -> set latency_ms to be conservative"
+      },
+      "bookDepth": {
+        "enabled": true,
+        "time_col": "snapshot_time_utc",
+        "time_offset_ms": 0,
+        "latency_ms": 0,
+        "rank": 30,
+        "why": "depth-band snapshot stamped at the time it was taken"
+      },
+      "aggTrades": {
+        "enabled": false,
+        "time_col": "exchange_event_time_utc",
+        "time_offset_ms": 0,
+        "latency_ms": 0,
+        "rank": 40,
+        "why": "duplicates the trades flow; off by default"
+      },
+      "trades": {
+        "enabled": true,
+        "time_col": "exchange_event_time_utc",
+        "time_offset_ms": 0,
+        "latency_ms": 0,
+        "rank": 50,
+        "why": "individual executions at exchange trade time"
+      }
+    },
+    "quality_events": true,
+    "max_events_per_chunk": 65536,
+    "checkpoint_every_events": 2000000,
+    "paced_chunk_sim_ms": 250
+  }
+}

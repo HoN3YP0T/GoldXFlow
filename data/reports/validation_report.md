@@ -1,0 +1,182 @@
+# Phase 3 validation report
+
+Generated 2026-10-30T14:04:27Z · code 994c9a1fc509f99a · schema v1
+
+| Dataset | Partitions | Rows | Quarantined | Day status | Dataset status |
+|---|---|---|---|---|---|
+| trades | 183 | 149,515,816 | 0 | COMPLETE 181, MISSING 1, PARTIAL 1, UNVERIFIED 1 | PARTIAL |
+| aggTrades | 182 | 60,365,927 | 0 | COMPLETE 143, MISSING 2, PARTIAL 39 | PARTIAL |
+| klines_1m | 182 | 262,080 | 0 | COMPLETE 182, MISSING 2 | PARTIAL |
+| bookDepth | 182 | 6,165,348 | 0 | COMPLETE 145, MISSING 2, PARTIAL 37 | PARTIAL |
+| metrics | 183 | 52,704 | 0 | COMPLETE 183, MISSING 1 | PARTIAL |
+
+## Quarantine by reason
+
+- none
+
+## Days not COMPLETE
+
+- **trades 2026-10-28: UNVERIFIED**. {"klines_1m": {"status": "UNAVAILABLE"}, "aggTrades": {"status": "UNAVAILABLE"}, "records_valid": 1603503, "records_recovered": 0, "records_quarantined": 0, "id_gaps_unused_ids": 4494}
+- **trades 2026-10-29: PARTIAL**. {"klines_1m": {"status": "MISMATCH", "minutes_compared": 1440, "klines_count": 1801515, "trades_count": 1769768, "minutes_mismatched": 123, "mismatched_minutes": ["2026-10-29T21:49:00.000Z", "2026-10-29T21:50:00.000Z", "2026-10-29T21:55:00.000Z", "2026-10-29T22:00:00.000Z", "2026-10-29T22:01:00.000Z", "2026-10-29T22:02:00.000Z", "2026-10-29T22:03:00.000Z", "2026-10-29T22:04:00.000Z", "2026-10-29T2
+- **trades 2026-10-30: MISSING**. {"interval": ["2026-10-30T00:00:00.000Z", "2026-10-30T08:42:51.101Z"], "reason": "day not complete at acquisition time; not yet archived on data.binance.vision"}
+- **aggTrades 2026-05-01: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"19": 1}}
+- **aggTrades 2026-05-03: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"22": 2}}
+- **aggTrades 2026-05-04: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"15": 2}}
+- **aggTrades 2026-05-05: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"14": 1}}
+- **aggTrades 2026-05-06: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"5": 2}}
+- **aggTrades 2026-05-07: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"11": 2, "12": 1, "13": 7, "15": 10, "16": 1, "17": 16, "18": 1, "19": 3, "20": 3}}
+- **aggTrades 2026-05-08: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"1": 1, "5": 1, "6": 15, "7": 1, "10": 2, "12": 5, "14": 11, "16": 1, "18": 2, "19": 2}}
+- **aggTrades 2026-05-10: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"3": 1, "20": 1, "22": 3}}
+- **aggTrades 2026-05-11: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"1": 4, "2": 1, "7": 1, "12": 1, "13": 3, "14": 3, "16": 3, "19": 5, "20": 2}}
+- **aggTrades 2026-05-12: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"1": 5, "2": 1, "5": 2, "7": 13, "10": 1, "12": 3, "13": 17, "14": 5, "15": 24, "16": 2}}
+- **aggTrades 2026-05-13: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"1": 6, "8": 1, "12": 17, "13": 2, "15": 2, "16": 10, "17": 1}}
+- **aggTrades 2026-05-14: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"2": 3, "3": 1, "7": 2, "11": 5, "13": 2, "14": 18, "15": 1, "16": 3}}
+- **aggTrades 2026-05-15: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"0": 4, "1": 2, "2": 8, "7": 2, "8": 5, "9": 1, "10": 6, "12": 2, "13": 44, "14": 1, "17": 2, "19": 22}}
+- **aggTrades 2026-05-16: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"6": 1, "7": 8, "9": 6}}
+- **aggTrades 2026-05-17: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"23": 18}}
+- **aggTrades 2026-05-18: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"0": 5, "1": 2, "5": 2, "7": 1, "11": 2, "13": 18, "14": 8, "15": 11, "16": 15, "17": 1, "18": 5, "19": 32}}
+- **aggTrades 2026-05-19: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"0": 1, "2": 2, "5": 1, "9": 14, "10": 5, "12": 2, "14": 10, "15": 10, "19": 2}}
+- **aggTrades 2026-05-20: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"0": 1, "1": 1, "2": 4, "13": 7, "14": 10, "15": 14, "17": 1, "18": 4, "19": 44}}
+- **aggTrades 2026-05-21: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"11": 2, "12": 1, "13": 18, "16": 4, "17": 6, "18": 2}}
+- **aggTrades 2026-05-22: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"8": 1, "12": 7, "13": 2, "14": 5, "17": 4}}
+- **aggTrades 2026-05-23: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"0": 1, "7": 12, "20": 4, "21": 2, "22": 1, "23": 1}}
+- **aggTrades 2026-05-24: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"14": 2}}
+- **aggTrades 2026-05-25: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"0": 4, "6": 1, "7": 1}}
+- **aggTrades 2026-05-26: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"0": 9, "9": 1, "12": 1, "13": 7, "14": 1, "17": 3, "18": 1, "23": 2}}
+- **aggTrades 2026-05-27: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"3": 1, "6": 4, "7": 5, "10": 1, "12": 1, "13": 8, "14": 13, "15": 1, "19": 1}}
+- **aggTrades 2026-05-28: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"1": 4, "2": 2, "3": 10, "4": 40, "5": 4, "6": 2, "7": 1, "10": 1, "14": 16, "15": 6, "22": 2}}
+- **aggTrades 2026-05-29: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"14": 5, "15": 23, "16": 1, "17": 1, "18": 15}}
+- **aggTrades 2026-05-30: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"5": 1}}
+- **aggTrades 2026-05-31: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"9": 1, "14": 2, "20": 18}}
+- **aggTrades 2026-06-01: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"0": 1, "1": 2, "7": 1, "9": 4, "13": 6, "14": 2, "15": 1, "16": 3, "17": 7, "23": 1}}
+- **aggTrades 2026-06-02: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"2": 2, "6": 3, "8": 1, "9": 2, "11": 9, "12": 3, "13": 3, "14": 28, "15": 22, "16": 54, "17": 7, "18": 7, "19": 10, "20": 1, "22": 15, "23": 29}}
+- **aggTrades 2026-06-03: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"0": 3, "1": 1, "3": 49, "4": 1, "5": 2, "6": 10, "7": 1, "9": 4, "10": 2, "12": 6, "13": 6, "14": 15, "15": 1, "16": 7, "18": 4, "19": 2, "20": 8, "22": 7}}
+- **aggTrades 2026-06-04: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"0": 4, "1": 44, "2": 247, "3": 4, "4": 2, "6": 3, "8": 4, "9": 8, "11": 10, "12": 17, "13": 15, "14": 4, "15": 17, "16": 1, "18": 21, "19": 1, "20": 2, "21": 1, "22": 8, "23": 5}}
+- **aggTrades 2026-06-05: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"0": 4, "1": 4, "2": 15, "3": 4, "4": 6, "5": 7, "6": 58, "7": 16, "8": 8, "9": 49, "10": 2, "11": 18, "12": 61, "13": 34, "14": 23, "15": 30, "16": 59, "17": 8, "18": 18, "19": 18, "20": 20, "21": 1, "22": 1}}
+- **aggTrades 2026-06-06: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"0": 3, "1": 1, "2": 1, "4": 7, "5": 36, "6": 7, "7": 5, "8": 1, "10": 12, "12": 2, "15": 1, "16": 4, "17": 4, "18": 1, "20": 1}}
+- **aggTrades 2026-06-07: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"5": 20, "6": 13, "8": 1, "10": 1, "12": 25, "14": 5, "15": 2, "19": 5, "20": 4, "22": 27}}
+- **aggTrades 2026-06-08: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"0": 1, "1": 6, "2": 1, "4": 1, "5": 1, "7": 1, "9": 3, "10": 6, "11": 12, "12": 3, "13": 2, "14": 2, "15": 25, "17": 5, "18": 5, "19": 2, "23": 1}}
+- **aggTrades 2026-06-09: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"0": 1, "1": 1, "2": 2, "3": 1}}
+- **aggTrades 2026-10-27: PARTIAL**. {"trades_absent_from_aggtrades_by_hour": {"0": 21346}}
+- **aggTrades 2026-10-28: MISSING**. {"reason": "file not published on data.binance.vision (listing has no key; HTTP 404)"}
+- **aggTrades 2026-10-30: MISSING**. {"interval": ["2026-10-30T00:00:00.000Z", "2026-10-30T08:42:51.101Z"], "reason": "day not complete at acquisition time; not yet archived on data.binance.vision"}
+- **klines_1m 2026-10-28: MISSING**. {"reason": "file not published on data.binance.vision (listing has no key; HTTP 404)"}
+- **klines_1m 2026-10-30: MISSING**. {"interval": ["2026-10-30T00:00:00.000Z", "2026-10-30T08:42:51.101Z"], "reason": "day not complete at acquisition time; not yet archived on data.binance.vision"}
+- **bookDepth 2026-04-30: PARTIAL**. {"snapshots": 2632, "snapshots_missing_bands": 0, "holes_over_120s": 27, "holes": [["2026-04-30T00:05:31.000Z", "2026-04-30T00:08:33.000Z"], ["2026-04-30T01:47:00.000Z", "2026-04-30T01:49:32.000Z"], ["2026-04-30T01:59:32.000Z", "2026-04-30T02:03:00.000Z"], ["2026-04-30T03:31:01.000Z", "2026-04-30T03:33:32.000Z"], ["2026-04-30T03:43:00.000Z", "2026-04-30T03:46:01.000Z"], ["2026-04-30T03:56:02.000Z"
+- **bookDepth 2026-05-01: PARTIAL**. {"snapshots": 2660, "snapshots_missing_bands": 0, "holes_over_120s": 24, "holes": [["2026-05-01T01:35:01.000Z", "2026-05-01T01:37:32.000Z"], ["2026-05-01T01:47:32.000Z", "2026-05-01T01:51:30.000Z"], ["2026-05-01T03:07:31.000Z", "2026-05-01T03:09:32.000Z"], ["2026-05-01T03:19:00.000Z", "2026-05-01T03:21:03.000Z"], ["2026-05-01T03:31:02.000Z", "2026-05-01T03:34:00.000Z"], ["2026-05-01T03:44:00.000Z"
+- **bookDepth 2026-05-02: PARTIAL**. {"snapshots": 2666, "snapshots_missing_bands": 0, "holes_over_120s": 29, "holes": [["2026-05-02T01:00:48.000Z", "2026-05-02T01:03:01.000Z"], ["2026-05-02T01:13:00.000Z", "2026-05-02T01:15:31.000Z"], ["2026-05-02T01:25:32.000Z", "2026-05-02T01:28:31.000Z"], ["2026-05-02T02:46:00.000Z", "2026-05-02T02:48:02.000Z"], ["2026-05-02T02:58:00.000Z", "2026-05-02T03:00:47.000Z"], ["2026-05-02T03:10:36.000Z"
+- **bookDepth 2026-05-03: PARTIAL**. {"snapshots": 2629, "snapshots_missing_bands": 0, "holes_over_120s": 30, "holes": [["2026-05-03T00:10:05.000Z", "2026-05-03T00:14:01.000Z"], ["2026-05-03T02:13:33.000Z", "2026-05-03T02:16:01.000Z"], ["2026-05-03T02:26:00.000Z", "2026-05-03T02:29:31.000Z"], ["2026-05-03T04:49:32.000Z", "2026-05-03T04:51:33.000Z"], ["2026-05-03T05:01:05.000Z", "2026-05-03T05:03:33.000Z"], ["2026-05-03T05:13:33.000Z"
+- **bookDepth 2026-05-04: PARTIAL**. {"snapshots": 2650, "snapshots_missing_bands": 0, "holes_over_120s": 25, "holes": [["2026-05-04T00:27:00.000Z", "2026-05-04T00:29:33.000Z"], ["2026-05-04T00:39:00.000Z", "2026-05-04T00:42:03.000Z"], ["2026-05-04T00:52:00.000Z", "2026-05-04T00:55:00.000Z"], ["2026-05-04T03:45:31.000Z", "2026-05-04T03:47:32.000Z"], ["2026-05-04T03:57:32.000Z", "2026-05-04T04:00:07.000Z"], ["2026-05-04T04:09:32.000Z"
+- **bookDepth 2026-05-05: PARTIAL**. {"snapshots": 2671, "snapshots_missing_bands": 0, "holes_over_120s": 24, "holes": [["2026-05-05T01:08:00.000Z", "2026-05-05T01:10:36.000Z"], ["2026-05-05T01:20:36.000Z", "2026-05-05T01:24:02.000Z"], ["2026-05-05T02:51:32.000Z", "2026-05-05T02:53:33.000Z"], ["2026-05-05T03:03:30.000Z", "2026-05-05T03:06:03.000Z"], ["2026-05-05T03:15:32.000Z", "2026-05-05T03:19:00.000Z"], ["2026-05-05T03:28:30.000Z"
+- **bookDepth 2026-05-06: PARTIAL**. {"snapshots": 2663, "snapshots_missing_bands": 0, "holes_over_120s": 29, "holes": [["2026-05-06T00:13:33.000Z", "2026-05-06T00:16:03.000Z"], ["2026-05-06T00:26:00.000Z", "2026-05-06T00:29:33.000Z"], ["2026-05-06T00:39:31.000Z", "2026-05-06T00:41:32.000Z"], ["2026-05-06T02:40:37.000Z", "2026-05-06T02:43:00.000Z"], ["2026-05-06T02:53:01.000Z", "2026-05-06T02:56:03.000Z"], ["2026-05-06T03:06:01.000Z"
+- **bookDepth 2026-05-07: PARTIAL**. {"snapshots": 2680, "snapshots_missing_bands": 0, "holes_over_120s": 25, "holes": [["2026-05-07T01:57:00.000Z", "2026-05-07T01:59:33.000Z"], ["2026-05-07T02:09:00.000Z", "2026-05-07T02:12:02.000Z"], ["2026-05-07T02:22:02.000Z", "2026-05-07T02:25:01.000Z"], ["2026-05-07T05:16:32.000Z", "2026-05-07T05:19:01.000Z"], ["2026-05-07T05:29:00.000Z", "2026-05-07T05:32:02.000Z"], ["2026-05-07T06:08:32.000Z"
+- **bookDepth 2026-05-08: PARTIAL**. {"snapshots": 2725, "snapshots_missing_bands": 0, "holes_over_120s": 15, "holes": [["2026-05-08T02:28:00.000Z", "2026-05-08T02:30:41.000Z"], ["2026-05-08T02:40:36.000Z", "2026-05-08T02:44:32.000Z"], ["2026-05-08T09:17:01.000Z", "2026-05-08T09:19:33.000Z"], ["2026-05-08T09:29:33.000Z", "2026-05-08T09:32:33.000Z"], ["2026-05-08T13:08:32.000Z", "2026-05-08T13:11:00.000Z"], ["2026-05-08T13:21:01.000Z"
+- **bookDepth 2026-05-09: PARTIAL**. {"snapshots": 2749, "snapshots_missing_bands": 0, "holes_over_120s": 16, "holes": [["2026-05-09T01:21:31.000Z", "2026-05-09T01:23:32.000Z"], ["2026-05-09T01:33:31.000Z", "2026-05-09T01:36:01.000Z"], ["2026-05-09T01:46:02.000Z", "2026-05-09T01:49:32.000Z"], ["2026-05-09T10:49:00.000Z", "2026-05-09T10:51:01.000Z"], ["2026-05-09T11:00:47.000Z", "2026-05-09T11:03:32.000Z"], ["2026-05-09T11:13:32.000Z"
+- **bookDepth 2026-05-10: PARTIAL**. {"snapshots": 2752, "snapshots_missing_bands": 0, "holes_over_120s": 13, "holes": [["2026-05-10T00:10:05.000Z", "2026-05-10T00:13:33.000Z"], ["2026-05-10T03:17:01.000Z", "2026-05-10T03:19:32.000Z"], ["2026-05-10T03:29:32.000Z", "2026-05-10T03:33:01.000Z"], ["2026-05-10T06:04:00.000Z", "2026-05-10T06:06:01.000Z"], ["2026-05-10T06:16:00.000Z", "2026-05-10T06:18:33.000Z"], ["2026-05-10T06:28:31.000Z"
+- **bookDepth 2026-05-11: PARTIAL**. {"snapshots": 2784, "snapshots_missing_bands": 0, "holes_over_120s": 10, "holes": [["2026-05-11T00:15:32.000Z", "2026-05-11T00:17:33.000Z"], ["2026-05-11T00:27:00.000Z", "2026-05-11T00:29:33.000Z"], ["2026-05-11T00:39:01.000Z", "2026-05-11T00:42:01.000Z"], ["2026-05-11T00:52:00.000Z", "2026-05-11T00:55:00.000Z"], ["2026-05-11T02:44:00.000Z", "2026-05-11T02:46:31.000Z"], ["2026-05-11T02:56:32.000Z"
+- **bookDepth 2026-05-12: PARTIAL**. {"snapshots": 2738, "snapshots_missing_bands": 0, "holes_over_120s": 13, "holes": [["2026-05-12T01:08:31.000Z", "2026-05-12T01:11:01.000Z"], ["2026-05-12T01:21:02.000Z", "2026-05-12T01:24:30.000Z"], ["2026-05-12T04:49:00.000Z", "2026-05-12T04:51:31.000Z"], ["2026-05-12T05:01:30.000Z", "2026-05-12T05:05:01.000Z"], ["2026-05-12T06:54:32.000Z", "2026-05-12T06:56:33.000Z"], ["2026-05-12T07:06:32.000Z"
+- **bookDepth 2026-05-13: PARTIAL**. {"snapshots": 2716, "snapshots_missing_bands": 0, "holes_over_120s": 16, "holes": [["2026-05-13T01:16:00.000Z", "2026-05-13T01:18:02.000Z"], ["2026-05-13T01:28:00.000Z", "2026-05-13T01:30:40.000Z"], ["2026-05-13T01:40:37.000Z", "2026-05-13T01:44:32.000Z"], ["2026-05-13T05:08:33.000Z", "2026-05-13T05:11:00.000Z"], ["2026-05-13T05:21:01.000Z", "2026-05-13T05:24:32.000Z"], ["2026-05-13T12:09:00.000Z"
+- **bookDepth 2026-05-14: PARTIAL**. {"snapshots": 2657, "snapshots_missing_bands": 0, "holes_over_120s": 25, "holes": [["2026-05-14T01:57:01.000Z", "2026-05-14T01:59:32.000Z"], ["2026-05-14T02:09:33.000Z", "2026-05-14T02:12:33.000Z"], ["2026-05-14T02:22:31.000Z", "2026-05-14T02:25:00.000Z"], ["2026-05-14T04:35:00.000Z", "2026-05-14T04:37:31.000Z"], ["2026-05-14T04:47:32.000Z", "2026-05-14T04:51:04.000Z"], ["2026-05-14T07:02:03.000Z"
+- **bookDepth 2026-05-15: PARTIAL**. {"snapshots": 2611, "snapshots_missing_bands": 0, "holes_over_120s": 31, "holes": [["2026-05-15T00:53:00.000Z", "2026-05-15T00:55:32.000Z"], ["2026-05-15T01:05:31.000Z", "2026-05-15T01:09:32.000Z"], ["2026-05-15T02:16:01.000Z", "2026-05-15T02:18:03.000Z"], ["2026-05-15T02:28:01.000Z", "2026-05-15T02:30:45.000Z"], ["2026-05-15T02:40:40.000Z", "2026-05-15T02:44:31.000Z"], ["2026-05-15T04:01:38.000Z"
+- **bookDepth 2026-05-16: PARTIAL**. {"snapshots": 2652, "snapshots_missing_bands": 0, "holes_over_120s": 25, "holes": [["2026-05-16T01:02:34.000Z", "2026-05-16T01:05:05.000Z"], ["2026-05-16T01:15:05.000Z", "2026-05-16T01:18:31.000Z"], ["2026-05-16T03:17:31.000Z", "2026-05-16T03:19:32.000Z"], ["2026-05-16T03:29:31.000Z", "2026-05-16T03:32:31.000Z"], ["2026-05-16T03:42:31.000Z", "2026-05-16T03:46:01.000Z"], ["2026-05-16T04:52:32.000Z"
+- **bookDepth 2026-05-17: PARTIAL**. {"snapshots": 2691, "snapshots_missing_bands": 0, "holes_over_120s": 20, "holes": [["2026-05-17T00:08:32.000Z", "2026-05-17T00:11:31.000Z"], ["2026-05-17T00:21:34.000Z", "2026-05-17T00:25:00.000Z"], ["2026-05-17T03:16:01.000Z", "2026-05-17T03:18:03.000Z"], ["2026-05-17T03:28:02.000Z", "2026-05-17T03:30:45.000Z"], ["2026-05-17T03:40:40.000Z", "2026-05-17T03:44:32.000Z"], ["2026-05-17T05:01:37.000Z"
+- **bookDepth 2026-05-18: PARTIAL**. {"snapshots": 2649, "snapshots_missing_bands": 0, "holes_over_120s": 28, "holes": [["2026-05-18T00:18:02.000Z", "2026-05-18T00:20:40.000Z"], ["2026-05-18T00:30:48.000Z", "2026-05-18T00:34:02.000Z"], ["2026-05-18T01:40:05.000Z", "2026-05-18T01:42:32.000Z"], ["2026-05-18T01:52:31.000Z", "2026-05-18T01:55:32.000Z"], ["2026-05-18T02:05:31.000Z", "2026-05-18T02:08:32.000Z"], ["2026-05-18T04:07:32.000Z"
+- **bookDepth 2026-05-19: PARTIAL**. {"snapshots": 2645, "snapshots_missing_bands": 0, "holes_over_120s": 27, "holes": [["2026-05-19T00:07:31.000Z", "2026-05-19T00:11:31.000Z"], ["2026-05-19T04:39:30.000Z", "2026-05-19T04:42:31.000Z"], ["2026-05-19T04:52:00.000Z", "2026-05-19T04:55:00.000Z"], ["2026-05-19T06:11:32.000Z", "2026-05-19T06:13:33.000Z"], ["2026-05-19T06:23:31.000Z", "2026-05-19T06:26:00.000Z"], ["2026-05-19T06:36:03.000Z"
+- **bookDepth 2026-05-20: PARTIAL**. {"snapshots": 2638, "snapshots_missing_bands": 0, "holes_over_120s": 30, "holes": [["2026-05-20T00:56:32.000Z", "2026-05-20T00:59:00.000Z"], ["2026-05-20T01:08:32.000Z", "2026-05-20T01:11:32.000Z"], ["2026-05-20T01:21:32.000Z", "2026-05-20T01:23:33.000Z"], ["2026-05-20T03:23:00.000Z", "2026-05-20T03:25:32.000Z"], ["2026-05-20T03:35:32.000Z", "2026-05-20T03:39:33.000Z"], ["2026-05-20T05:07:33.000Z"
+- **bookDepth 2026-05-21: PARTIAL**. {"snapshots": 2671, "snapshots_missing_bands": 0, "holes_over_120s": 24, "holes": [["2026-05-21T00:05:31.000Z", "2026-05-21T00:08:31.000Z"], ["2026-05-21T01:45:32.000Z", "2026-05-21T01:47:33.000Z"], ["2026-05-21T01:57:31.000Z", "2026-05-21T01:59:33.000Z"], ["2026-05-21T02:09:31.000Z", "2026-05-21T02:12:32.000Z"], ["2026-05-21T02:22:32.000Z", "2026-05-21T02:25:00.000Z"], ["2026-05-21T04:24:01.000Z"
+- **bookDepth 2026-05-22: PARTIAL**. {"snapshots": 2670, "snapshots_missing_bands": 0, "holes_over_120s": 23, "holes": [["2026-05-22T01:36:03.000Z", "2026-05-22T01:39:00.000Z"], ["2026-05-22T01:49:00.000Z", "2026-05-22T01:52:01.000Z"], ["2026-05-22T02:58:33.000Z", "2026-05-22T03:00:49.000Z"], ["2026-05-22T03:10:37.000Z", "2026-05-22T03:13:32.000Z"], ["2026-05-22T03:23:33.000Z", "2026-05-22T03:26:32.000Z"], ["2026-05-22T04:34:00.000Z"
+- **bookDepth 2026-05-23: PARTIAL**. {"snapshots": 2659, "snapshots_missing_bands": 0, "holes_over_120s": 24, "holes": [["2026-05-23T00:00:00.000Z", "2026-05-23T00:02:31.000Z"], ["2026-05-23T00:12:30.000Z", "2026-05-23T00:16:00.000Z"], ["2026-05-23T01:44:00.000Z", "2026-05-23T01:46:31.000Z"], ["2026-05-23T01:56:30.000Z", "2026-05-23T02:00:07.000Z"], ["2026-05-23T03:29:00.000Z", "2026-05-23T03:32:00.000Z"], ["2026-05-23T03:41:30.000Z"
+- **bookDepth 2026-05-24: PARTIAL**. {"snapshots": 2626, "snapshots_missing_bands": 0, "holes_over_120s": 29, "holes": [["2026-05-24T01:32:34.000Z", "2026-05-24T01:35:36.000Z"], ["2026-05-24T01:45:33.000Z", "2026-05-24T01:49:00.000Z"], ["2026-05-24T03:38:00.000Z", "2026-05-24T03:40:38.000Z"], ["2026-05-24T03:50:36.000Z", "2026-05-24T03:54:05.000Z"], ["2026-05-24T05:43:34.000Z", "2026-05-24T05:46:01.000Z"], ["2026-05-24T05:56:01.000Z"
+- **bookDepth 2026-05-25: PARTIAL**. {"snapshots": 2678, "snapshots_missing_bands": 0, "holes_over_120s": 20, "holes": [["2026-05-25T02:12:31.000Z", "2026-05-25T02:15:04.000Z"], ["2026-05-25T02:25:00.000Z", "2026-05-25T02:29:01.000Z"], ["2026-05-25T05:22:32.000Z", "2026-05-25T05:25:32.000Z"], ["2026-05-25T05:35:31.000Z", "2026-05-25T05:38:31.000Z"], ["2026-05-25T07:37:34.000Z", "2026-05-25T07:40:04.000Z"], ["2026-05-25T07:50:04.000Z"
+- **bookDepth 2026-05-26: PARTIAL**. {"snapshots": 2643, "snapshots_missing_bands": 0, "holes_over_120s": 28, "holes": [["2026-05-26T02:22:32.000Z", "2026-05-26T02:26:01.000Z"], ["2026-05-26T02:36:05.000Z", "2026-05-26T02:38:32.000Z"], ["2026-05-26T03:34:01.000Z", "2026-05-26T03:36:04.000Z"], ["2026-05-26T03:46:01.000Z", "2026-05-26T03:48:32.000Z"], ["2026-05-26T03:58:32.000Z", "2026-05-26T04:02:05.000Z"], ["2026-05-26T05:41:32.000Z"
+- **bookDepth 2026-05-27: PARTIAL**. {"snapshots": 2663, "snapshots_missing_bands": 0, "holes_over_120s": 25, "holes": [["2026-05-27T00:03:00.000Z", "2026-05-27T00:05:33.000Z"], ["2026-05-27T00:15:04.000Z", "2026-05-27T00:18:04.000Z"], ["2026-05-27T00:28:00.000Z", "2026-05-27T00:30:41.000Z"], ["2026-05-27T01:47:31.000Z", "2026-05-27T01:50:04.000Z"], ["2026-05-27T02:00:07.000Z", "2026-05-27T02:03:32.000Z"], ["2026-05-27T02:13:32.000Z"
+- **bookDepth 2026-05-28: PARTIAL**. {"snapshots": 2637, "snapshots_missing_bands": 0, "holes_over_120s": 29, "holes": [["2026-05-28T00:01:06.000Z", "2026-05-28T00:03:32.000Z"], ["2026-05-28T00:13:34.000Z", "2026-05-28T00:16:34.000Z"], ["2026-05-28T00:26:30.000Z", "2026-05-28T00:29:30.000Z"], ["2026-05-28T01:46:00.000Z", "2026-05-28T01:48:01.000Z"], ["2026-05-28T01:58:00.000Z", "2026-05-28T02:00:47.000Z"], ["2026-05-28T02:10:39.000Z"
+- **bookDepth 2026-05-29: PARTIAL**. {"snapshots": 2634, "snapshots_missing_bands": 0, "holes_over_120s": 31, "holes": [["2026-05-29T00:09:31.000Z", "2026-05-29T00:11:32.000Z"], ["2026-05-29T00:21:32.000Z", "2026-05-29T00:24:30.000Z"], ["2026-05-29T00:34:32.000Z", "2026-05-29T00:38:31.000Z"], ["2026-05-29T02:16:00.000Z", "2026-05-29T02:18:04.000Z"], ["2026-05-29T02:28:00.000Z", "2026-05-29T02:30:43.000Z"], ["2026-05-29T02:40:38.000Z"
+- **bookDepth 2026-05-30: PARTIAL**. {"snapshots": 2674, "snapshots_missing_bands": 0, "holes_over_120s": 22, "holes": [["2026-05-30T00:01:08.000Z", "2026-05-30T00:04:00.000Z"], ["2026-05-30T01:42:02.000Z", "2026-05-30T01:44:31.000Z"], ["2026-05-30T01:54:31.000Z", "2026-05-30T01:58:01.000Z"], ["2026-05-30T02:08:01.000Z", "2026-05-30T02:10:04.000Z"], ["2026-05-30T03:17:01.000Z", "2026-05-30T03:20:05.000Z"], ["2026-05-30T03:30:05.000Z"
+- **bookDepth 2026-05-31: PARTIAL**. {"snapshots": 2592, "snapshots_missing_bands": 0, "holes_over_120s": 39, "holes": [["2026-05-31T00:27:32.000Z", "2026-05-31T00:30:06.000Z"], ["2026-05-31T00:40:04.000Z", "2026-05-31T00:43:34.000Z"], ["2026-05-31T02:01:04.000Z", "2026-05-31T02:03:32.000Z"], ["2026-05-31T02:13:34.000Z", "2026-05-31T02:17:01.000Z"], ["2026-05-31T02:27:00.000Z", "2026-05-31T02:29:32.000Z"], ["2026-05-31T03:35:00.000Z"
+- **bookDepth 2026-06-01: PARTIAL**. {"snapshots": 2628, "snapshots_missing_bands": 0, "holes_over_120s": 31, "holes": [["2026-06-01T01:19:05.000Z", "2026-06-01T01:22:02.000Z"], ["2026-06-01T01:32:01.000Z", "2026-06-01T01:35:31.000Z"], ["2026-06-01T03:45:32.000Z", "2026-06-01T03:48:02.000Z"], ["2026-06-01T03:58:00.000Z", "2026-06-01T04:02:00.000Z"], ["2026-06-01T05:19:32.000Z", "2026-06-01T05:22:00.000Z"], ["2026-06-01T05:32:01.000Z"
+- **bookDepth 2026-06-02: PARTIAL**. {"snapshots": 2624, "snapshots_missing_bands": 0, "holes_over_120s": 30, "holes": [["2026-06-02T01:17:01.000Z", "2026-06-02T01:20:05.000Z"], ["2026-06-02T01:30:06.000Z", "2026-06-02T01:34:00.000Z"], ["2026-06-02T03:33:34.000Z", "2026-06-02T03:36:32.000Z"], ["2026-06-02T03:46:30.000Z", "2026-06-02T03:50:04.000Z"], ["2026-06-02T05:38:01.000Z", "2026-06-02T05:40:04.000Z"], ["2026-06-02T05:50:04.000Z"
+- **bookDepth 2026-06-03: PARTIAL**. {"snapshots": 2845, "snapshots_missing_bands": 0, "holes_over_120s": 6, "holes": [["2026-06-03T00:01:08.000Z", "2026-06-03T00:03:31.000Z"], ["2026-06-03T00:13:32.000Z", "2026-06-03T00:17:02.000Z"], ["2026-06-03T00:27:01.000Z", "2026-06-03T00:29:34.000Z"], ["2026-06-03T01:35:00.000Z", "2026-06-03T01:37:01.000Z"], ["2026-06-03T01:47:02.000Z", "2026-06-03T01:49:32.000Z"], ["2026-06-03T01:59:34.000Z",
+- **bookDepth 2026-10-07: PARTIAL**. {"snapshots": 339, "snapshots_missing_bands": 0, "holes_over_120s": 1, "holes": [["2026-10-07T02:49:00.000Z", "2026-10-08T00:00:00.000Z"]], "max_gap_s": 76260.0}
+- **bookDepth 2026-10-08: MISSING**. {"reason": "file not published on data.binance.vision (listing has no key; HTTP 404)"}
+- **bookDepth 2026-10-09: PARTIAL**. {"snapshots": 2389, "snapshots_missing_bands": 0, "holes_over_120s": 1, "holes": [["2026-10-09T00:00:00.000Z", "2026-10-09T04:05:31.000Z"]], "max_gap_s": 14731.0}
+- **bookDepth 2026-10-30: MISSING**. {"interval": ["2026-10-30T00:00:00.000Z", "2026-10-30T08:42:51.101Z"], "reason": "day not complete at acquisition time; not yet archived on data.binance.vision"}
+- **metrics 2026-10-30: MISSING**. {"interval": ["2026-10-30T00:00:00.000Z", "2026-10-30T08:42:51.101Z"], "reason": "day not complete at acquisition time; not yet archived on data.binance.vision"}
+
+## Hours not COMPLETE (trades, aggTrades)
+
+- aggTrades 2026-05-01 PARTIAL: hours 19
+- aggTrades 2026-05-03 PARTIAL: hours 22
+- aggTrades 2026-05-04 PARTIAL: hours 15
+- aggTrades 2026-05-05 PARTIAL: hours 14
+- aggTrades 2026-05-06 PARTIAL: hours 05
+- aggTrades 2026-05-07 PARTIAL: hours 11, 12, 13, 15, 16, 17, 18, 19, 20
+- aggTrades 2026-05-08 PARTIAL: hours 01, 05, 06, 07, 10, 12, 14, 16, 18, 19
+- aggTrades 2026-05-10 PARTIAL: hours 03, 20, 22
+- aggTrades 2026-05-11 PARTIAL: hours 01, 02, 07, 12, 13, 14, 16, 19, 20
+- aggTrades 2026-05-12 PARTIAL: hours 01, 02, 05, 07, 10, 12, 13, 14, 15, 16
+- aggTrades 2026-05-13 PARTIAL: hours 01, 08, 12, 13, 15, 16, 17
+- aggTrades 2026-05-14 PARTIAL: hours 02, 03, 07, 11, 13, 14, 15, 16
+- aggTrades 2026-05-15 PARTIAL: hours 00, 01, 02, 07, 08, 09, 10, 12, 13, 14, 17, 19
+- aggTrades 2026-05-16 PARTIAL: hours 06, 07, 09
+- aggTrades 2026-05-17 PARTIAL: hours 23
+- aggTrades 2026-05-18 PARTIAL: hours 00, 01, 05, 07, 11, 13, 14, 15, 16, 17, 18, 19
+- aggTrades 2026-05-19 PARTIAL: hours 00, 02, 05, 09, 10, 12, 14, 15, 19
+- aggTrades 2026-05-20 PARTIAL: hours 00, 01, 02, 13, 14, 15, 17, 18, 19
+- aggTrades 2026-05-21 PARTIAL: hours 11, 12, 13, 16, 17, 18
+- aggTrades 2026-05-22 PARTIAL: hours 08, 12, 13, 14, 17
+- aggTrades 2026-05-23 PARTIAL: hours 00, 07, 20, 21, 22, 23
+- aggTrades 2026-05-24 PARTIAL: hours 14
+- aggTrades 2026-05-25 PARTIAL: hours 00, 06, 07
+- aggTrades 2026-05-26 PARTIAL: hours 00, 09, 12, 13, 14, 17, 18, 23
+- aggTrades 2026-05-27 PARTIAL: hours 03, 06, 07, 10, 12, 13, 14, 15, 19
+- aggTrades 2026-05-28 PARTIAL: hours 01, 02, 03, 04, 05, 06, 07, 10, 14, 15, 22
+- aggTrades 2026-05-29 PARTIAL: hours 14, 15, 16, 17, 18
+- aggTrades 2026-05-30 PARTIAL: hours 05
+- aggTrades 2026-05-31 PARTIAL: hours 09, 14, 20
+- aggTrades 2026-06-01 PARTIAL: hours 00, 01, 07, 09, 13, 14, 15, 16, 17, 23
+- aggTrades 2026-06-02 PARTIAL: hours 02, 06, 08, 09, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23
+- aggTrades 2026-06-03 PARTIAL: hours 00, 01, 03, 04, 05, 06, 07, 09, 10, 12, 13, 14, 15, 16, 18, 19, 20, 22
+- aggTrades 2026-06-04 PARTIAL: hours 00, 01, 02, 03, 04, 06, 08, 09, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23
+- aggTrades 2026-06-05 PARTIAL: hours 00, 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22
+- aggTrades 2026-06-06 PARTIAL: hours 00, 01, 02, 04, 05, 06, 07, 08, 10, 12, 15, 16, 17, 18, 20
+- aggTrades 2026-06-07 PARTIAL: hours 05, 06, 08, 10, 12, 14, 15, 19, 20, 22
+- aggTrades 2026-06-08 PARTIAL: hours 00, 01, 02, 04, 05, 07, 09, 10, 11, 12, 13, 14, 15, 17, 18, 19, 23
+- aggTrades 2026-06-09 PARTIAL: hours 00, 01, 02, 03
+- aggTrades 2026-10-27 PARTIAL: hours 00
+- trades 2026-10-28 UNVERIFIED: hours 00, 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
+- trades 2026-10-29 PARTIAL: hours 21, 22, 23
+
+## Monthly archive files vs daily files
+
+- XAUUSDT-1m-2026-05.zip: MATCH on 31 days
+- XAUUSDT-1m-2026-06.zip: MATCH on 30 days
+- XAUUSDT-1m-2026-07.zip: MATCH on 31 days
+- XAUUSDT-1m-2026-08.zip: MATCH on 31 days
+- XAUUSDT-1m-2026-09.zip: MATCH on 30 days
+- XAUUSDT-aggTrades-2026-05.zip: MATCH on 31 days
+- XAUUSDT-aggTrades-2026-06.zip: MATCH on 30 days
+- XAUUSDT-aggTrades-2026-07.zip: MATCH on 31 days
+- XAUUSDT-aggTrades-2026-08.zip: MATCH on 31 days
+- XAUUSDT-aggTrades-2026-09.zip: MATCH on 30 days
+- XAUUSDT-trades-2026-05.zip: MATCH on 31 days
+- XAUUSDT-trades-2026-06.zip: DIFF on 1 days
+- XAUUSDT-trades-2026-06.zip: MATCH on 29 days
+- XAUUSDT-trades-2026-07.zip: MATCH on 31 days
+- XAUUSDT-trades-2026-08.zip: MATCH on 31 days
+- XAUUSDT-trades-2026-09.zip: MATCH on 30 days
+  - XAUUSDT-trades-2026-06.zip 2026-06-07: monthly has -114 rows, +6347530536 lots vs daily
+
+## Cross-partition id overlaps
+
+- 0 found
+
+## Validation runs
+
+- normalize-20261030T125945Z-a79c44 (normalize): digest e6680fc2219e3fb3… compared to - → identical=None
+- normalize-20261030T130730Z-bf443c (normalize): digest e2cada6780e0e6cd… compared to normalize-20261030T125945Z-a79c44 → identical=0
+- validate-20261030T131341Z-b5b594 (validate): digest e2cada6780e0e6cd… compared to normalize-20261030T130730Z-bf443c → identical=1
+- normalize-20261030T132015Z-30befb (normalize): digest e2cada6780e0e6cd… compared to validate-20261030T131341Z-b5b594 → identical=1
+- validate-20261030T132643Z-92a07e (validate): digest e2cada6780e0e6cd… compared to normalize-20261030T132015Z-30befb → identical=1
+- normalize-20261030T135933Z-c5e646 (normalize): digest 7eb02d132fe2a86b… compared to validate-20261030T132643Z-92a07e → identical=0
+- validate-20261030T140300Z-877cc7 (validate): digest 7eb02d132fe2a86b… compared to normalize-20261030T135933Z-c5e646 → identical=1

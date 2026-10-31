@@ -1,0 +1,26 @@
+# ---- Market data is never committed (raw archives, normalised Parquet, quarantine, REST captures, catalog DBs)
+data/**
+!data/
+!data/state/
+!data/state/range.json
+!data/state/cloud_fingerprints.json
+!data/manifests/
+!data/manifests/dataset_manifest.json
+!data/reports/
+!data/reports/*.md
+!data/reports/*.csv
+!data/reports/*.json
+*.parquet
+*.zip
+*.zip.CHECKSUM
+*.jsonl.gz
+*.npz
+*.sqlite
+*.sqlite-*
+*.tgz
+# ---- Python / tooling
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+.env
