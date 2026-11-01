@@ -1,0 +1,10 @@
+# Daily backup (incremental: unchanged files are hard-linked), then verification of the new snapshot.
+[Unit]
+Description=GoldXFlow backup
+
+[Service]
+Type=oneshot
+User=goldflow
+WorkingDirectory=/opt/goldflow
+EnvironmentFile=-/etc/goldflow/goldflow.env
+ExecStart=/bin/sh -c '/opt/goldflow/.venv/bin/python -m goldflow.cli backup --dest "$GOLDFLOW_BACKUP_DIR" && /opt/goldflow/.venv/bin/python -m goldflow.cli backup-verify --src "$(ls -d "$GOLDFLOW_BACKUP_DIR"/*/ | tail -1)"'

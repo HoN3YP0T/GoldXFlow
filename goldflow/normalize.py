@@ -175,10 +175,11 @@ def resolve_duplicates(ids: np.ndarray, payload_cols: list, rej: Rejects, alive:
         else:
             mask[m] = True; rej.mark(mask, "DUPLICATE_CONFLICT", f"{len(m)} differing copies of id {gid}")
 
-def const_cols(n: int, symbol: str) -> dict:
+def const_cols(n: int, symbol: str, provider: str = S.PROVIDER_ID) -> dict:
     def d(v): return pa.DictionaryArray.from_arrays(pa.array(np.zeros(n, np.int8)), pa.array([v]))
-    return {"schema_version": pa.array(np.full(n, S.SCHEMA_VERSION, np.int16)), "provider_id": d(S.PROVIDER_ID),
-            "venue_id": d(S.VENUE_ID), "market_type": d(S.MARKET_TYPE), "instrument_id": d(S.instrument_id(symbol))}
+    venue, market = S.VENUES[provider]
+    return {"schema_version": pa.array(np.full(n, S.SCHEMA_VERSION, np.int16)), "provider_id": d(provider),
+            "venue_id": d(venue), "market_type": d(market), "instrument_id": d(S.instrument_id(symbol, provider))}
 
 def dict_col(values: np.ndarray) -> pa.Array:
     return pa.array(values.astype(object), pa.string()).dictionary_encode().cast(S.DICT)
@@ -325,8 +326,8 @@ def hour_index(ts: np.ndarray, d_start: int) -> np.ndarray:
     return ((ts - d_start) // HOUR_MS).astype(np.int64)
 
 # ============================================================================ writing
-def part_path(root: Path, symbol: str, dataset: str, d: str, kind: str = "normalized") -> Path:
-    return (root / kind / f"provider={S.PROVIDER_ID}" / f"market={S.MARKET_TYPE}" / f"instrument={symbol}" /
+def part_path(root: Path, symbol: str, dataset: str, d: str, kind: str = "normalized", provider: str = S.PROVIDER_ID) -> Path:
+    return (root / kind / f"provider={provider}" / f"market={S.VENUES[provider][1]}" / f"instrument={symbol}" /
             f"data_type={dataset}" / f"date={d}" / "part-000.parquet")
 
 def logical_digest(t: pa.Table) -> str:

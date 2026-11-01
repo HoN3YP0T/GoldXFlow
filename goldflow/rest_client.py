@@ -19,7 +19,8 @@ class GeoBlocked(NonRetryable):
 
 class BinanceFuturesREST:
     WEIGHTS = {"/fapi/v1/ping": 1, "/fapi/v1/time": 1, "/fapi/v1/exchangeInfo": 1, "/fapi/v1/aggTrades": 20,
-               "/fapi/v1/trades": 5, "/fapi/v1/historicalTrades": 20, "/fapi/v1/klines": 5}
+               "/fapi/v1/trades": 5, "/fapi/v1/historicalTrades": 20, "/fapi/v1/klines": 5,
+               "/fapi/v1/depth": 20, "/fapi/v1/rpiDepth": 20}   # depth: weight 20 at limit 1000 (5 at <=50)
 
     def __init__(self, base_url: str = "https://fapi.binance.com", weight_limit_per_min: int = 2400,
                  weight_budget_fraction: float = 0.6, max_attempts: int = 8, backoff_base_s: float = 1.0,
@@ -47,7 +48,8 @@ class BinanceFuturesREST:
                 time.sleep(wait); self._window, self.used_weight = int(time.time() // 60), 0
             self.used_weight += w
 
-    def get(self, path: str, params: dict | None = None) -> Any:
+    def get(self, path: str, params: dict | None = None, raw: bool = False) -> Any:
+        """GET with weight budgeting and retries. raw=True returns the response text exactly as received."""
         w = self.WEIGHTS.get(path, 10)
         last = None
         for attempt in range(self.max_attempts):
@@ -71,7 +73,7 @@ class BinanceFuturesREST:
                     last = f"HTTP {r.status_code}"; backoff_sleep(attempt, self.bb, self.bc); continue
                 if r.status_code >= 400:
                     raise NonRetryable(f"HTTP {r.status_code} {path}: {r.text[:200]}", r.status_code)
-                return r.json()
+                return r.text if raw else r.json()
             except NonRetryable:
                 raise
             except (requests.ConnectionError, requests.Timeout, ValueError) as e:
@@ -82,6 +84,10 @@ class BinanceFuturesREST:
     def ping(self) -> dict: return self.get("/fapi/v1/ping")
     def server_time(self) -> int: return int(self.get("/fapi/v1/time")["serverTime"])
     def exchange_info(self) -> dict: return self.get("/fapi/v1/exchangeInfo")
+
+    def depth_snapshot_text(self, symbol: str, limit: int = 1000, path: str = "/fapi/v1/depth") -> str:
+        """Order-book snapshot as the raw response text (persisted before parsing). Raises GeoBlocked on HTTP 451."""
+        return self.get(path, {"symbol": symbol, "limit": limit}, raw=True)
 
     def symbol_spec(self, symbol: str) -> dict:
         info = self.exchange_info()

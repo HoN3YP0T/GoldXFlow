@@ -203,3 +203,12 @@ def test_sessions_and_dates_filters(tmp_path):
     tod = m["avail"] % DAY_MS
     assert len(m) and ((tod >= 13 * 3_600_000) & (tod < 14 * 3_600_000)).all()
     assert (m["avail"] >= day_start_ms(DAYS[1])).all() and (m["avail"] < day_start_ms(DAYS[2])).all()
+
+def test_until_inside_last_day_reports_stopped_and_resumes(tmp_path):
+    """Regression (found in Phase 5): a stop inside the last day was reported as 'completed'."""
+    cfg = make_dataset(tmp_path)
+    _, r_full, h_full, _, _ = run(cfg, "whole")
+    e = ReplayEngine(cfg, [ChainHasher()], name="u"); r = e.run(until=day_start_ms(DAYS[-1]) + 12 * 3_600_000)
+    assert r["status"] == "stopped"
+    h = ChainHasher(); e2 = ReplayEngine(cfg, [h], name="u"); r2 = e2.run(resume=True)
+    assert r2["status"] == "completed" and r2["events"] == r_full["events"]

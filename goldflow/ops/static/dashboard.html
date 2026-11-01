@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GoldXFlow Operations</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --fg:#1d2433; --muted:#667085; --line:#e4e7ec; --crit:#b42318; --warn:#b54708; --ok:#027a48; --na:#98a2b3; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0f1219; --card:#171b24; --fg:#e6e9ef; --muted:#98a2b3; --line:#2a303c; --crit:#f97066; --warn:#fdb022; --ok:#32d583; --na:#667085; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+  header { padding:14px 16px; border-bottom:1px solid var(--line); display:flex; gap:12px; align-items:baseline; flex-wrap:wrap; }
+  header h1 { font-size:17px; margin:0; }
+  header .meta { color:var(--muted); font-size:12px; }
+  main { padding:16px; display:grid; gap:14px; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); max-width:1500px; }
+  section { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px 14px; min-width:0; }
+  section h2 { font-size:13px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin:0 0 8px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  td, th { text-align:left; padding:3px 6px 3px 0; vertical-align:top; border-bottom:1px solid var(--line); overflow-wrap:anywhere; }
+  th { color:var(--muted); font-weight:500; width:42%; }
+  .na { color:var(--na); font-style:italic; }
+  .crit { color:var(--crit); font-weight:600; } .warn { color:var(--warn); font-weight:600; } .ok { color:var(--ok); font-weight:600; }
+  #alerts { grid-column:1/-1; }
+  .pill { display:inline-block; padding:1px 7px; border-radius:10px; border:1px solid currentColor; font-size:12px; margin-right:6px; }
+  pre { margin:0; white-space:pre-wrap; font-size:12px; }
+  .src { color:var(--muted); font-size:11px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>GoldXFlow operations</h1>
+  <span class="meta" id="meta">loading…</span>
+  <span class="meta">Read-only. Every value comes from engine state on disk (hover for its source); missing values say why.</span>
+</header>
+<main>
+  <section id="alerts"><h2>Alerts</h2><div id="alerts-body" class="na">loading…</div></section>
+  <section><h2>Market</h2><div id="market"></div></section>
+  <section><h2>Orderflow</h2><div id="orderflow"></div></section>
+  <section><h2>Trading</h2><div id="trading"></div></section>
+  <section><h2>Research</h2><div id="research"></div></section>
+  <section><h2>System</h2><div id="system"></div></section>
+</main>
+<script>
+"use strict";
+const qs = new URLSearchParams(location.search);
+const token = qs.get("token");
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ticks = t => (t === null || t === undefined) ? null : (Number(t) / 100).toFixed(2);
+const fmtTime = ms => ms ? new Date(ms).toISOString().replace("T", " ").slice(0, 19) + "Z" : null;
+function val(it, render) {
+  if (it === null || it === undefined) return '<span class="na">not available</span>';
+  if (it.value === null || it.value === undefined)
+    return `<span class="na" title="${esc(it.source || "")}">not available: ${esc(it.reason || "no value")}</span>`;
+  const body = render ? render(it.value) : esc(typeof it.value === "object" ? JSON.stringify(it.value) : it.value);
+  return `<span title="source: ${esc(it.source || "")}${it.as_of ? " · as of " + fmtTime(it.as_of) : ""}">${body}</span>`;
+}
+const rows = pairs => "<table>" + pairs.map(([k, v]) => `<tr><th>${esc(k)}</th><td>${v}</td></tr>`).join("") + "</table>";
+const pre = o => `<pre>${esc(JSON.stringify(o, null, 1))}</pre>`;
+
+function renderMarket(m) {
+  const live = val(m.live, v => rows([
+    ["runner", `${esc(v.name)} (${esc(v.run_status)})`], ["checkpoint age", `${v.checkpoint_age_s} s`],
+    ["last trade", `${esc(fmtTime(v.last_trade_ms) || "–")} (id ${esc(v.last_trade_id ?? "–")})`],
+    ["feeds", Object.entries(v.feeds).map(([k, f]) => `<span class="pill ${f.stale ? "crit" : "ok"}">${esc(k)} ${f.age_s ?? "–"} s</span>`).join("")],
+    ["suspected gaps", esc(v.suspected_gaps)], ["polls / errors", `${esc(v.counters.polls)} / ${esc(v.counters.poll_errors)}`],
+    ["trades / RPI", `${esc(v.counters.trades)} / ${esc(v.counters.rpi_trades)}`], ["late trades", esc(v.counters.late_trades)]]));
+  return rows([["live feed", live], ["sessions now", val(m.sessions_now, v => v.length ? esc(v.join(", ")) : "none")]]);
+}
+function renderOrderflow(o) {
+  const prof = val(o.profile, v => "<table><tr><th>window</th><td>POC · VAL–VAH · VWAP ±1σ</td></tr>" + Object.entries(v).map(([k, r]) =>
+    `<tr><th>${esc(k)}${r.is_final ? "" : " (developing)"}</th><td>${ticks(r.poc_ticks)} · ${ticks(r.val_ticks)}–${ticks(r.vah_ticks)} · ${(r.vwap_ticks/100).toFixed(2)} ` +
+    `[${(r.band_dn_1_ticks/100).toFixed(2)}, ${(r.band_up_1_ticks/100).toFixed(2)}] <span class="src">${esc(r.dq_status)} · HVN ${r.hvn_count} LVN ${r.lvn_count}</span></td></tr>`).join("") + "</table>");
+  const cvd = val(o.cvd, v => v.length ? rows(v.slice(-3).map(r => [`${r.series} ${r.interval}`, `close ${esc(r.cvd_close)} lots (${esc(r.bar_end)})`])) : "none");
+  const ev = val(o.events, v => v.length ? rows(v.slice(-6).map(r => [r.event_type, `${esc(r.side || "")} ${esc(r.status)} @ ${ticks(r.reference_ticks) ?? "–"} (${esc(r.available_at)})`])) : "none");
+  const au = val(o.auction_events, v => v.length ? rows(v.slice(-6).map(r => [r.event_type, `${esc(r.level_id || r.level_type || "")} (${esc(r.available_at)})`])) : "none");
+  return rows([["profile (latest per window type)", prof], ["CVD", cvd], ["orderflow events", ev], ["auction events", au], ["depth", val(o.depth)]]);
+}
+function renderTrading(t) {
+  const sig = (t.signals || []).map(s => val(s, v => v.length ? rows(v.slice(-5).map(r => [`${r.strategy_id} ${r.direction}`,
+    `entry ${ticks(r.entry_price_ticks)} SL ${ticks(r.stop_loss_ticks)} TP ${ticks(r.take_profit_ticks)} · score ${esc(r.setup_score)} · ${esc(r.available_at)}`])) : "none")).join("");
+  let ex;
+  if (t.execution && t.execution.value === null) ex = val(t.execution);
+  else ex = Object.entries(t.execution || {}).map(([n, it]) => val(it, v => rows([
+    ["run", `${esc(n)} (${esc(v.run_status)})`], ["emergency", v.risk.emergency ? `<span class="crit">LATCHED: ${esc(v.risk.emergency_reason)}</span>` : '<span class="ok">no</span>'],
+    ["blocked", Object.keys(v.risk.blocked).length ? `<span class="warn">${esc(Object.keys(v.risk.blocked).join(", "))}</span>` : '<span class="ok">no</span>'],
+    ["orders", esc(JSON.stringify(v.orders_by_state))], ["open positions", v.open_positions.length ? pre(v.open_positions) : "none"],
+    ["realised P&L", esc(v.realized)], ["EA last message", v.last_message_from_ea_age_s === null ? '<span class="na">never</span>' : `${v.last_message_from_ea_age_s} s ago`],
+    ["losing streak", esc(v.risk.consecutive_losses)], ["audit chain", v.audit_chain.ok ? `<span class="ok">OK (${v.audit_chain.records})</span>` : `<span class="crit">${esc(v.audit_chain.error)}</span>`]]))).join("");
+  return rows([["signals", sig], ["execution", ex]]);
+}
+function renderResearch(r) {
+  const bt = Array.isArray(r.backtests) ? r.backtests.map(b => val(b, v => (v.SYNTHETIC_BROKER_DATA ? '<span class="warn">SYNTHETIC broker data (test, not a result)</span> ' : "") +
+    `${esc(v.name)} · ${esc(v.broker)} · ${esc(v.trades)} trades · PF ${esc(v.profit_factor)} · max DD ${esc(v.max_drawdown_pct)}`)).join("<br>") : val(r.backtests);
+  return rows([["coverage (trades)", val(r.coverage)], ["venues", r.venues && r.venues.value === null ? val(r.venues) : Object.entries(r.venues || {}).map(([k, v]) => `${esc(k)}: ${val(v)}`).join("<br>")],
+    ["backtests", bt], ["research ledger", val(r.ledger)], ["test lock", val(r.test_lock)], ["studies", esc((r.studies || []).join(", ") || "none")], ["reports", esc((r.reports || []).join(", "))]]);
+}
+function renderSystem(s) {
+  return rows([["disk", val(s.disk, v => `${v.free_gb} GB free of ${v.total_gb} (${v.free_pct} %)`)], ["catalog", val(s.catalog_integrity)],
+    ["logs", val(s.logs, v => esc(v.map(x => `${x.file} ${x.mb} MB`).join(", ") || "none"))],
+    ["recent errors", val(s.recent_errors, v => v.length ? pre(v.slice(-5)) : '<span class="ok">none</span>')], ["version", esc(s.version)]]);
+}
+function section(id, data, fn) {
+  const el = document.getElementById(id);
+  if (data && data.value === null && data.reason) { el.innerHTML = val(data); return; }
+  try { el.innerHTML = fn(data || {}); } catch (e) { el.innerHTML = `<span class="crit">render error: ${esc(e)}</span>`; }
+}
+async function refresh() {
+  let st;
+  try {
+    const r = await fetch("/api/status" + (token ? "?token=" + encodeURIComponent(token) : ""), {cache: "no-store"});
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    st = await r.json();
+  } catch (e) {
+    document.getElementById("meta").innerHTML = `<span class="crit">engine status unreachable: ${esc(e.message)}</span>`;
+    setTimeout(refresh, 5000);
+    return;
+  }
+  document.getElementById("meta").textContent = `${st.symbol} · snapshot ${fmtTime(st.generated_ms)} · refresh ${st.refresh_s} s`;
+  const al = st.alerts_open || [];
+  document.getElementById("alerts-body").innerHTML = al.length ? al.map(a =>
+    `<div><span class="pill ${a.severity === "critical" ? "crit" : "warn"}">${esc(a.severity)}</span><b>${esc(a.kind)}</b> ${esc(a.id)} · since ${fmtTime(a.opened_ms)}<br><span class="src">${esc(JSON.stringify(a.detail))}</span></div>`).join("")
+    : '<span class="ok">no open alerts</span>';
+  section("market", st.market, renderMarket); section("orderflow", st.orderflow, renderOrderflow); section("trading", st.trading, renderTrading);
+  section("research", st.research, renderResearch); section("system", st.system, renderSystem);
+  setTimeout(refresh, (st.refresh_s || 5) * 1000);
+}
+refresh();
+</script>
+</body>
+</html>

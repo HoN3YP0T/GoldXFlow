@@ -15,9 +15,18 @@ SCHEMA_VERSION = 1
 PROVIDER_ID = "binance"
 VENUE_ID = "binance-futures-usdm"
 MARKET_TYPE = "usdm_perpetual"
+# Phase 15: one identity per venue (provider -> venue id, market type). Data of different venues never shares a
+# partition, an instrument id, a catalog or a processor.
+VENUES = {"binance": (VENUE_ID, MARKET_TYPE), "okx": ("okx-swap", "usdt_swap"), "bybit": ("bybit-linear", "usdt_perpetual"),
+          "bitget": ("bitget-usdt-futures", "usdt_perpetual")}
 
-def instrument_id(symbol: str) -> str:
-    return f"{PROVIDER_ID}:{MARKET_TYPE}:{symbol}"
+def venue_of(cfg) -> str:
+    """Provider of a config's data (``source``); the Phase 1 dummy provider writes Binance-shaped test data."""
+    src = cfg["source"] if not isinstance(cfg, str) else cfg
+    return src if src in VENUES else PROVIDER_ID
+
+def instrument_id(symbol: str, provider: str = PROVIDER_ID) -> str:
+    return f"{provider}:{VENUES[provider][1]}:{symbol}"
 
 TS = pa.timestamp("ms", tz="UTC")
 DICT = pa.dictionary(pa.int8(), pa.string())

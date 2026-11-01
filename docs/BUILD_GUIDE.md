@@ -188,17 +188,25 @@ goldflow/                     current package
   rest_client.py  vision_archive.py  checkpoint.py  acquire.py  integrity.py  report.py   (Phase 2)
   schemas.py  normalize.py  catalog.py  dataset_report.py                                  (Phase 3)
   replay.py                                                                                (Phase 4)
-  cli.py                       discover | acquire | rest | manifest | normalize | validate | report | replay
+  settings.py  profiles.py  observability.py  migrations.py  providers/{base.py, registry.py, binance/, dummy/}  (Phase 1)
+  processing/{trade_processor.py, classify.py, aggregation.py, sessions.py, settings.py,
+              footprint_store.py, reconcile.py}                                            (Phase 5)
+  orderflow/{volume_profile.py, vwap.py, engine.py, store.py, rebuild.py, verify.py, export.py}            (Phase 6)
+  orderflow/{delta.py, cvd.py, imbalance.py, big_trades.py, absorption.py, exhaustion.py, divergence.py,
+             events.py, flow_engine.py, flow_store.py, flow_verify.py, flow_settings.py}                  (Phase 7)
+  liquidity/{book.py, recorder.py, capture.py, dataset.py, metrics.py, coverage.py, registry.py, ...}     (Phase 8)
+  cli.py      discover | acquire | rest | manifest | normalize | validate | report | replay | process | reconcile |
+              vprofile[-verify|-export] | orderflow[-verify] | auction[-verify|-review] | ib[-verify] | signals[-verify] | broker-import | backtest | perf-report | study | ledger-verify | depth-record | depth-replay | depth-normalize
+  orderflow/{auction.py, failed_auction.py, auction_engine.py, auction_verify.py, auction_review.py, auction_settings.py}  (Phase 9)
+  orderflow/{initial_balance.py, ib_verify.py, ivb.py}  processing/holidays.py                 (Phase 10)
   — to add —
-  providers/{base.py, registry.py, binance/, dummy/}                                       (Phase 1, 14, 15)
-  logging.py  settings.py (validated config)                                               (Phase 1)
-  processing/{trade_processor.py, aggregation.py, sessions.py}                             (Phase 5)
-  orderflow/{volume_profile.py, vwap.py, delta.py, cvd.py, imbalance.py, big_trades.py,
-             absorption.py, liquidity.py, auction.py, failed_auction.py, initial_balance.py, ivb.py}  (Ph 6–10)
-  strategies/  signals/                                                                    (Phase 11)
-  backtesting/{engine.py, simulator.py, costs.py, ledger.py}                               (Phase 12)
-  research/{splits.py, walkforward.py, montecarlo.py, ledger.py}                          (Phase 13)
-  live/{ws_client.py, recorder.py, parity.py}                                              (Phase 14)
+  strategies/{signal.py, base.py, regime.py, library.py, engine.py, verify.py}             (Phase 11, built)
+  backtesting/{settings.py, broker.py, basis.py, simulator.py, engine.py}                  (Phase 12, built)
+  research/{settings.py, metrics.py, ledger.py, runner.py, walkforward.py, study.py}         (Phase 13, built)
+  live/{trades.py, bus.py, runner.py, parity.py}                                           (Phase 14, built)
+  venues/{mapping.py, archives.py, ingest.py, run.py, crossvenue.py, report.py}; providers/{okx,bybit,bitget}  (Phase 15, built)
+  execution/{protocol, settings, orders, risk, symbol, reconcile, audit, transport, bridge, gate, sim}.py; mt5/GoldflowExecutor.mq5  (Phase 16, built)
+  ops/{status, alerts, dashboard, backup}.py + ops/static/dashboard.html; deploy/{systemd, windows}  (Phase 17, built)
   execution/{bridge.py, order_manager.py, positions.py}  risk/                             (Phase 16)
   monitoring/  dashboard/                                                                  (Phase 17)
 config/  docs/  scripts/  tests/  data/ (git-ignored except small reports, manifest and frozen range)
@@ -216,19 +224,19 @@ mql5/   (Phase 16: EA executor source)
 | 2 | Binance adapter and six-month acquisition | **Done** | M1 |
 | 3 | Validation, normalisation and storage | **Done** | M1 |
 | 4 | Deterministic historical replay | **Done** | M2 |
-| 5 | Trade processing, classification, price-level aggregation | Not started. **Next.** | M3 (begins) |
-| 6 | Volume Profile, POC, Value Area, HVN/LVN, VWAP | Not started | M3 |
-| 7 | Delta, CVD, imbalance, Big Trades, absorption, exhaustion | Not started | M3 |
-| 8 | Order-book reconstruction and liquidity | Not started (live-only; no historical L2) | M3 (live part) |
-| 9 | Auction Market Theory and failed auctions | Not started | M3 |
-| 10 | Sessions, Initial Balance, IVB | Not started (IVB definition required from you) | M3 |
-| 11 | Strategy interface and signal generation | Not started | – |
-| 12 | Event-driven backtesting and execution simulation | Not started (needs broker tick history) | M4 |
-| 13 | Reports, validation, walk-forward, research | Not started | M5 |
-| 14 | Live Binance ingestion and historical/live parity | Not started (start the depth recorder early) | M6 |
-| 15 | Additional providers and cross-market mapping | Not started | – |
-| 16 | MT5 execution bridge and risk controls | Not started | M7 |
-| 17 | Dashboard, observability, deployment, hardening | Not started | M8 |
+| 5 | Trade processing, classification, price-level aggregation | **Done** (session times still PROPOSED, D4) | M3 (begins) |
+| 6 | Volume Profile, POC, Value Area, HVN/LVN, VWAP | **Done** (2026-10-31; see `docs/PHASE6_COMPLETION_REPORT.md`; v1 node/VA parameters PROPOSED) | M3 |
+| 7 | Delta, CVD, imbalance, Big Trades, absorption, exhaustion | **Done** (2026-10-31; see `docs/PHASE7_COMPLETION_REPORT.md`; detector parameters PROPOSED, D11) | M3 |
+| 8 | Order-book reconstruction and liquidity | **Done** (2026-10-31; live-only, see `docs/PHASE8_COMPLETION_REPORT.md`). The recorder must run on the PC or a non-US VPS. | M3 (live part) |
+| 9 | Auction Market Theory and failed auctions | **Done** (2026-10-31; see `docs/PHASE9_COMPLETION_REPORT.md`; thresholds PROPOSED, D12; IB levels arrive with Phase 10) | M3 |
+| 10 | Sessions, Initial Balance, IVB | **Done** (2026-10-31; see `docs/PHASE10_COMPLETION_REPORT.md`). IVB disabled until D1; holiday calendar PROPOSED | M3 |
+| 11 | Strategy interface and signal generation | **Done** (2026-10-31; see `docs/PHASE11_COMPLETION_REPORT.md`; example strategy parameters PROPOSED, D13) | – |
+| 12 | Event-driven backtesting and execution simulation | **Built** (2026-10-31; see `docs/PHASE12_COMPLETION_REPORT.md`). Real backtests **blocked on D2** (broker spec + tick history) | M4 |
+| 13 | Reports, validation, walk-forward, research | **Built** (2026-10-31; see `docs/PHASE13_COMPLETION_REPORT.md`). Real studies blocked on D2; thresholds D8 | M5 |
+| 14 | Live Binance ingestion and historical/live parity | **Built** (2026-10-31; see `docs/PHASE14_COMPLETION_REPORT.md`). Parity exact on 4 real days; live REST needs a non-US host (D6) | M6 |
+| 15 | Additional providers and cross-market mapping | **Done** (2026-10-31; see `docs/PHASE15_COMPLETION_REPORT.md`). OKX + Bybit history imported and run through the unchanged stack; Bitget discovery only | – |
+| 16 | MT5 execution bridge and risk controls | **Built** (2026-10-31; see `docs/PHASE16_COMPLETION_REPORT.md`). EA not compiled here; demo run and M7 gate need D2/D6 | M7 |
+| 17 | Dashboard, observability, deployment, hardening | **Built** (2026-10-31; see `docs/PHASE17_COMPLETION_REPORT.md`, `docs/RUNBOOK.md`, `docs/PRODUCTION_READINESS.md`). Restore tested on real data; service templates not installed on a host | M8 |
 
 ---
 
@@ -250,12 +258,12 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 | S8 performance on unseen data | Ph13 | Out-of-sample and walk-forward metrics; research ledger; approval criteria |
 | §2 multi-source, configurable providers | Ph1 (contract), Ph14, Ph15 | Provider added without analytics changes |
 | §2 never merge unrelated books | Ph8, Ph15 | One book per venue; tests reject merged inputs |
-| §3 volume and market profile | Ph6 | – |
-| §3 VWAP and volume analytics | Ph6 | – |
-| §3 trade and orderflow analysis | Ph5, Ph7, Ph8 | – |
-| §3 Auction Market Theory | Ph9 | – |
-| §3 Initial Balance and IVB | Ph10 | IVB enabled only after its formula is approved |
-| §4 signal generation with evidence, SL/TP, R:R, score, reason | Ph11 | Signal schema; reproducibility tests |
+| §3 volume and market profile | Ph6 | `docs/METRICS_PROFILE_V1.md`; hand-computed POC/VA/prominence tests; six-month from-scratch parity (`data/reports/profile_verification.md`) |
+| §3 VWAP and volume analytics | Ph6 | Exact integer VWAP sums; float64 recomputation from decimal prices within 1e-9 relative |
+| §3 trade and orderflow analysis | Ph5, Ph7, Ph8 | `docs/METRICS_ORDERFLOW_V1.md`; hand-computed imbalance/quantile/event tests; `orderflow-verify` exact recomputation from trades (bars, CVD, imbalances, every big trade and fill id, event evidence and resolutions) |
+| §3 Auction Market Theory | Ph9 | `docs/METRICS_AUCTION_V1.md`; hand-computed episode/failed-auction/shape tests; replay clock check; `auction-verify` exact re-derivation from trades; `auction-review` charts |
+| §3 Initial Balance and IVB | Ph10 | `docs/METRICS_IB_V1.md`; DST-week tests; `ib-verify` exact recomputation; IVB refused at startup until its formula is approved (D1) |
+| §4 signal generation with evidence, SL/TP, R:R, score, reason | Ph11 | `docs/SIGNALS_V1.md`; `signals-verify` re-derives every signal from its evidence; gating and look-ahead tests; reproducibility tests |
 | §5 MT5 lifecycle, risk, reconciliation, recovery | Ph16 | – |
 | §6 backtest/live parity, costs, walk-forward, reports | Ph12, Ph13, Ph14 | – |
 | §7 zero-silent-loss architecture | Ph2–Ph4 (built), Ph14 (live) | Layered integrity (§9.1) |
@@ -398,7 +406,25 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 5: Trade processing, classification and price-level aggregation. **Status: Not started**
+### Phase 5: Trade processing, classification and price-level aggregation. **Status: Done (M3 begins)**
+**Built** (`goldflow/processing/`; spec `docs/PROCESSING_V1.md`; report `docs/PHASE5_COMPLETION_REPORT.md`):
+- `TradeProcessor(Consumer)`, the single path for replay and live: dedup (watermark plus id ring), exchange-reported sides (cross-checked against Phase 3), and an optional INFERRED tick rule kept separate.
+- Integer footprint bars at 1s/5s/1m/5m/15m/1h, finalised only at `end + shift`.
+- Windows: UTC day, trading day, trading week, sessions and custom ranges, using zoneinfo for DST.
+- Snapshot/restore inside replay checkpoints, guarded by the settings hash. The 1m footprint is written to Parquet with a manifest, and `reconcile` checks it.
+
+**Evidence (full six months, rebuilt in the cloud):**
+- Replay digest `eeacba10…` unchanged; 657,749 events/s; 1.25 GB peak.
+- 183/183 days: footprint = partition exactly.
+- All 181 COMPLETE days equal Binance klines minute by minute (volume, count, taker-buy, OHLC).
+- Processor state digest `ad595214…`, reproduced after stop/resume.
+- 85 tests pass (`scripts/check.sh` green, with `goldflow.processing` under `mypy --strict`).
+
+**Commands.** `python -m goldflow.cli process --name p1 [--resume] [--dates …] [--until …] [--budget S]`; `python -m goldflow.cli reconcile`.
+
+**Open:** session times are PROPOSED (D4). No holiday calendar yet (Phase 10).
+
+**Original specification:**
 **Objective.** One shared event processor that turns trades into price-level and time-window aggregates. Every analytic in Phases 6–10 is built on its outputs.
 
 **Depends on.** Phase 4 (the Consumer interface) and Phase 1 (settings, logging). The session config is drafted here and finalised in Phase 10.
@@ -446,7 +472,7 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 6: Volume Profile, POC, Value Area, HVN/LVN and VWAP. **Status: Not started**
+### Phase 6: Volume Profile, POC, Value Area, HVN/LVN and VWAP. **Status: Done (2026-10-31)**
 **Objective.** The foundational profile and volume-weighted references, precisely defined and reproducible.
 
 **Depends on.** Phase 5 aggregates and sessions.
@@ -490,7 +516,9 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 7: Delta, CVD, imbalance, Big Trades, absorption and exhaustion. **Status: Not started**
+### Phase 7: Delta, CVD, imbalance, Big Trades, absorption and exhaustion. **Status: Done (2026-10-31)**
+**Built** (`goldflow/orderflow/` Phase 7 modules; spec `docs/METRICS_ORDERFLOW_V1.md`; report `docs/PHASE7_COMPLETION_REPORT.md`): `OrderflowEngine(ProcessorSink)` with flow bars (delta and intra-bar delta extremes), CVD per reset instance, diagonal/horizontal and stacked imbalance, taker-order reconstruction and Big Trades (absolute, notional, rolling and time-of-day quantiles on an exact histogram, every fill id stored), absorption, exhaustion and divergence with a CANDIDATE → CONFIRMED / INVALIDATED / EXPIRED lifecycle tracked strictly after the evidence window. Commands: `orderflow --name o1 [--resume]`, `orderflow-verify`. Evidence (4 real days in the cloud): exact verification 4/4 days, state digest reproduced after a stop/resume through the DST night, 296 k events/s. Six-month run: on the PC. Open: D11 (parameter review).
+
 **Objective.** Transaction-based orderflow analytics with transparent classification and stated limits.
 
 **Depends on.** Phase 5 (sides, footprint) and Phase 6 (levels for context).
@@ -528,7 +556,8 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 8: Historical and live order-book reconstruction and liquidity. **Status: Not started. Live only.**
+### Phase 8: Historical and live order-book reconstruction and liquidity. **Status: Done (2026-10-31). Live only.**
+**Built** (`goldflow/liquidity/`, `docs/METRICS_LIQUIDITY_V1.md`, `docs/PHASE8_COMPLETION_REPORT.md`): local book with the Binance sync procedure, raw recorder (`goldflow depth-record`), capture replay (`depth-replay`), DepthEvent v1 normalisation (`depth-normalize`), per-interval depth capability, book metrics, and one book per venue with RPI separate. Next step for you: start `depth-record` on the PC or a non-US VPS (D6) so depth history begins to accumulate.
 **Objective.** Depth-based analytics **only** where genuine snapshots and incremental updates exist.
 
 **Reality for us.** There is no historical price-level L2 for 2026-04-30 → 2026-10-30. Depth analytics can only be built from our **own live recorder**, so it should be started as early as possible (see Phase 14) to accumulate history. Paid history (for example Tardis.dev `incremental_book_L2`) is the alternative and needs your decision.
@@ -561,7 +590,9 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 9: Auction Market Theory and failed-auction analytics. **Status: Not started**
+### Phase 9: Auction Market Theory and failed-auction analytics. **Status: Done (2026-10-31)**
+**Built** (`orderflow/auction*.py`, `failed_auction.py`; spec `docs/METRICS_AUCTION_V1.md`; report `docs/PHASE9_COMPLETION_REPORT.md`): `AuctionEngine(ProcessorSink)` after the `ProfileEngine`. Reference levels from the previous full profile instance (high, low, POC, VAH, VAL, VWAP, bands, HVN/LVN, user levels; exact rationals, never from a partial window); acceptance / return / rejection episodes; failed auctions with weak-participation evidence and a held return; outcome rows at 15/30/60 min; auction state (balance, imbalance, transition); initiative vs responsive activity; excess, poor extremes and a labelled single-print proxy. Commands: `auction`, `auction-verify`, `auction-review` (CSV + SVG charts from raw trades). Evidence (4 real days): exact independent re-derivation 4/4 days, state digest reproduced after stop/resume. Open: D12, IB levels (Phase 10).
+
 **Objective.** Rule-based acceptance, rejection, auction state and failed-auction detection from measurable evidence.
 
 **Depends on.** Phases 5–7 (profile, VWAP, delta) and Phase 10 sessions. The Phase 10 session calendar may be built first or in parallel.
@@ -596,7 +627,9 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 10: Sessions, Initial Balance and IVB. **Status: Not started. IVB definition required.**
+### Phase 10: Sessions, Initial Balance and IVB. **Status: Done (2026-10-31). IVB disabled until its definition (D1).**
+**Built** (`orderflow/initial_balance.py`, `ib_verify.py`, `ivb.py`, `processing/holidays.py`; spec `docs/METRICS_IB_V1.md`; report `docs/PHASE10_COMPLETION_REPORT.md`): `IBEngine(ProcessorSink)` with per-session IB definitions (offset or local start; DST-checked at startup), developing and final IB with k × range extensions, breakouts (volume/delta filters reported), failed breaks, extension touches and session summaries; IB levels feed the Phase 9 auction engine (acceptance outside the IB); a PROPOSED holiday calendar that labels without changing Phase 5 sessions; IVB refused until a signed-off definition and implementation exist. Commands: `ib`, `ib-verify`. Evidence (4 real days): exact verification, digest reproduced after stop/resume.
+
 **Objective.** Session-aware opening range and initial-session analytics.
 
 **What to build.**
@@ -619,7 +652,9 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 11: Unified strategy interface and signal generation. **Status: Not started**
+### Phase 11: Unified strategy interface and signal generation. **Status: Done (2026-10-31)**
+**Built** (`goldflow/strategies/`; spec `docs/SIGNALS_V1.md`; report `docs/PHASE11_COMPLETION_REPORT.md`): strategy contract (capabilities, inputs, triggers, typed parameters, warm-up, pure `build` from evidence), `StrategyEngine` after its analytics engines with time-ordered dispatch and suppress-only gating (capability refusal, WARMUP, DQ_OPEN, DQ_EVIDENCE, DUPLICATE_ACTIVE), regime features, grouped uncalibrated score, `TradingSignal` with exact R:R and evidence, three example research strategies with hypotheses. Commands: `signals`, `signals-verify` (re-derives every signal from its stored evidence). Evidence (4 real days): 5 signals, all re-derived; digest reproduced after stop/resume.
+
 **Objective.** Strategies consume validated analytical state and emit explainable, timestamped signals, or emit nothing.
 
 **What to build** (`strategies/`, `signals/`):
@@ -653,7 +688,9 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 12: Event-driven backtesting and execution simulation. **Status: Not started**
+### Phase 12: Event-driven backtesting and execution simulation. **Status: Built (2026-10-31). Real results blocked on D2.**
+**Built** (`goldflow/backtesting/`; spec `docs/BACKTEST_V1.md`; report `docs/PHASE12_COMPLETION_REPORT.md`): MT5 tick import (server time zone, quarantine, manifest), basis model (past-only rolling median, exact translation), `Backtester` sink on the replay clock after the `StrategyEngine`, fills on broker bid/ask with latency and slippage, gapped stops, unfavourable gap rule, seeded rejections, stops level, commission and swap, risk sizing and limits, exact cents ledger reconciled before every report, reproducibility record. Refuses to run without a configured broker; synthetic broker data only in tests and labelled NOT A RESULT. Commands: `broker-import`, `backtest`.
+
 **Objective.** Backtest strategies over the dataset with the same analytics and strategy code as live, and with realistic, disclosed execution.
 
 **Critical design point: signal venue ≠ execution venue.** Signals come from Binance XAUUSDT. Orders execute on your **MT5 broker's XAUUSD**, a different price feed with its own spread, swap, commission and hours. So the backtest must fill on **broker prices**.
@@ -687,7 +724,9 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 13: Reports, validation, walk-forward and strategy research. **Status: Not started**
+### Phase 13: Reports, validation, walk-forward and strategy research. **Status: Built (2026-10-31). Real studies blocked on D2.**
+**Built** (`goldflow/research/`; spec `docs/RESEARCH_V1.md`; report `docs/PHASE13_COMPLETION_REPORT.md`): reconciled performance report with intervals, splits by regime and cost impact; fixed chronological splits and a once-only test-set lock; rolling walk-forward with stitched out-of-sample equity; stability, cost stress (real reruns with a widened spread), sensitivity heatmap and Monte Carlo; hash-chained research ledger with hypotheses first; approval criteria (`max_oos_drawdown` must be set, D8). Commands: `study`, `perf-report`, `ledger-verify`.
+
 **Objective.** Decide whether a strategy is robust, not merely fitted.
 
 **What to build** (`research/`):
@@ -718,7 +757,9 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 14: Real-time Binance ingestion and historical/live parity. **Status: Not started. Start the recorder early.**
+### Phase 14: Real-time Binance ingestion and historical/live parity. **Status: Built (2026-10-31). Live REST needs a non-US host (D6).**
+**Built** (`goldflow/live/`; spec `docs/LIVE_V1.md`; report `docs/PHASE14_COMPLETION_REPORT.md`): option (a) REST trade poller incl. RPI, normalised by the Phase 3 validator; raw capture first; gap suspicion with `historicalTrades` backfill or a `GAP` interval; `LiveBus` with the same `EventChunk` interface and a clock held at the last successful poll minus a grace; per-stream staleness (`STALE` blocks signals); late trades excluded everywhere and counted; checkpoints with `RECOVERY` on restart; WebSocket monitor (aggTrade, markPrice). Parity harness: **exactly equal on 26 outputs over 3,197,220 real trades**. Found: the legacy `fstream.binance.com/stream` URL is silent; depth is on `/public/stream`, aggTrade/markPrice on `/market/stream` (Phase 8 default fixed). Commands: `live-run`, `parity`.
+
 **Objective.** Bring the pipeline online without a second, inconsistent implementation.
 
 **Host.** It must run where Binance is reachable: the trading PC (India) or a non-US VPS. US cloud hosts get HTTP 451.
@@ -750,7 +791,9 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 15: Additional providers and cross-market mapping. **Status: Not started**
+### Phase 15: Additional providers and cross-market mapping. **Status: Done (2026-10-31).**
+**Built** (`goldflow/venues/`, `goldflow/providers/{okx,bybit,bitget}/`; spec `docs/VENUES_V1.md`; report `docs/PHASE15_COMPLETION_REPORT.md`): per-venue identity, partitions and catalogs; mapping records checked against live discovery; OKX (contiguous ids, provable completeness, UTC+8 archive days) and Bybit (RPI flag; UNVERIFIED) archive import through the Phase 3 validator; the unchanged Phase 4–11 stack on each venue, reconciled; basis series (1 s, as-of strictly before, exact) and a labelled cross-venue ounce aggregate; `providers-report`. Real data, 4 days: OKX 509,207 trades (COMPLETE), Bybit 471,842 (RPI 17.8 % of volume); Binance trades $0.5–1.0 below both. Commands: `venue-import`, `venue-run`, `basis`, `volume-oz`, `providers-report`.
+
 **Objective.** Add sources without rewriting analytics or merging markets.
 
 **Candidates (from Phase 0).**
@@ -777,7 +820,9 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 16: MT5 execution bridge and risk controls. **Status: Not started**
+### Phase 16: MT5 execution bridge and risk controls. **Status: Built (2026-10-31). Demo evidence pending (D2, D6).**
+**Built** (`goldflow/execution/`, `mt5/GoldflowExecutor.mq5`; spec `docs/EXECUTION_V1.md`; report `docs/PHASE16_COMPLETION_REPORT.md`): HMAC-authenticated loopback protocol (EA connects; Common Files fallback), symbol validation against the broker block, broker-confirmed order lifecycle with idempotency keys in the order comment, pre-trade risk engine (limits from `backtest.risk`, stricter only; DQ gate cannot be disabled; latched emergency flatten), reconciliation (adopt broker changes, block on mismatch), hash-chained audit log, `demo` profile (DEMO accounts only) and `exec-gate` for the M7 record. 13 fault-injection tests against a simulated EA following the MQL5 rules. Live off by default.
+
 **Objective.** Connect validated signals to MetaTrader 5 with broker-side confirmation and strict safety.
 
 **Bridge design (recommended).** An **MQL5 EA executor** running in MT5 on Windows (the trading PC or a Windows VPS) plus a **local authenticated channel** to the Python engine.
@@ -806,7 +851,9 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 17: Dashboard, observability, deployment and production hardening. **Status: Not started**
+### Phase 17: Dashboard, observability, deployment and production hardening. **Status: Built (2026-10-31). Host installation pending (D6).**
+**Built** (`goldflow/ops/`, `deploy/`; `docs/RUNBOOK.md`, `docs/PRODUCTION_READINESS.md`, `docs/PHASE17_COMPLETION_REPORT.md`): status snapshot where every value carries its source file (missing values say why); alert rules with an open/close lifecycle (stale feed, DQ, reconciliation mismatch, risk limit, bridge down, audit broken, disk, catalog, errors); read-only loopback dashboard (stdlib HTTP, optional token); backups with SQLite online copies, hard-linked increments, verification and restore into an empty root; rotating logs; systemd units and Windows scheduled tasks; hardening (failed live checkpoint does not stop ingestion; bridge blocks trading when it cannot persist). Evidence: the six evidence digests rebuilt from a restored backup of the real data root are identical. Found and fixed: Phase 3 refused to run once other venues' raw files existed (registry now scoped to its provider).
+
 **Objective.** A complete operational view and controlled continuous operation.
 
 **What to build.**
@@ -838,12 +885,12 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ### 9.1 Data integrity: the eight layers (all phases)
 1. **Source validation:** checksums, schema and value rules (built: Phases 2–3).
-2. **Event identity and idempotency:** keys scoped by provider, market, instrument and source id (built for history; Phase 5 for processing; Phase 14 for live).
+2. **Event identity and idempotency:** keys scoped by provider, market, instrument and source id (built for history; built for processing in Phase 5: watermark plus recent-id ring; built for live in Phase 14: the same processor behind the REST poller).
 3. **Sequence validation where the source provides it:** trade ids are not contiguous on Binance (unused ids), so completeness is proven with **kline counts** rather than id gaps. Depth uses `U/u/pu`.
-4. **Durable raw capture before transformation:** archive zips and REST JSONL (built); live capture (Phase 14).
+4. **Durable raw capture before transformation:** archive zips and REST JSONL (built); live capture (built, Phase 14).
 5. **Normalised validation and quarantine** (built).
-6. **Reconciliation and backfill:** aggTrades, klines, REST, midnight-straddle resolution (built); live backfill (Phase 14).
-7. **Capability and DQ gating downstream:** quality events (built); strategy gating (Phase 11); live staleness (Phase 14); risk engine (Phase 16).
+6. **Reconciliation and backfill:** aggTrades, klines, REST, midnight-straddle resolution (built); live backfill via historicalTrades (built, Phase 14).
+7. **Capability and DQ gating downstream:** quality events (built); strategy gating (Phase 11); live staleness, gaps, late trades and recovery (built, Phase 14); risk engine (Phase 16).
 8. **Audit reporting:** manifests, validation reports, run digests (built); execution audit (Phase 16).
 
 **Rule.** When integrity is uncertain, mark the interval, block only the calculations and signals that depend on it, and keep the unaffected ones running.
@@ -856,7 +903,7 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ### 9.3 Determinism and parity
 - Every dataset, run and backtest records its dataset digest, config hash and code version.
-- Digest checks become regression tests. Today: Phase 3 `7eb02d13…` and replay `eeacba10…`. Any refactor must keep them, or explain and re-baseline them deliberately.
+- Digest checks become regression tests. Today: Phase 3 `7eb02d13…` (PC catalog), replay `eeacba10…`, and Phase 5 processor state `ad595214…` (default processing/session settings `2b3dc7ba…`). Any refactor must keep them, or explain and re-baseline them deliberately.
 - Live/historical parity is proven by the Phase 14 harness.
 
 ### 9.4 Risk (layered)
@@ -916,6 +963,9 @@ DQ gating (Ph11) → simulated risk (Ph12) → feed staleness (Ph14) → pre-tra
 | D8 | **Approval criteria numbers** | Phase 13 | You | See Phase 13 proposals |
 | D9 | **Data backup location** | Now | You | External drive or cloud storage for `Documents\python\goldflow` |
 | D10 | **Repository visibility** | Now | You | Private is recommended for strategy code |
+| D12 | **Phase 9 auction thresholds** (probe bins, acceptance time/volume, failed-auction volume share and hold, state rules, shape fractions) | Phase 11/13 | You | Keep the v1 defaults for research; review with Phase 13 out-of-sample outcomes |
+| D13 | **Phase 11 example strategy parameters** (stops, targets, minimum R:R, level types) | Phase 13 | You | Research defaults only; judge them out of sample, never by in-sample results |
+| D11 | **Phase 7 detector parameters** (imbalance ratio/min lots, Big Trade quantile, absorption/exhaustion/divergence settings) | Phase 11/13 | You | Keep the v1 defaults for research; review them with Phase 13 out-of-sample results, never by in-sample outcome |
 
 ---
 
@@ -936,7 +986,7 @@ Every phase ends with a report containing:
 **Standing instruction (append to every phase request):**
 > Execute only the current phase. First inspect the repository and identify what is already implemented. Do not rewrite working components unnecessarily. Implement real functionality; no placeholder calculations or fabricated market data. Run unit, integration, regression and data-integrity tests (including the digest regression checks). Inspect actual outputs, fix critical errors, update documentation, and provide evidence. If data or credentials are unavailable, document the limitation and stop the dependent task. Summarise the phase contents before starting. Stop after the phase with the completion report.
 
-Completed reports: `docs/PHASE2_ACQUISITION_REPORT.md`, `docs/PHASE3_COMPLETION_REPORT.md`, `docs/PHASE4_COMPLETION_REPORT.md`.
+Completed reports: `docs/PHASE2_ACQUISITION_REPORT.md`, `docs/PHASE3_COMPLETION_REPORT.md`, `docs/PHASE4_COMPLETION_REPORT.md`, `docs/PHASE5_COMPLETION_REPORT.md`, `docs/PHASE7_COMPLETION_REPORT.md`, `docs/PHASE8_COMPLETION_REPORT.md`, `docs/PHASE9_COMPLETION_REPORT.md`, `docs/PHASE10_COMPLETION_REPORT.md`, `docs/PHASE11_COMPLETION_REPORT.md`, `docs/PHASE12_COMPLETION_REPORT.md`, `docs/PHASE13_COMPLETION_REPORT.md`.
 
 ---
 

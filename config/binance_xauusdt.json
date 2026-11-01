@@ -122,5 +122,543 @@
     "max_events_per_chunk": 65536,
     "checkpoint_every_events": 2000000,
     "paced_chunk_sim_ms": 250
+  },
+  "processing": {
+    "_doc": "Phase 5 trade processor (docs/PROCESSING_V1.md). Volume in integer lots (0.001 oz), price in integer ticks (0.01 USDT).",
+    "version": 1,
+    "intervals": [
+      "1s",
+      "5s",
+      "1m",
+      "5m",
+      "15m",
+      "1h"
+    ],
+    "persist_intervals": [
+      "1m"
+    ],
+    "footprint_bin_ticks": 1,
+    "dedup_window_ids": 131072,
+    "include_recovered": true,
+    "inferred_side": {
+      "enabled": false,
+      "method": "tick_rule",
+      "_doc": "only splits UNKNOWN-side volume into separate INFERRED columns; never mixed into exchange-reported buy/sell"
+    },
+    "dq_datasets": [
+      "trades"
+    ]
+  },
+  "sessions": {
+    "_doc": "Session calendar v1. STATUS: PROPOSED defaults from the build guide; decision D4 (which sessions, IB window) is still open. Times are local wall-clock in the named zone; DST via zoneinfo.",
+    "version": "1-proposed",
+    "trading_day": {
+      "tz": "America/New_York",
+      "roll": "18:00",
+      "starts_previous_day": true,
+      "_doc": "CME/COMEX convention: trading day D = 18:00 New York on D-1 -> 18:00 on D"
+    },
+    "regular_trading_week_utc": {
+      "open": "Sun 22:00",
+      "close": "Fri 21:00",
+      "_doc": "Binance tradingSchedule COMMODITY REGULAR (re-verify against /fapi tradingSchedule from a permitted host). Outside it bars are flagged weekend=true."
+    },
+    "sessions": [
+      {
+        "name": "asia",
+        "tz": "Asia/Tokyo",
+        "start": "08:00",
+        "end": "17:00",
+        "weekdays": [
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri"
+        ],
+        "_doc": "= 23:00-08:00 UTC (Tokyo has no DST)"
+      },
+      {
+        "name": "london",
+        "tz": "Europe/London",
+        "start": "07:00",
+        "end": "16:00",
+        "weekdays": [
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri"
+        ]
+      },
+      {
+        "name": "new_york",
+        "tz": "America/New_York",
+        "start": "08:20",
+        "end": "17:00",
+        "weekdays": [
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri"
+        ],
+        "_doc": "COMEX gold pit hours"
+      }
+    ]
+  },
+  "volume_profile": {
+    "_doc": "Phase 6 profile engine (docs/METRICS_PROFILE_V1.md). Volumes in lots, prices in ticks. Fractions are decimal strings so they are exact. Node and VA parameters are v1 defaults: PROPOSED until reviewed (see the Phase 6 report).",
+    "version": 1,
+    "bin_ticks": [
+      10
+    ],
+    "value_area": {
+      "pct": "0.70",
+      "method": "pair",
+      "_doc": "pair = CBOT-style two-bin expansion (default); single = one bin at a time"
+    },
+    "nodes": {
+      "smooth_bins": 5,
+      "truncate_sigmas": 4,
+      "kernel_scale_bits": 20,
+      "prom_frac": "0.10",
+      "hvn_min_vol_frac": "1.0",
+      "lvn_max_vol_frac": "0.5",
+      "min_separation_bins": 10,
+      "width_rel_height": "0.5",
+      "_doc": "integer Gaussian smoothing (sigma = smooth_bins bins); peaks need prominence >= prom_frac * max(smoothed); HVN smoothed >= hvn_min_vol_frac * mean bin volume, LVN <= lvn_max_vol_frac * mean"
+    },
+    "vwap": {
+      "band_k": [
+        1,
+        2,
+        3
+      ],
+      "variance": "population"
+    },
+    "snapshot_every": "1m",
+    "windows": [
+      "utc_day",
+      "trading_day",
+      "trading_week",
+      "session",
+      "custom",
+      "anchor"
+    ],
+    "anchors": [],
+    "persist": true
+  },
+  "orderflow": {
+    "_doc": "Phase 7 orderflow engine (docs/METRICS_ORDERFLOW_V1.md). Volumes in lots, prices in ticks. Fractions are decimal strings so they are exact. Every detector parameter is a v1 default: PROPOSED until reviewed (see docs/PHASE7_COMPLETION_REPORT.md).",
+    "version": 1,
+    "bar_intervals": [
+      "1m",
+      "5m"
+    ],
+    "cvd": {
+      "resets": [
+        "utc_day",
+        "trading_day",
+        "session"
+      ],
+      "anchors": [],
+      "_doc": "CVD = running exchange-reported delta, reset at the start of every instance of each listed window kind"
+    },
+    "max_unknown_share": "0.05",
+    "imbalance": {
+      "interval": "1m",
+      "bin_ticks": 10,
+      "method": "diagonal",
+      "ratio": "3",
+      "min_lots": 2000,
+      "zero_policy": "none",
+      "stack_n": 3,
+      "_doc": "diagonal: buy(p) vs sell(p-1 bin); min_lots 2000 = 2 oz; zero_policy none = never an imbalance against an empty bin"
+    },
+    "big_trades": {
+      "cluster_ms": 0,
+      "max_step_ticks": 25,
+      "combine": "any",
+      "min_qty_lots": null,
+      "min_notional_usdt": null,
+      "rolling_quantile": {
+        "enabled": true,
+        "q": "0.995",
+        "hours": 24,
+        "min_samples": 2000
+      },
+      "time_of_day": {
+        "enabled": false,
+        "q": "0.995",
+        "bucket": "30m",
+        "lookback_days": 20,
+        "min_samples": 200
+      },
+      "_doc": "taker order = consecutive fills, same side, same ms, price moving with the aggressor by <= max_step_ticks. Big if ANY enabled threshold passes."
+    },
+    "absorption": {
+      "enabled": true,
+      "interval": "1m",
+      "bin_ticks": 10,
+      "tol_bins": 1,
+      "min_zone_lots": null,
+      "zone_quantile": "0.95",
+      "quantile_hours": 24,
+      "min_samples": 360,
+      "max_progress_bins": 2,
+      "min_active_seconds": 3,
+      "max_second_share": "0.5",
+      "confirm_bins": 3,
+      "confirm_window": "5m"
+    },
+    "exhaustion": {
+      "enabled": true,
+      "interval": "1m",
+      "bin_ticks": 10,
+      "lookback_bars": 5,
+      "pushes": 3,
+      "max_span_bars": 30,
+      "cvd_reset": "trading_day",
+      "confirm_bins": 5,
+      "inval_bins": 1,
+      "confirm_window": "15m"
+    },
+    "divergence": {
+      "enabled": true,
+      "interval": "5m",
+      "bin_ticks": 10,
+      "swing_bars": 3,
+      "measure": "cvd",
+      "cvd_reset": "trading_day",
+      "max_gap_bars": 48,
+      "inval_bins": 3,
+      "track_bars": 48
+    },
+    "persist": true
+  },
+  "auction": {
+    "_doc": "Phase 9 Auction Market Theory (docs/METRICS_AUCTION_V1.md). Levels come from the final Phase 6 profile of the previous instance of each source window. Every threshold is a v1 default: PROPOSED (decision D12).",
+    "version": 1,
+    "interval": "1m",
+    "bin_ticks": 10,
+    "levels": {
+      "sources": [
+        "trading_day",
+        "session",
+        "ib"
+      ],
+      "types": [
+        "HIGH",
+        "LOW",
+        "POC",
+        "VAH",
+        "VAL",
+        "VWAP"
+      ],
+      "band_k": [
+        1,
+        2
+      ],
+      "user": [],
+      "_doc": "user levels: [{\"name\": \"round-4000\", \"price\": \"4000.00\"}] (USDT, exact decimal string)"
+    },
+    "acceptance": {
+      "accept_time": "15m",
+      "accept_vol_frac": "0.10",
+      "_doc": "15 consecutive 1m closes beyond, or a close beyond with volume beyond >= 10 % of the source window's volume"
+    },
+    "rejection": {
+      "probe_bins": 3,
+      "reject_time": "30m"
+    },
+    "failed_auction": {
+      "fa_vol_frac": "0.25",
+      "fa_return_time": "30m",
+      "fa_hold_bars": 5,
+      "outcome_minutes": [
+        15,
+        30,
+        60
+      ]
+    },
+    "state": {
+      "series": [
+        "trading_day"
+      ],
+      "every": "15m",
+      "rot_n": 2,
+      "ov_frac": "0.5",
+      "poc_shift_bins": 5
+    },
+    "profile_shape": {
+      "windows": [
+        "trading_day",
+        "session"
+      ],
+      "poor_frac": "0.9",
+      "excess_bins": 3,
+      "tail_frac": "0.25",
+      "excess_time": "5m",
+      "single_print_frac": "0.1",
+      "single_print_min_bins": 2
+    },
+    "persist": true
+  },
+  "holidays": {
+    "_doc": "Gold (CME/COMEX) holiday calendar, local dates in America/New_York. STATUS: PROPOSED. The dates are the 2026 US federal holidays and Good Friday; verify each date and its trading hours against CME Group's published holiday schedule before relying on it. CLOSED = no IB is built; MODIFIED_HOURS = IB built and labelled. Labels only: Phase 5 sessions are not changed.",
+    "version": "2026-proposed",
+    "tz": "America/New_York",
+    "days": [
+      {
+        "date": "2026-01-01",
+        "name": "New Year's Day",
+        "type": "CLOSED"
+      },
+      {
+        "date": "2026-01-19",
+        "name": "Martin Luther King Jr. Day",
+        "type": "MODIFIED_HOURS"
+      },
+      {
+        "date": "2026-02-16",
+        "name": "Presidents' Day",
+        "type": "MODIFIED_HOURS"
+      },
+      {
+        "date": "2026-04-03",
+        "name": "Good Friday",
+        "type": "CLOSED"
+      },
+      {
+        "date": "2026-05-25",
+        "name": "Memorial Day",
+        "type": "MODIFIED_HOURS"
+      },
+      {
+        "date": "2026-06-19",
+        "name": "Juneteenth",
+        "type": "MODIFIED_HOURS"
+      },
+      {
+        "date": "2026-07-03",
+        "name": "Independence Day (observed)",
+        "type": "MODIFIED_HOURS"
+      },
+      {
+        "date": "2026-09-07",
+        "name": "Labor Day",
+        "type": "MODIFIED_HOURS"
+      },
+      {
+        "date": "2026-11-26",
+        "name": "Thanksgiving Day",
+        "type": "MODIFIED_HOURS"
+      },
+      {
+        "date": "2026-12-25",
+        "name": "Christmas Day",
+        "type": "CLOSED"
+      }
+    ]
+  },
+  "initial_balance": {
+    "_doc": "Phase 10 Initial Balance (docs/METRICS_IB_V1.md). Each IB lies inside a Phase 5 session: 'offset' from the session start or local 'start' in the session's time zone. STATUS: PROPOSED (decision D4).",
+    "version": 1,
+    "definitions": [
+      {
+        "name": "new_york",
+        "session": "new_york",
+        "offset": "0m",
+        "length": "60m",
+        "_doc": "08:20-09:20 America/New_York (COMEX open)"
+      },
+      {
+        "name": "london",
+        "session": "london",
+        "start": "08:00",
+        "length": "60m",
+        "_doc": "08:00-09:00 Europe/London"
+      }
+    ],
+    "extensions": [
+      "0.5",
+      "1",
+      "1.5",
+      "2",
+      "3"
+    ],
+    "break_interval": "5m",
+    "failed_break_window": "30m",
+    "snapshot_every": "1m",
+    "persist": true
+  },
+  "ivb": {
+    "_doc": "IVB is DISABLED until its definition is supplied and signed off (decision D1). It is never replaced by IB or another metric.",
+    "enabled": false,
+    "definition": null
+  },
+  "strategies": {
+    "_doc": "Phase 11 research strategies (docs/SIGNALS_V1.md). None is assumed profitable; parameters are PROPOSED (D13). Signals are proposals in Binance ticks, not orders.",
+    "version": 1,
+    "enabled": [
+      "fa_value_edge",
+      "absorption_level",
+      "ib_failed_break"
+    ],
+    "params": {},
+    "warmup": "24h",
+    "regime": {
+      "vol_bars": 12,
+      "volume_lookback_days": 20
+    },
+    "persist": true
+  },
+  "broker": {
+    "_doc": "Execution venue (decision D2, OPEN): your MT5 broker's XAUUSD contract specification. A backtest refuses to run while name is null. Copy every value from the broker's contract specification (MT5: Symbols -> XAUUSD -> Specification); server_tz is the broker server time zone used by its tick timestamps.",
+    "name": null,
+    "symbol": "XAUUSD",
+    "digits": 2,
+    "contract_size": "100",
+    "volume_min": "0.01",
+    "volume_step": "0.01",
+    "volume_max": "50",
+    "commission_per_lot_side": "0",
+    "swap_long_per_lot": "0",
+    "swap_short_per_lot": "0",
+    "swap_time": "00:00",
+    "triple_swap_day": "Wed",
+    "stops_level_points": 0,
+    "server_tz": null,
+    "account_currency": "USD"
+  },
+  "backtest": {
+    "_doc": "Phase 12 execution model and risk limits (docs/BACKTEST_V1.md). PROPOSED defaults; risk limits are decision D7.",
+    "version": 1,
+    "starting_capital": "10000",
+    "latency_ms": 250,
+    "slippage_points": 2,
+    "slippage_vol_mult": "0",
+    "slippage_vol_ticks": 20,
+    "reject_rate": "0",
+    "max_tick_gap": "60s",
+    "max_hold": "24h",
+    "seed": 1,
+    "spread_mult": "1",
+    "basis": {
+      "window": "5m",
+      "min_samples": 30
+    },
+    "risk": {
+      "risk_per_trade": "0.005",
+      "max_concurrent_positions": 1,
+      "max_exposure_lots": "5",
+      "daily_loss_limit": "0.02",
+      "max_drawdown": "0.08",
+      "max_consecutive_losses": 4,
+      "sessions": []
+    }
+  },
+  "research": {
+    "_doc": "Phase 13 research (docs/RESEARCH_V1.md). Splits are fixed before any testing; the test period is opened once (data/research/test_lock.json). Approval thresholds are PROPOSED; you set the final numbers (D8), and max_oos_drawdown must be set before anything can be approved.",
+    "version": 1,
+    "splits": {
+      "development": [
+        "2026-04-30",
+        "2026-08-31"
+      ],
+      "validation": [
+        "2026-09-01",
+        "2026-09-30"
+      ],
+      "test": [
+        "2026-10-01",
+        "2026-10-29"
+      ]
+    },
+    "walk_forward": {
+      "in_sample_days": 56,
+      "out_of_sample_days": 14,
+      "step_days": 14,
+      "warmup_days": 2
+    },
+    "objective": "profit_factor",
+    "min_trades_in_sample": 30,
+    "min_trades_conclusion": 100,
+    "bootstrap": {
+      "samples": 2000,
+      "seed": 7
+    },
+    "approval": {
+      "oos_profit_factor": "1.2",
+      "wf_positive_share": "0.7",
+      "max_oos_drawdown": null,
+      "param_change": "0.2",
+      "cost_multiplier": "1.5"
+    }
+  },
+  "live": {
+    "_doc": "Phase 14 live ingestion (docs/LIVE_V1.md). Trade source: REST polling of individual trades incl. RPI (decision D3, option a), the same definition as the history. Paper mode: signals only. Run where fapi is reachable (not a US host: HTTP 451).",
+    "trade_source": "rest_poll",
+    "poll_ms": 750,
+    "rest_limit": 1000,
+    "grace_ms": 3000,
+    "stale_ms": {
+      "trades": 15000,
+      "aggTrade": 30000,
+      "markPrice": 10000
+    },
+    "ws_streams": [
+      "aggTrade",
+      "markPrice"
+    ],
+    "ws_base_url": "wss://fstream.binance.com/market/stream",
+    "checkpoint_s": 60,
+    "backfill_max_pages": 50
+  },
+  "venues": {
+    "_doc": "Phase 15 venues (docs/VENUES_V1.md). One mapping record per venue; venues are separate markets and are never merged. Defaults (tick, step, ounces per quantity unit, session, price basis, specification source) live in goldflow/venues/mapping.py; override per venue here, e.g. {\"bybit\": {\"tick_size\": \"0.01\"}}.",
+    "basis": {
+      "grid_ms": 1000,
+      "max_age_ms": 5000
+    }
+  },
+  "bridge": {
+    "_doc": "Phase 16 MT5 execution bridge (docs/EXECUTION_V1.md). Python listens on loopback; the EA (mt5/GoldflowExecutor.mq5) connects. The shared secret is never in this file: secret_file (e.g. the MT5 Common Files goldflow\\bridge.secret, created with `bridge-secret`) or the env var secret_env. Order routing only in the demo profile (demo accounts) or the gated live profile; execution.live_trading_enabled stays false.",
+    "transport": "tcp",
+    "host": "127.0.0.1",
+    "port": 47011,
+    "secret_file": null,
+    "secret_env": "GOLDFLOW_BRIDGE_SECRET",
+    "magic": 20261031,
+    "deviation_points": 30,
+    "ack_timeout_ms": 3000,
+    "max_retries": 3,
+    "heartbeat_ms": 2000,
+    "heartbeat_timeout_ms": 10000,
+    "max_skew_ms": 5000,
+    "reconcile_every_s": 30
+  },
+  "risk": {
+    "_doc": "Phase 16 pre-trade risk engine. Limits default to backtest.risk (decision D7, PROPOSED) so live trades within what was backtested; values here may only be stricter. Spread/slippage filters in broker points (XAUUSD 2 digits: 1 point = 0.01). block_on_dq cannot be disabled.",
+    "max_spread_points": 60,
+    "max_slippage_points": 50,
+    "max_avg_slippage_points": 25,
+    "slippage_window": 20,
+    "sessions": "any",
+    "day_reset_utc": "00:00"
+  },
+  "ops": {
+    "_doc": "Phase 17 operations (docs/RUNBOOK.md). Dashboard is read-only and loopback-only (token via env GOLDFLOW_DASHBOARD_TOKEN). Alerts: data/ops/alerts.jsonl; webhook only if webhook_env names an env var holding the URL. Logs rotate at log_max_mb, keeping log_backups files.",
+    "dashboard_host": "127.0.0.1",
+    "dashboard_port": 8765,
+    "refresh_s": 5,
+    "stale_checkpoint_s": 180,
+    "bridge_silent_s": 30,
+    "disk_warn_pct": 15,
+    "disk_crit_pct": 5,
+    "webhook_env": null,
+    "log_max_mb": 50,
+    "log_backups": 10
   }
 }

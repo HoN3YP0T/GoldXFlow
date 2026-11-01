@@ -1,0 +1,11 @@
+# One alert evaluation (alerts.jsonl, log, optional webhook). Exit 2 = a critical alert is open.
+[Unit]
+Description=GoldXFlow alert check
+
+[Service]
+Type=oneshot
+User=goldflow
+WorkingDirectory=/opt/goldflow
+EnvironmentFile=-/etc/goldflow/goldflow.env
+ExecStart=/opt/goldflow/.venv/bin/python -m goldflow.cli ops-check
+SuccessExitStatus=2

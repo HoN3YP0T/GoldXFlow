@@ -34,6 +34,7 @@ class ConfigError(ValueError):
 class Profile(str, Enum):
     RESEARCH = "research"  # history, analytics, backtests; no order routing
     TEST = "test"  # automated tests; synthetic providers allowed
+    DEMO = "demo"  # Phase 16: order routing to MT5 DEMO accounts only (the bridge refuses any other account)
     LIVE = "live"  # order routing; locked until the Phase 16 demo gate (M7) is recorded
 
 
@@ -162,6 +163,94 @@ class ReplayCfg(_Strict):
     paced_chunk_sim_ms: int = Field(ge=1)
 
 
+class DepthCfg(_Strict):
+    """Phase 8 live price-level book recorder. Defaults live here (not in the JSON file) so the config hash is unchanged.
+
+    Endpoints are configurable because Binance has changed WebSocket routing before: re-verify them on the recording host.
+    The RPI stream/endpoint names are unverified and therefore disabled by default.
+
+    Verified 2026-10-31: depth streams are served on ``/public/stream`` only; the legacy ``/stream`` path still accepts the
+    connection but delivers no messages (``/market/stream`` carries aggTrade/markPrice, not depth)."""
+
+    ws_base_url: str = "wss://fstream.binance.com/public/stream"
+    stream: str = "{symbol}@depth@100ms"
+    snapshot_path: str = "/fapi/v1/depth"
+    snapshot_limit: Literal[5, 10, 20, 50, 100, 500, 1000] = 1000
+    snapshot_min_interval_s: float = Field(default=2.0, ge=0, le=600)
+    rpi_enabled: bool = False
+    rpi_stream: str = "{symbol}@rpiDepth@500ms"
+    rpi_snapshot_path: str = "/fapi/v1/rpiDepth"
+    max_buffer_events: int = Field(default=20_000, ge=10, le=10_000_000)
+    invalidate_on_crossed_book: bool = True
+    reconnect_base_s: float = Field(default=1.0, gt=0, le=60)
+    reconnect_cap_s: float = Field(default=60.0, gt=0, le=3600)
+    max_connection_s: float = Field(default=23 * 3600 + 50 * 60, ge=60, le=24 * 3600)
+    flush_every_s: float = Field(default=1.0, ge=0, le=60)
+    status_every_s: float = Field(default=60.0, gt=0)
+    metrics_cadence_ms: int = Field(default=1_000, ge=100)
+    flow_window_ms: int = Field(default=60_000, ge=1_000)
+    touch_ticks: int = Field(default=10, ge=0)
+    tick_bands: list[int] = Field(default_factory=lambda: [10, 50, 100, 500])
+    pct_bands: list[str] = Field(default_factory=lambda: ["0.1", "0.25", "0.5", "1.0"])
+    top_k: int = Field(default=5, ge=1)
+
+    @field_validator("ws_base_url")
+    @classmethod
+    def _wss(cls, v: str) -> str:
+        if not v.startswith("wss://"):
+            raise ValueError(f"must be a wss:// URL: {v!r}")
+        return v.rstrip("/")
+
+    @field_validator("stream", "rpi_stream")
+    @classmethod
+    def _stream(cls, v: str) -> str:
+        if "{symbol}" not in v:
+            raise ValueError("stream must contain the {symbol} placeholder")
+        return v
+
+    @field_validator("snapshot_path", "rpi_snapshot_path")
+    @classmethod
+    def _path(cls, v: str) -> str:
+        if not v.startswith("/fapi/"):
+            raise ValueError(f"must be a /fapi/ REST path: {v!r}")
+        return v
+
+    @field_validator("tick_bands")
+    @classmethod
+    def _bands(cls, v: list[int]) -> list[int]:
+        if any(x <= 0 for x in v):
+            raise ValueError("tick bands must be > 0")
+        return v
+
+    @field_validator("pct_bands")
+    @classmethod
+    def _pct(cls, v: list[str]) -> list[str]:
+        for x in v:
+            try:
+                d = Decimal(x)
+            except InvalidOperation as e:
+                raise ValueError(f"pct band {x!r} is not a decimal string") from e
+            if not (0 < d <= 50):
+                raise ValueError(f"pct band {x!r} must be in (0, 50]")
+        return v
+
+    @model_validator(mode="after")
+    def _backoff(self) -> "DepthCfg":
+        if self.reconnect_cap_s < self.reconnect_base_s:
+            raise ValueError("reconnect_cap_s must be >= reconnect_base_s")
+        return self
+
+    def streams(self, symbol: str) -> dict[str, str]:
+        """Combined-stream name -> book kind."""
+        out = {self.stream.format(symbol=symbol.lower()): "regular"}
+        if self.rpi_enabled:
+            out[self.rpi_stream.format(symbol=symbol.lower())] = "rpi"
+        return out
+
+    def url(self, symbol: str) -> str:
+        return f"{self.ws_base_url}?streams=" + "/".join(self.streams(symbol))
+
+
 class ExecutionCfg(_Strict):
     """Order routing. Off by default; the live profile additionally requires the recorded M7 demo gate."""
 
@@ -182,6 +271,7 @@ class Settings(_Strict):
     instrument: InstrumentCfg
     replay: ReplayCfg
     execution: ExecutionCfg = ExecutionCfg()
+    depth: DepthCfg = DepthCfg()
 
     @model_validator(mode="after")
     def _cross(self) -> "Settings":
@@ -230,6 +320,118 @@ def validate_config(raw: dict[str, Any], base_dir: Path | None = None, check_dis
             loc = ".".join(str(p) for p in err["loc"]) or "(root)"
             problems.append(f"{loc}: {err['msg']}")
         raise ConfigError(problems) from None
+    if raw.get("processing") is not None or raw.get("sessions") is not None:
+        # Phase 5 blocks: intervals, bins, session calendar (zoneinfo, DST gaps), alignment rules
+        from .config import Config
+        from .processing.settings import ProcessingSettings
+
+        try:
+            ProcessingSettings.from_config(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError) as e:
+            raise ConfigError([f"processing/sessions: {e}"]) from None
+    if raw.get("volume_profile") is not None:
+        # Phase 6 block: bins, value-area rule, node parameters, VWAP bands, snapshot cadence, anchors
+        from .config import Config
+        from .orderflow.settings import ProfileSettings
+
+        try:
+            ProfileSettings.from_config(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError, TypeError) as e:
+            raise ConfigError([f"volume_profile: {e}"]) from None
+    if raw.get("orderflow") is not None:
+        # Phase 7 block: flow bars, CVD resets, imbalance, Big Trades thresholds, absorption/exhaustion/divergence
+        from .config import Config
+        from .orderflow.flow_settings import OrderflowSettings
+
+        try:
+            OrderflowSettings.from_config(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError, TypeError) as e:
+            raise ConfigError([f"orderflow: {e}"]) from None
+    if raw.get("initial_balance") is not None or raw.get("holidays") is not None:
+        # Phase 10 blocks: IB definitions (inside their sessions, DST-safe), extensions, holiday calendar
+        from .config import Config
+        from .orderflow.initial_balance import IBSettings
+        from .processing.holidays import HolidayCalendar
+
+        try:
+            IBSettings.from_config(Config(raw, base_dir or Path(".")))
+            HolidayCalendar(raw.get("holidays"))
+        except (ValueError, KeyError, TypeError) as e:
+            raise ConfigError([f"initial_balance/holidays: {e}"]) from None
+    if raw.get("ivb") is not None:
+        from .orderflow.ivb import validate as validate_ivb
+
+        try:
+            validate_ivb(raw.get("ivb"))
+        except ValueError as e:
+            raise ConfigError([f"ivb: {e}"]) from None
+    if raw.get("broker") is not None or raw.get("backtest") is not None:
+        from .backtesting.settings import BacktestSettings
+        from .config import Config
+
+        try:
+            BacktestSettings.from_config(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError, TypeError) as e:
+            raise ConfigError([f"broker/backtest: {e}"]) from None
+    if raw.get("research") is not None:
+        from .config import Config
+        from .research.settings import ResearchSettings
+
+        try:
+            ResearchSettings.from_config(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError, TypeError) as e:
+            raise ConfigError([f"research: {e}"]) from None
+    if raw.get("ops") is not None:
+        from .config import Config
+        from .ops.alerts import ops_settings
+
+        try:
+            ops_settings(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError, TypeError) as e:
+            raise ConfigError([f"ops: {e}"]) from None
+    if raw.get("bridge") is not None or raw.get("risk") is not None:
+        from .config import Config
+        from .execution.settings import BridgeSettings, RiskSettings
+
+        try:
+            BridgeSettings.from_config(Config(raw, base_dir or Path(".")))
+            RiskSettings.from_config(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError, TypeError, ArithmeticError) as e:
+            raise ConfigError([f"bridge/risk: {e}"]) from None
+    if raw.get("venues") is not None:
+        from .config import Config
+        from .venues.mapping import basis_settings, venue_settings
+
+        try:
+            venue_settings(Config(raw, base_dir or Path(".")))
+            basis_settings(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError, TypeError, ZeroDivisionError) as e:
+            raise ConfigError([f"venues: {e}"]) from None
+    if raw.get("live") is not None:
+        from .config import Config
+        from .live.runner import live_settings
+
+        try:
+            live_settings(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError, TypeError) as e:
+            raise ConfigError([f"live: {e}"]) from None
+    if raw.get("strategies") is not None:
+        from .config import Config
+        from .strategies.engine import strategy_settings
+
+        try:
+            strategy_settings(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError, TypeError) as e:
+            raise ConfigError([f"strategies: {e}"]) from None
+    if raw.get("auction") is not None:
+        # Phase 9 block: reference levels, acceptance/rejection, failed auctions, auction state, profile shape
+        from .config import Config
+        from .orderflow.auction_settings import AuctionSettings
+
+        try:
+            AuctionSettings.from_config(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError, TypeError) as e:
+            raise ConfigError([f"auction: {e}"]) from None
     if check_discovery and base_dir is not None:
         disc = base_dir / s.paths.data_root / "state" / "instrument_discovery.json"
         if disc.exists():

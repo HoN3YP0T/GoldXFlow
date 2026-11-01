@@ -21,7 +21,7 @@ def register(provider_id: str):  # type: ignore[no-untyped-def]
 
 
 def _load_builtin() -> None:
-    from . import binance, dummy  # noqa: F401  (registration side effects)
+    from . import binance, bitget, bybit, dummy, okx  # noqa: F401  (registration side effects)
 
 
 def available_providers() -> dict[str, type[Provider]]:
