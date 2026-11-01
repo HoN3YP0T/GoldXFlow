@@ -4,6 +4,31 @@ Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`**
 
 **No market data is committed to this repository.** Rebuild it with `python -m goldflow.cli acquire` then `python -m goldflow.cli normalize`. The frozen range in `data/state/range.json` reproduces the exact dataset, and the partition digests in `data/manifests/dataset_manifest.json` let you verify it.
 
+## Quick start: from nothing to signals
+```bash
+pip install -r requirements.txt
+python -m goldflow.cli acquire --no-rest            # Phase 2: archives for the frozen range (data/state/range.json); add --new-range --start/--end for another
+python -m goldflow.cli normalize                    # Phase 3: validated Parquet partitions + catalog
+python -m goldflow.cli pipeline --name main         # Phases 5-11 in ONE replay, every dataset written, every verifier run
+python -m goldflow.cli dashboard                    # Phase 17: http://127.0.0.1:8765/
+```
+On Windows, `run_windows.bat` does all of this; on Linux/macOS, use `scripts/run_all.sh`. Every step is resumable.
+
+### How the phases connect
+| Step | Command | Reads | Writes |
+|---|---|---|---|
+| Phase 2 data | `acquire`, `rest`, `manifest` | Binance archives (+ REST from a non-US host) | `data/raw/binance/...`, `data/manifest.json` |
+| Phase 3 validation | `normalize`, `validate`, `report` | raw | `data/normalized/provider=binance/...`, catalog `data/state/acquisition.sqlite` |
+| Phases 4-11 analytics | **`pipeline`** (or one by one: `process`, `vprofile`, `orderflow`, `ib`, `auction`, `signals`) | normalized partitions + catalog quality events | `data/derived/.../{footprint,profile,orderflow,initial_balance,auction,signals}`, `data/reports/pipeline_<name>.json` |
+| Phase 12 backtest | `broker-import`, `pipeline --backtest` or `backtest` | partitions + broker ticks (**D2**) | `data/backtests/<name>/` |
+| Phase 13 research | `study`, `perf-report`, `ledger-verify` | backtests | `data/research/` |
+| Phase 14 live | `live-run`, `parity` | Binance REST + WebSocket (**non-US host, D6**) | `data/raw/.../live/`, `data/live/<name>/` |
+| Phase 15 venues | `venue-import`, `venue-run`, `basis`, `volume-oz`, `providers-report` | OKX/Bybit archives | `data/normalized/provider=<venue>/`, `data/derived/cross_venue/` |
+| Phase 16 execution | `bridge-run --profile demo` (+ the MT5 EA), `exec-gate` | live signals; broker block (**D2**) | `data/execution/<name>/` |
+| Phase 17 operations | `dashboard`, `ops-check`, `backup`, `restore` | everything above (read-only) | `data/ops/`, backups |
+
+All analytics run through one builder (`goldflow/pipeline.py: build_stack`), whether history, live, parity, research or another venue. That is why history and live give the same answers (Phase 14 parity), and why `pipeline` writes exactly what the single-phase commands write.
+
 ## Build guide
 **[docs/BUILD_GUIDE.md](docs/BUILD_GUIDE.md)** is the complete phase-by-phase plan (Phases 0–17): what to build, how to build it, acceptance criteria, current status, goal traceability, milestone gates and open decisions.
 
@@ -48,13 +73,14 @@ goldflow/
                     simulator.py (fills, costs, risk, cents ledger), engine.py (Backtester sink, report)
   research/         Phase 13: metrics.py, ledger.py (research ledger, test lock), runner.py, walkforward.py, study.py
   live/             Phase 14: trades.py (REST trades -> TradeEvent), bus.py (LiveBus, FeedHealth), runner.py (LiveRunner), parity.py
+  pipeline.py       build_stack (the one Phase 5-12 stack used everywhere) and the one-pass `pipeline` command
   ops/              Phase 17: status.py (snapshot with sources), alerts.py, dashboard.py (+ static/dashboard.html), backup.py
   execution/        Phase 16: protocol.py (HMAC lines), orders.py, risk.py, reconcile.py, audit.py, bridge.py, gate.py, sim.py (simulated EA for tests)
   venues/           Phase 15: mapping.py (instrument mapping, venue configs), archives.py, ingest.py, run.py, crossvenue.py (basis, oz aggregate), report.py
   cli.py            discover | acquire | rest | manifest | normalize | validate | report | replay | process | reconcile |
-                    vprofile | vprofile-verify | vprofile-export | orderflow | orderflow-verify | auction | auction-verify | auction-review | ib | ib-verify | signals | signals-verify | broker-import | backtest | perf-report | study | ledger-verify | live-run | parity | venue-import | venue-run | basis | volume-oz | providers-report | bridge-run | bridge-status | emergency-stop | emergency-reset | exec-gate | bridge-secret | audit-verify | ea-vector | dashboard | ops-status | ops-check | backup | backup-verify | restore
-docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, METRICS_PROFILE_V1.md, METRICS_ORDERFLOW_V1.md, METRICS_AUCTION_V1.md, METRICS_IB_V1.md, SIGNALS_V1.md, BACKTEST_V1.md, RESEARCH_V1.md, LIVE_V1.md, VENUES_V1.md, EXECUTION_V1.md, RUNBOOK.md, PRODUCTION_READINESS.md, PHASE*_REPORT.md
-tests/test_core.py, test_phase3.py, test_replay.py, test_processing.py, test_profile.py, test_orderflow.py, test_auction.py, test_ib.py, test_strategies.py, test_backtest.py, test_research.py, test_live.py, test_venues.py, test_execution.py, test_ops.py
+                    vprofile | vprofile-verify | vprofile-export | orderflow | orderflow-verify | auction | auction-verify | auction-review | ib | ib-verify | signals | signals-verify | broker-import | backtest | perf-report | study | ledger-verify | live-run | parity | venue-import | venue-run | basis | volume-oz | providers-report | bridge-run | bridge-status | emergency-stop | emergency-reset | exec-gate | bridge-secret | audit-verify | ea-vector | dashboard | ops-status | ops-check | backup | backup-verify | restore | pipeline
+docs/L2_ORDERBOOK_AVAILABILITY.md, SCHEMAS_V1.md, REPLAY_V1.md, PROCESSING_V1.md, METRICS_PROFILE_V1.md, METRICS_ORDERFLOW_V1.md, METRICS_AUCTION_V1.md, METRICS_IB_V1.md, SIGNALS_V1.md, BACKTEST_V1.md, RESEARCH_V1.md, LIVE_V1.md, VENUES_V1.md, EXECUTION_V1.md, RUNBOOK.md, PRODUCTION_READINESS.md, INTEGRATION_REPORT.md, PHASE*_REPORT.md
+tests/test_core.py, test_phase3.py, test_replay.py, test_processing.py, test_profile.py, test_orderflow.py, test_auction.py, test_ib.py, test_strategies.py, test_backtest.py, test_research.py, test_live.py, test_venues.py, test_execution.py, test_ops.py, test_pipeline.py
 data/raw/binance/futures_um/XAUUSDT/<dataset>/<daily|monthly|rest>/   raw zips + .CHECKSUM (+ _verify sidecars)
 data/state/   acquisition.sqlite, range.json, plan-*.json, progress.json, acquisition.log, instrument_discovery.json
 data/manifest.json

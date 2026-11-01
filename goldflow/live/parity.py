@@ -54,17 +54,11 @@ class _Collect(ProcessorSink):
 
 
 def _stack(cfg: Any) -> tuple[list[Any], _Collect]:
-    from ..orderflow import ProfileEngine
-    from ..orderflow.auction_engine import AuctionEngine
-    from ..orderflow.flow_engine import OrderflowEngine
-    from ..orderflow.initial_balance import IBEngine
-    from ..processing import TradeProcessor
-    from ..strategies import StrategyEngine, build_strategies
+    from ..pipeline import build_stack
 
     col = _Collect()
-    prof, flow, ib = ProfileEngine(cfg), OrderflowEngine(cfg), IBEngine(cfg)
-    auc = AuctionEngine(cfg, prof, ib_engine=ib)
-    strat = StrategyEngine(cfg, build_strategies(cfg), {"profile": prof, "orderflow": flow, "ib": ib, "auction": auc})
+    st = build_stack(cfg, pre_sinks=[col])
+    prof, flow, ib, auc, strat = st.profile, st.orderflow, st.ib, st.auction, st.strategies
 
     def on_profile(recs: list[dict[str, Any]], nodes: list[dict[str, Any]]) -> None:
         col.add("phase6.snapshots", recs)
@@ -79,8 +73,7 @@ def _stack(cfg: Any) -> tuple[list[Any], _Collect]:
     prof.listeners.append(on_profile)
     for name, eng in (("phase7", flow), ("phase10", ib), ("phase9", auc), ("phase11", strat)):
         eng.listeners.append(tap(name))
-    proc = TradeProcessor(cfg, sinks=[col, prof, flow, ib, auc, strat])
-    return [proc], col
+    return [st.proc], col
 
 
 def archive_polls(

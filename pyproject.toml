@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "goldflow"
-version = "0.6.0"
-description = "Gold orderflow engine: Binance XAUUSDT data foundation (acquisition, validation, replay) and orderflow analytics"
+version = "0.17.0"
+description = "GoldXFlow: gold orderflow engine (Binance XAUUSDT data, orderflow analytics, signals, backtesting, live, MT5 execution, operations)"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "Hrithik Ganguli" }]
@@ -65,11 +65,11 @@ python_version = "3.12"
 warn_unused_configs = true
 ignore_missing_imports = true
 files = ["goldflow/settings.py", "goldflow/profiles.py", "goldflow/observability.py", "goldflow/migrations.py",
-         "goldflow/providers", "goldflow/processing", "goldflow/liquidity", "goldflow/orderflow", "goldflow/strategies", "goldflow/backtesting", "goldflow/research", "goldflow/live", "goldflow/venues", "goldflow/execution", "goldflow/ops"]
+         "goldflow/providers", "goldflow/processing", "goldflow/liquidity", "goldflow/orderflow", "goldflow/strategies", "goldflow/backtesting", "goldflow/research", "goldflow/live", "goldflow/venues", "goldflow/execution", "goldflow/ops", "goldflow/pipeline.py"]
 
 [[tool.mypy.overrides]]
 module = ["goldflow.settings", "goldflow.profiles", "goldflow.observability", "goldflow.migrations", "goldflow.providers.*",
-          "goldflow.processing.*", "goldflow.liquidity", "goldflow.liquidity.*", "goldflow.orderflow", "goldflow.orderflow.*", "goldflow.strategies", "goldflow.strategies.*", "goldflow.backtesting", "goldflow.backtesting.*", "goldflow.research", "goldflow.research.*", "goldflow.live", "goldflow.live.*", "goldflow.venues", "goldflow.venues.*", "goldflow.execution", "goldflow.execution.*", "goldflow.ops", "goldflow.ops.*"]
+          "goldflow.processing.*", "goldflow.liquidity", "goldflow.liquidity.*", "goldflow.orderflow", "goldflow.orderflow.*", "goldflow.strategies", "goldflow.strategies.*", "goldflow.backtesting", "goldflow.backtesting.*", "goldflow.research", "goldflow.research.*", "goldflow.live", "goldflow.live.*", "goldflow.venues", "goldflow.venues.*", "goldflow.execution", "goldflow.execution.*", "goldflow.ops", "goldflow.ops.*", "goldflow.pipeline"]
 strict = true
 
 [[tool.mypy.overrides]]

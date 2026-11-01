@@ -289,8 +289,10 @@ class ExecutionBridge:
                 self.audit.write(now, "ALERT", {"kind": "TXN_FOR_UNKNOWN_ORDER", "txn": m})
 
     def _equity(self, eq: float) -> None:
-        for b in self.risk.on_equity(eq, self.now()):
-            self.emergency_stop(f"{b} limit reached (equity {eq})")
+        breaches = self.risk.on_equity(eq, self.now())
+        # latch once: flatten retries are driven by tick(); re-latching on every POSITIONS/HEARTBEAT made a request loop
+        if breaches and not self.risk.st.emergency:
+            self.emergency_stop(f"{breaches[0]} limit reached (equity {eq})")
 
     def _request_positions(self) -> None:
         self.last_reconcile_req = self.now()

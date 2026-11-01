@@ -71,7 +71,7 @@ def evaluate(st: dict[str, Any], ops: dict[str, Any]) -> dict[str, dict[str, Any
             add("STATUS_SECTION_FAILED", "critical", sec, v["reason"])
     live = (st.get("market") or {}).get("live") or {}
     lv = live.get("value")
-    if lv:
+    if lv and lv.get("run_status") != "stopped":  # a deliberately stopped runner is not a stale feed
         if lv["checkpoint_age_s"] > ops["stale_checkpoint_s"]:
             add(
                 "STALE_FEED",
@@ -103,7 +103,9 @@ def evaluate(st: dict[str, Any], ops: dict[str, Any]) -> dict[str, dict[str, Any
                 add("RECONCILE_MISMATCH", "critical", name, b["RECONCILE_MISMATCH"])
             if v["risk"]["emergency"]:
                 add("RISK_LIMIT", "critical", f"{name}:emergency", v["risk"]["emergency_reason"])
-            if {"NO_HEARTBEAT", "NO_EA"} & set(b):
+            if v.get("run_status") == "stopped":
+                pass  # stopped on purpose (audit ends with STOP): the EA is expected to be silent
+            elif {"NO_HEARTBEAT", "NO_EA"} & set(b):
                 add("BRIDGE_DOWN", "critical", name, {k: b[k] for k in ("NO_HEARTBEAT", "NO_EA") if k in b})
             elif v["last_message_from_ea_age_s"] is not None and v["last_message_from_ea_age_s"] > ops["bridge_silent_s"]:
                 add("BRIDGE_DOWN", "critical", name, f"EA silent for {v['last_message_from_ea_age_s']} s")

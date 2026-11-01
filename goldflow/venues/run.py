@@ -61,19 +61,13 @@ def _flat(rows: list[dict[str, Any]]) -> pa.Table:
 def venue_run(
     cfg: Any, provider: str, name: str = "venue", start: str | int | None = None, end: str | int | None = None
 ) -> dict[str, Any]:
-    from ..orderflow import ProfileEngine
-    from ..orderflow.auction_engine import AuctionEngine
-    from ..orderflow.flow_engine import OrderflowEngine
-    from ..orderflow.initial_balance import IBEngine
-    from ..processing import TradeProcessor
+    from ..pipeline import build_stack
     from ..replay import ChainHasher, ReplayEngine
-    from ..strategies import StrategyEngine, build_strategies
 
     vcfg = venue_config(cfg, provider)
     col = _Rows()
-    prof, flow, ib = ProfileEngine(vcfg), OrderflowEngine(vcfg), IBEngine(vcfg)
-    auc = AuctionEngine(vcfg, prof, ib_engine=ib)
-    strat = StrategyEngine(vcfg, build_strategies(vcfg), {"profile": prof, "orderflow": flow, "ib": ib, "auction": auc})
+    st = build_stack(vcfg, pre_sinks=[col])
+    prof, flow, ib, auc, strat = st.profile, st.orderflow, st.ib, st.auction, st.strategies
 
     def on_profile(recs: list[dict[str, Any]], nodes: list[dict[str, Any]]) -> None:
         col.add("profile_final", [r for r in recs if r.get("is_final")])
@@ -87,7 +81,7 @@ def venue_run(
     prof.listeners.append(on_profile)
     for nm, eng in (("orderflow", flow), ("ib", ib), ("auction", auc), ("strategies", strat)):
         eng.listeners.append(tap(nm))
-    proc = TradeProcessor(vcfg, sinks=[col, prof, flow, ib, auc, strat])
+    proc = st.proc
     hasher = ChainHasher()  # type: ignore[no-untyped-call]
     res = ReplayEngine(vcfg, [hasher, proc], start=start, end=end, name=f"venue-{provider}-{name}", checkpoint=False).run()
     m = mappings(cfg)[provider]

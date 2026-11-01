@@ -4,6 +4,7 @@
   python -m goldflow.cli acquire   --config ... [--months 6 | --start ISO --end ISO] [--new-range] [--no-rest]
   python -m goldflow.cli rest      --config ...          # REST recovery units only (run where fapi is reachable)
   python -m goldflow.cli manifest  --config ...
+  python -m goldflow.cli pipeline  --name run1 [--resume] [--backtest]          # Phases 5-11 (12) in ONE replay + every verifier
   python -m goldflow.cli process   --name p1 [--resume] [--dates ..] [--budget S]   # Phase 5 trade processor
   python -m goldflow.cli reconcile [--interval 1m]                              # Phase 5 footprint checks
   python -m goldflow.cli vprofile  --name v1 [--resume] [--footprint]          # Phase 6 volume profile / VWAP snapshots
@@ -41,7 +42,14 @@ from .timeutil import iso, minus_months, parse_iso, to_ms, utcnow
 def _range(cfg: Config, a) -> tuple[int, int]:
     rp = cfg.data_root / "state" / "range.json"
     if rp.exists() and not a.new_range:
-        r = json.loads(rp.read_text()); return r["start_ms"], r["end_ms"]
+        r = json.loads(rp.read_text())
+        asked = (to_ms(parse_iso(a.start)) if a.start else None, to_ms(parse_iso(a.end)) if a.end else None)
+        if a.months or (asked[0] is not None and asked[0] != r["start_ms"]) or (asked[1] is not None and asked[1] != r["end_ms"]):
+            # an explicit range that differs from the frozen one used to be ignored silently
+            print(f"goldflow: the acquisition range is frozen at {r['start']} -> {r['end']} ({rp}); "
+                  "add --new-range to use the range you gave, or drop --start/--end/--months to continue the frozen one", file=sys.stderr)
+            raise SystemExit(2)
+        return r["start_ms"], r["end_ms"]
     end = parse_iso(a.end) if a.end else utcnow()
     start = parse_iso(a.start) if a.start else minus_months(end, a.months or cfg["range"]["months"])
     s, e = to_ms(start), to_ms(end)
@@ -203,7 +211,7 @@ def main(argv=None) -> int:
                                     "venue-import", "venue-run", "basis", "volume-oz", "providers-report",
                                     "bridge-run", "bridge-status", "emergency-stop", "emergency-reset", "exec-gate", "bridge-secret",
                                     "audit-verify", "ea-vector", "dashboard", "ops-status", "ops-check", "backup", "backup-verify",
-                                    "restore",
+                                    "restore", "pipeline",
                                     "depth-record", "depth-replay", "depth-normalize"])
     ap.add_argument("--profile", help="research (default) | test | demo (MT5 demo routing) | live; or env GOLDFLOW_PROFILE")
     ap.add_argument("--config", default="config/binance_xauusdt.json")
@@ -246,6 +254,8 @@ def main(argv=None) -> int:
     ap.add_argument("--src", help="backup-verify/restore: snapshot directory")
     ap.add_argument("--target", help="restore: new, empty data root to restore into")
     ap.add_argument("--port", type=int, help="dashboard: port (default ops.dashboard_port)")
+    ap.add_argument("--backtest", action="store_true", help="pipeline: also run the Phase 12 backtester (needs the broker block, D2)")
+    ap.add_argument("--no-verify", action="store_true", help="pipeline: skip the independent verifiers")
     a = ap.parse_args(argv)
     from .migrations import apply_migrations
     from .observability import new_run_id, setup_logging
@@ -334,6 +344,9 @@ def main(argv=None) -> int:
         from .research import ResearchSettings, performance
         rs = ResearchSettings.from_config(cfg)
         d = cfg.data_root / "backtests" / (a.name or "backtest")
+        if not (d / "run.json").exists():
+            print(f"goldflow: no backtest run at {d} (run `backtest --name {a.name or 'backtest'}` first; it needs the broker block, D2)",
+                  file=sys.stderr); return 2
         rd = lambda n: pq.read_table(d / f"{n}.parquet").to_pylist() if (d / f"{n}.parquet").exists() else []
         rec = json.loads((d / "run.json").read_text())
         sig = {r["signal_id"]: r for r in rd("signals")}
@@ -353,6 +366,8 @@ def main(argv=None) -> int:
         print(json.dumps({"entries": len(es), "chain": "OK"}, indent=1)); return 0
     if a.cmd == "signals":
         return _signals_cmd(cfg, a, log)
+    if a.cmd == "pipeline":
+        return _pipeline_cmd(cfg, a, log)
     if a.cmd == "live-run":
         return _live_cmd(cfg, a, log)
     if a.cmd in ("venue-import", "venue-run", "basis", "volume-oz", "providers-report"):
@@ -496,23 +511,36 @@ def _ib_cmd(cfg, a, log) -> int:
     bad = checker.violations or (out.get("verification") or {}).get("fail")
     return 1 if bad else (0 if res["status"] == "completed" else 3)
 
+def _pipeline_cmd(cfg, a, log) -> int:
+    """Phases 5-11 (and 12 with --backtest) in one replay: every dataset written, then every independent verifier."""
+    import signal, threading
+    from .pipeline import run_pipeline
+    from .backtesting import BrokerNotConfigured
+    name = a.name or "pipeline"
+    stops: list = []
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        signal.signal(sig, lambda *_: (log.info("stop requested; checkpointing"), [f() for f in stops]))
+    if a.budget: threading.Timer(a.budget, lambda: [f() for f in stops]).start()
+    try:
+        out = run_pipeline(cfg, name, start=a.start, end=a.end, dates=a.dates, resume=a.resume, until=a.until, backtest=a.backtest,
+                           verify=not a.no_verify, stop_event=stops,
+                           progress=lambda m: log.info("pipeline %s day=%s events=%d clock=%s %.0f ev/s", name, m.get("day"), m["events"],
+                                                       m["sim_clock"], m["events_per_s"] or 0))
+    except (BrokerNotConfigured, FileNotFoundError, ValueError) as e:
+        print(f"goldflow: {e}", file=sys.stderr); return 2
+    print(json.dumps(out, indent=1, default=str))
+    if out["status"] != "completed": return 3
+    return 0 if out["ok"] else 1
+
 def _signals_cmd(cfg, a, log) -> int:
     """Phase 11: replay -> TradeProcessor -> Profile/Orderflow/IB/Auction engines -> StrategyEngine -> signals Parquet."""
     import signal, threading
     from .replay import ReplayEngine, ChainHasher, IntegrityChecker
-    from .processing.trade_processor import TradeProcessor
-    from .orderflow.engine import ProfileEngine
-    from .orderflow.flow_engine import OrderflowEngine
-    from .orderflow.initial_balance import IBEngine
-    from .orderflow.auction_engine import AuctionEngine
-    from .strategies import SignalStore, StrategyEngine, build_strategies
+    from .pipeline import build_stack
     from .strategies.verify import verify as sig_verify
     name = a.name or "signals"
-    prof, flow, ib = ProfileEngine(cfg), OrderflowEngine(cfg), IBEngine(cfg)   # analytics in memory; their datasets come from their own commands
-    auc = AuctionEngine(cfg, prof, ib_engine=ib)
-    strat = StrategyEngine(cfg, build_strategies(cfg), {"profile": prof, "orderflow": flow, "ib": ib, "auction": auc},
-                           store=SignalStore(cfg.data_root, cfg.symbol, replace=not a.resume))
-    proc = TradeProcessor(cfg, sinks=[prof, flow, ib, auc, strat]); hasher, checker = ChainHasher(), IntegrityChecker()
+    st = build_stack(cfg, stores=("signals",), resume=a.resume)   # analytics in memory; their datasets come from their own commands
+    proc, strat = st.proc, st.strategies; hasher, checker = ChainHasher(), IntegrityChecker()
     eng = ReplayEngine(cfg, [hasher, checker, proc], start=a.start, end=a.end, dates=a.dates, name=name,
                        progress=lambda m: log.info("signals %s day=%s events=%d clock=%s", name, m.get("day"), m["events"], m["sim_clock"]))
     for sig in (signal.SIGINT, signal.SIGTERM):
@@ -637,36 +665,36 @@ def _exec_cmd(cfg, a, log, profile) -> int:
     import asyncio
     from .execution import BridgeSettings, ExecutionBridge, FileQueue, TcpServer
     from .live import LiveRunner
-    from .orderflow.auction_engine import AuctionEngine
-    from .orderflow.engine import ProfileEngine
-    from .orderflow.flow_engine import OrderflowEngine
-    from .orderflow.initial_balance import IBEngine
+    from .pipeline import build_stack
     from .processing.sessions import SessionCalendar
-    from .processing.trade_processor import TradeProcessor
-    from .strategies import SignalStore, StrategyEngine, build_strategies
     bs = BridgeSettings.from_config(cfg)
-    t = TcpServer(bs.host, bs.port) if bs.transport == "tcp" else FileQueue(Path(bs.file_queue_dir))
-    prof, flow, ib = ProfileEngine(cfg), OrderflowEngine(cfg), IBEngine(cfg)
-    auc = AuctionEngine(cfg, prof, ib_engine=ib)
-    strat = StrategyEngine(cfg, build_strategies(cfg), {"profile": prof, "orderflow": flow, "ib": ib, "auction": auc},
-                           store=SignalStore(cfg.data_root / "live" / name, cfg.symbol, replace=False))
-    proc = TradeProcessor(cfg, sinks=[prof, flow, ib, auc, strat])
+    try:
+        secret = bs.secret(cfg.base_dir)
+    except ValueError as e:
+        print(f"goldflow: {e}", file=sys.stderr); return 2
+    st = build_stack(cfg, stores=("signals",), resume=True, signals_root=cfg.data_root / "live" / name)
+    proc, strat = st.proc, st.strategies
     def dq_open(now: int) -> bool:
         tt = proc.clock if proc.clock is not None else now
         return any(x[0] <= tt < x[1] for x in strat.dq) or any(x[0] <= tt < x[1] for x in proc.dq)
+    t = TcpServer(bs.host, bs.port) if bs.transport == "tcp" else FileQueue(Path(bs.file_queue_dir))
     try:
-        br = ExecutionBridge(cfg, name, t, bs.secret(cfg.base_dir), mode="live" if profile is Profile.LIVE else "demo", dq_open=dq_open,
+        br = ExecutionBridge(cfg, name, t, secret, mode="live" if profile is Profile.LIVE else "demo", dq_open=dq_open,
                              calendar=SessionCalendar.from_config(cfg.raw.get("sessions")))
     except ValueError as e:
-        print(f"goldflow: {e}", file=sys.stderr); return 2
-    strat.listeners.append(br.on_signal)
+        t.close(); print(f"goldflow: {e}", file=sys.stderr); return 2
+    st.signal_listeners.append(br.on_signal)
     runner = LiveRunner(cfg, [proc], name)
     runner.hooks.append(lambda now: br.tick())
     br.start()
+    from .replay import ReplayGuardError
     try:
         out = asyncio.run(runner.run(a.duration))
     except KeyboardInterrupt:
         runner.stop(); out = {"status": "stopped"}
+    except ReplayGuardError as e:
+        print(f"goldflow: {e}. Start a new run with another --name, or delete {runner.state_path}", file=sys.stderr)
+        return 2   # the finally block closes the bridge and the socket
     finally:
         br.close(); t.close()
     out["bridge"] = br.status()
@@ -676,24 +704,19 @@ def _exec_cmd(cfg, a, log, profile) -> int:
 def _live_cmd(cfg, a, log) -> int:
     """Phase 14 paper mode: REST trade poller + WebSocket monitor -> LiveBus -> the replay's analytics and strategy stack."""
     import asyncio
-    from .processing.trade_processor import TradeProcessor
-    from .orderflow.engine import ProfileEngine
-    from .orderflow.flow_engine import OrderflowEngine
-    from .orderflow.initial_balance import IBEngine
-    from .orderflow.auction_engine import AuctionEngine
-    from .strategies import SignalStore, StrategyEngine, build_strategies
     from .live import LiveRunner
+    from .pipeline import build_stack
     name = a.name or "live"
-    prof, flow, ib = ProfileEngine(cfg), OrderflowEngine(cfg), IBEngine(cfg)
-    auc = AuctionEngine(cfg, prof, ib_engine=ib)
-    strat = StrategyEngine(cfg, build_strategies(cfg), {"profile": prof, "orderflow": flow, "ib": ib, "auction": auc},
-                           store=SignalStore(cfg.data_root / "live" / name, cfg.symbol, replace=False))
-    proc = TradeProcessor(cfg, sinks=[prof, flow, ib, auc, strat])
+    st = build_stack(cfg, stores=("signals",), resume=True, signals_root=cfg.data_root / "live" / name)
+    proc, strat = st.proc, st.strategies
+    from .replay import ReplayGuardError
     runner = LiveRunner(cfg, [proc], name)
     try:
         out = asyncio.run(runner.run(a.duration))
     except KeyboardInterrupt:
         runner.stop(); out = {"status": "stopped", "counters": runner.counters}
+    except ReplayGuardError as e:   # checkpoint from different settings: never mix states
+        print(f"goldflow: {e}. Start a new live run with another --name, or delete {runner.state_path}", file=sys.stderr); return 2
     out["strategies"] = strat.summary()
     print(json.dumps(out, indent=1, default=str))
     return 2 if out["status"] == "geo_blocked" else 0
@@ -702,22 +725,14 @@ def _backtest_cmd(cfg, a, log) -> int:
     """Phase 12: replay -> analytics -> StrategyEngine -> Backtester (fills on broker ticks) -> data/backtests/<name>/."""
     import signal, threading
     from .replay import ReplayEngine, ChainHasher, IntegrityChecker
-    from .processing.trade_processor import TradeProcessor
-    from .orderflow.engine import ProfileEngine
-    from .orderflow.flow_engine import OrderflowEngine
-    from .orderflow.initial_balance import IBEngine
-    from .orderflow.auction_engine import AuctionEngine
-    from .strategies import StrategyEngine, build_strategies
-    from .backtesting import Backtester, BrokerNotConfigured
+    from .backtesting import BrokerNotConfigured
+    from .pipeline import build_stack
     name = a.name or "backtest"
-    prof, flow, ib = ProfileEngine(cfg), OrderflowEngine(cfg), IBEngine(cfg)
-    auc = AuctionEngine(cfg, prof, ib_engine=ib)
-    strat = StrategyEngine(cfg, build_strategies(cfg), {"profile": prof, "orderflow": flow, "ib": ib, "auction": auc})
     try:
-        bt = Backtester(cfg, strat, run_name=name)
+        st = build_stack(cfg, backtest={"run_name": name})
     except (BrokerNotConfigured, FileNotFoundError, ValueError) as e:
         print(f"goldflow: {e}", file=sys.stderr); return 2
-    proc = TradeProcessor(cfg, sinks=[prof, flow, ib, auc, strat, bt]); hasher, checker = ChainHasher(), IntegrityChecker()
+    proc, bt = st.proc, st.backtester; hasher, checker = ChainHasher(), IntegrityChecker()
     eng = ReplayEngine(cfg, [hasher, checker, proc], start=a.start, end=a.end, dates=a.dates, name=name,
                        progress=lambda m: log.info("backtest %s day=%s events=%d clock=%s", name, m.get("day"), m["events"], m["sim_clock"]))
     for sig in (signal.SIGINT, signal.SIGTERM):

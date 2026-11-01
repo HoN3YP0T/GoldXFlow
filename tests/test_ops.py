@@ -242,3 +242,32 @@ def test_engine_crash_mid_order_and_broker_outage(tmp_path):
     assert o3.state == "FILLED"
     assert os.path.exists(r2.br.root / "audit.jsonl") and AuditLog(r2.br.root / "audit.jsonl").verify() > 0
 
+
+
+def test_deliberately_stopped_runs_raise_no_false_alerts(tmp_path):
+    """Regression: a live runner or bridge stopped on purpose kept raising STALE_FEED / BRIDGE_DOWN (critical)."""
+    cfg = cfg_at(tmp_path)
+    (cfg.data_root / "live").mkdir()
+    cp = {"name": "L1", "status": "stopped", "start_ms": T0, "saved_ms": T0 - 3_600_000, "counters": {"polls": 1, "poll_errors": 0, "trades": 1,
+          "rpi_trades": 0, "late_trades": 0}, "tracker": {"last_id": 1, "last_time": T0 - 3_600_000, "suspected_gaps": []},
+          "health": {"last": {"trades": T0 - 3_600_000}, "open": {}, "events": []}}
+    (cfg.data_root / "live" / "L1.checkpoint.json").write_text(json.dumps(cp))
+    root = cfg.data_root / "execution" / "d1"
+    _exec_state(root, {"blocked": {"NO_HEARTBEAT": "x"}})
+    lg = AuditLog(root / "audit.jsonl")
+    lg.write(T0 + 2, "STOP", {})
+    lg.close()
+    cur = evaluate(collect(cfg, T0), ops_settings(cfg))
+    assert not {"STALE_FEED", "BRIDGE_DOWN", "DQ_OPEN"} & {v["kind"] for v in cur.values()}, cur
+    cp["status"] = "running"                                                # the same files, but the runner died: alerts
+    (cfg.data_root / "live" / "L1.checkpoint.json").write_text(json.dumps(cp))
+    assert "STALE_FEED" in {v["kind"] for v in evaluate(collect(cfg, T0), ops_settings(cfg)).values()}
+
+
+def test_emergency_latches_once_not_on_every_heartbeat(tmp_path):
+    """Regression: below the daily-loss limit every heartbeat re-sent FLATTEN_ALL and re-wrote the emergency."""
+    r = ready(tmp_path)
+    r.broker.balance -= 300
+    r.run(20_000)                                                           # 20 s of heartbeats below the limit
+    sent = [x for x in r.audit("OUT") if '"type":"FLATTEN_ALL"' in x["line"]]
+    assert r.br.risk.st.emergency and len(r.audit("EMERGENCY")) <= 3 and len(sent) <= 3, len(sent)

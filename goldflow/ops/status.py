@@ -74,7 +74,7 @@ def market(cfg: Any, now_ms: int) -> dict[str, Any]:
         s = json.loads(p.read_text())
         h = s.get("health", {})
         last = h.get("last", {})
-        out["live"] = item({"name": s["name"], "checkpoint_age_s": round((now_ms - int(s["saved_ms"])) / 1000, 1), "counters": s["counters"],
+        out["live"] = item({"name": s["name"], "run_status": s.get("status", "running"), "checkpoint_age_s": round((now_ms - int(s["saved_ms"])) / 1000, 1), "counters": s["counters"],
                             "feeds": {k: {"last_ms": v, "age_s": None if v is None else round((now_ms - v) / 1000, 1),
                                           "stale": k in (h.get("open") or {})} for k, v in last.items()},
                             "last_trade_id": s["tracker"].get("last_id"), "last_trade_ms": s["tracker"].get("last_time"),
@@ -142,16 +142,18 @@ def trading(cfg: Any, now_ms: int) -> dict[str, Any]:
         audit = d.parent / "audit.jsonl"
         chain: dict[str, Any]
         last_in = None
+        last_kind = None
         try:
             lg = AuditLog(audit)
             chain = {"ok": True, "records": lg.verify()}
             for rec in lg.records():
+                last_kind = rec["kind"]
                 if rec["kind"] == "IN":
                     last_in = int(rec["at"])
             lg.close()
         except AuditBroken as e:
             chain = {"ok": False, "error": str(e)}
-        runs[d.parent.name] = item({"orders_by_state": dict(Counter(o["state"] for o in orders.values())),
+        runs[d.parent.name] = item({"run_status": "stopped" if last_kind == "STOP" else "running", "orders_by_state": dict(Counter(o["state"] for o in orders.values())),
                                     "open_positions": [{k: o[k] for k in ("key", "side", "open_volume", "avg_price", "sl", "tp", "strategy_id")}
                                                        for o in orders.values() if o["state"] in ("FILLED", "PARTIALLY_FILLED")],
                                     "realized": round(sum(float(o["realized"]) for o in orders.values()), 2),

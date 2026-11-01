@@ -39,27 +39,24 @@ class PipelineRunner:
 
     def run(self, strategy: str, params: dict[str, Any], start_ms: int, end_ms: int, tag: str, backtest: dict[str, Any] | None = None,
             test_access: bool = False) -> dict[str, Any]:  # fmt: skip
-        from ..backtesting import Backtester
-        from ..orderflow import ProfileEngine
-        from ..orderflow.auction_engine import AuctionEngine
-        from ..orderflow.flow_engine import OrderflowEngine
-        from ..orderflow.initial_balance import IBEngine
-        from ..processing import TradeProcessor
+        from ..pipeline import build_stack
         from ..replay import ReplayEngine
-        from ..strategies import StrategyEngine, build_strategies
 
         if not test_access:
             self.lock.guard(start_ms, end_ms, f"run {tag}")
         cfg = self.config_for(strategy, params, backtest)
-        prof, flow, ib = ProfileEngine(cfg), OrderflowEngine(cfg), IBEngine(cfg)
-        auc = AuctionEngine(cfg, prof, ib_engine=ib)
-        strat = StrategyEngine(cfg, build_strategies(cfg), {"profile": prof, "orderflow": flow, "ib": ib, "auction": auc})
-        sigs: dict[str, dict[str, Any]] = {}
-        strat.listeners.append(lambda t, rows: sigs.update({r["signal_id"]: r for r in rows}) if t == "signals" else None)
-        bt = Backtester(
-            cfg, strat, run_name=tag, allow_synthetic=self.allow_synthetic, out_root=self.out_root, accept_from_ms=start_ms
+        st = build_stack(
+            cfg,
+            backtest={
+                "run_name": tag,
+                "allow_synthetic": self.allow_synthetic,
+                "out_root": self.out_root,
+                "accept_from_ms": start_ms,
+            },
         )
-        proc = TradeProcessor(cfg, sinks=[prof, flow, ib, auc, strat, bt])
+        sigs: dict[str, dict[str, Any]] = {}
+        st.signal_listeners.append(lambda t, rows: sigs.update({r["signal_id"]: r for r in rows}) if t == "signals" else None)
+        proc, bt = st.proc, st.backtester
         avail = self._available(start_ms - self.rs.warmup_ms, end_ms)
         res = ReplayEngine(cfg, [proc], start=avail[0], end=avail[1], name=f"research-{tag}").run()
         if res["status"] != "completed":

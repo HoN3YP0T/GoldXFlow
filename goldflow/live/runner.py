@@ -119,7 +119,8 @@ class LiveRunner:
             self.status = "running"
 
     def checkpoint(self) -> None:
-        st = {"name": self.name, "start_ms": self.start_ms, "saved_ms": self.now(), "consumers": {c.name: c.get_state() for c in self.consumers},
+        st = {"name": self.name, "status": self.status, "start_ms": self.start_ms, "saved_ms": self.now(),
+              "consumers": {c.name: c.get_state() for c in self.consumers},
               "tracker": self.tracker.state(), "bus": self.bus.state(), "health": self.health.state(), "counters": self.counters}  # fmt: skip
         self.state_path.parent.mkdir(parents=True, exist_ok=True)
         tmp = self.state_path.with_name(self.state_path.name + ".tmp")
@@ -235,11 +236,11 @@ class LiveRunner:
             h(now)
 
     def stop(self) -> None:
+        self.status = "stopped"  # recorded in the final checkpoint: a deliberately stopped runner is not a stale feed
         self.checkpoint()
         if self.capture is not None:
             self.capture.close()
         self.bus.stop("stopped")
-        self.status = "stopped"
 
     # ------------------------------------------------------------------ asyncio wrapper
     async def _ws(self, stop: asyncio.Event) -> None:

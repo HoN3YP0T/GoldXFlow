@@ -347,3 +347,61 @@ def test_unknown_order_is_resent_or_expired_and_partial_fills(tmp_path):
     o3 = r3.br.submit(r3.signal())
     r3.run(500)
     assert [h[2] for h in o3.history] == ["TRANSMITTED", "ACCEPTED", "PARTIALLY_FILLED", "FILLED"] and o3.filled == "0.10"
+
+
+class _TcpEnd:
+    """The simulated EA's side of a REAL loopback TCP connection (the MQL5 EA is a TCP client too)."""
+
+    def __init__(self, port):
+        from types import SimpleNamespace
+        self.s = socket.create_connection(("127.0.0.1", port))
+        self.s.setblocking(False)
+        self.buf = b""
+        self.pipe = SimpleNamespace(connections=0)
+
+    def send(self, line):
+        self.s.sendall(line.encode("ascii"))
+        return True
+
+    def receive(self):
+        try:
+            while True:
+                b = self.s.recv(65536)
+                if not b:
+                    break
+                self.buf += b
+        except BlockingIOError:
+            pass
+        out = []
+        while b"\n" in self.buf:
+            ln, self.buf = self.buf.split(b"\n", 1)
+            out.append(ln.decode() + "\n")
+        return out
+
+
+def test_bridge_over_a_real_tcp_socket(tmp_path):
+    import time as _time
+    clock = [T0]
+    srv = TcpServer("127.0.0.1", 0)
+    br = ExecutionBridge(make_cfg(tmp_path), "tcp", srv, SECRET, now=lambda: clock[0])
+    br.start()
+    broker = SimBroker()
+    ea = SimEA(_TcpEnd(srv.port), SECRET, broker, lambda: clock[0])
+
+    def run(n):
+        for _ in range(n):
+            clock[0] += 100
+            br.tick()
+            _time.sleep(0.002)
+            ea.tick()
+            _time.sleep(0.002)
+            br.tick()
+
+    run(40)
+    assert br.risk.st.blocked == {} and br.hello["trade_mode"] == "DEMO" and srv.connections == 1
+    o = br.submit({"signal_id": "tcp-1", "strategy_id": "t", "direction": "SHORT", "entry_price_ticks": 240000, "stop_loss_ticks": 240500,
+                   "take_profit_ticks": 239000, "expiry_at": clock[0] + 60_000, "available_at": clock[0]})
+    run(20)
+    assert o.state == "FILLED" and len(broker.positions) == 1 and ea.orders_sent == 1 and o.side == "SELL"
+    br.close()
+    srv.close()

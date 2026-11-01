@@ -59,7 +59,7 @@ const pre = o => `<pre>${esc(JSON.stringify(o, null, 1))}</pre>`;
 
 function renderMarket(m) {
   const live = val(m.live, v => rows([
-    ["runner", esc(v.name)], ["checkpoint age", `${v.checkpoint_age_s} s`],
+    ["runner", `${esc(v.name)} (${esc(v.run_status)})`], ["checkpoint age", `${v.checkpoint_age_s} s`],
     ["last trade", `${esc(fmtTime(v.last_trade_ms) || "–")} (id ${esc(v.last_trade_id ?? "–")})`],
     ["feeds", Object.entries(v.feeds).map(([k, f]) => `<span class="pill ${f.stale ? "crit" : "ok"}">${esc(k)} ${f.age_s ?? "–"} s</span>`).join("")],
     ["suspected gaps", esc(v.suspected_gaps)], ["polls / errors", `${esc(v.counters.polls)} / ${esc(v.counters.poll_errors)}`],
@@ -81,7 +81,7 @@ function renderTrading(t) {
   let ex;
   if (t.execution && t.execution.value === null) ex = val(t.execution);
   else ex = Object.entries(t.execution || {}).map(([n, it]) => val(it, v => rows([
-    ["run", esc(n)], ["emergency", v.risk.emergency ? `<span class="crit">LATCHED: ${esc(v.risk.emergency_reason)}</span>` : '<span class="ok">no</span>'],
+    ["run", `${esc(n)} (${esc(v.run_status)})`], ["emergency", v.risk.emergency ? `<span class="crit">LATCHED: ${esc(v.risk.emergency_reason)}</span>` : '<span class="ok">no</span>'],
     ["blocked", Object.keys(v.risk.blocked).length ? `<span class="warn">${esc(Object.keys(v.risk.blocked).join(", "))}</span>` : '<span class="ok">no</span>'],
     ["orders", esc(JSON.stringify(v.orders_by_state))], ["open positions", v.open_positions.length ? pre(v.open_positions) : "none"],
     ["realised P&L", esc(v.realized)], ["EA last message", v.last_message_from_ea_age_s === null ? '<span class="na">never</span>' : `${v.last_message_from_ea_age_s} s ago`],
