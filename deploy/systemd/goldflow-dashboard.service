@@ -1,0 +1,19 @@
+# Read-only operations dashboard on 127.0.0.1:8765 (reach it through an SSH tunnel: ssh -L 8765:127.0.0.1:8765 vps)
+[Unit]
+Description=GoldXFlow operations dashboard (read-only)
+After=network-online.target
+
+[Service]
+Type=simple
+User=goldflow
+WorkingDirectory=/opt/goldflow
+EnvironmentFile=-/etc/goldflow/goldflow.env
+ExecStart=/opt/goldflow/.venv/bin/python -m goldflow.cli dashboard
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

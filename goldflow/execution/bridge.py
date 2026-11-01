@@ -35,6 +35,7 @@ Every message, decision and state change is written to the audit log.
 from __future__ import annotations
 
 import json
+import logging
 import os
 import secrets
 import time
@@ -49,6 +50,8 @@ from .reconcile import reconcile
 from .risk import RiskEngine
 from .settings import BridgeSettings, RiskSettings
 from .symbol import check_symbol, snap
+
+log = logging.getLogger("goldflow.execution")
 
 
 class ExecutionBridge:
@@ -125,14 +128,22 @@ class ExecutionBridge:
 
     # ------------------------------------------------------------------ signals
     def on_signal(self, table: str, rows: list[dict[str, Any]]) -> None:
-        """StrategyEngine listener: only ``signals`` rows are considered."""
+        """StrategyEngine listener: only ``signals`` rows are considered. A persistence failure blocks trading and
+        never propagates into the analytics pipeline."""
         if table != "signals":
             return
         for r in rows:
-            self.submit(r)
+            try:
+                self.submit(r)
+            except OSError as e:
+                self.risk.block("PERSISTENCE_FAILED", repr(e))
+                log.critical("execution bridge cannot persist (%r); signal %s not traded, trading blocked", e, r.get("signal_id"))
 
     def submit(self, sig: dict[str, Any]) -> Order | None:
         now = self.now()
+        if "PERSISTENCE_FAILED" in self.risk.st.blocked:
+            self.save()  # raises again while the disk is still failing; otherwise it clears the block
+            self.risk.unblock("PERSISTENCE_FAILED")
         sid = str(sig["signal_id"])
         self.audit.write(now, "SIGNAL", {k: sig.get(k) for k in ("signal_id", "strategy_id", "direction", "entry_price_ticks", "stop_loss_ticks",
                                                                "take_profit_ticks", "expiry_at", "available_at")})  # fmt: skip
@@ -301,6 +312,16 @@ class ExecutionBridge:
         self.save()
 
     def tick(self) -> None:
+        """One bridge step. If state or audit cannot be written (disk full, permissions), trading is blocked
+        (``PERSISTENCE_FAILED``): an order whose existence cannot be recorded must not be sent."""
+        try:
+            self._tick()
+            self.risk.unblock("PERSISTENCE_FAILED")
+        except OSError as e:
+            self.risk.block("PERSISTENCE_FAILED", repr(e))
+            log.critical("execution bridge cannot persist its state or audit log: %r; trading blocked", e)
+
+    def _tick(self) -> None:
         now = self.now()
         conns = getattr(self.t, "connections", None)
         if conns is not None and conns != self.conn_seen:  # a (re)connected EA: handshake and reconcile before trading

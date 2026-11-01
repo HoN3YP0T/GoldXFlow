@@ -1,0 +1,25 @@
+# Live ingestion + signals (paper mode), Linux VPS (non-US: Binance REST must be reachable).
+# Install: copy to /etc/systemd/system/, adjust User/WorkingDirectory, then
+#   systemctl daemon-reload && systemctl enable --now goldflow-live
+[Unit]
+Description=GoldXFlow live ingestion (paper mode)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=goldflow
+WorkingDirectory=/opt/goldflow
+EnvironmentFile=-/etc/goldflow/goldflow.env
+ExecStart=/opt/goldflow/.venv/bin/python -m goldflow.cli live-run --name live1
+Restart=always
+RestartSec=10
+# a restart resumes from the checkpoint with a RECOVERY interval (signals blocked until backfilled)
+KillSignal=SIGINT
+TimeoutStopSec=60
+NoNewPrivileges=true
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

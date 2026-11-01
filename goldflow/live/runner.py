@@ -225,7 +225,11 @@ class LiveRunner:
         hold = self.last_ok if self.last_ok is not None else (self.bus.clock + g if self.bus.clock is not None else self.start_ms)
         self.bus.advance(min(now, hold))
         if now - self.last_checkpoint >= int(self.ls["checkpoint_s"]) * 1000:
-            self.checkpoint()
+            try:
+                self.checkpoint()
+            except OSError as e:  # Phase 17: a full or failing disk must not stop ingestion; retried next interval
+                self.counters["checkpoint_errors"] = self.counters.get("checkpoint_errors", 0) + 1
+                log.error("live checkpoint failed (%s); retrying in %ss", e, self.ls["checkpoint_s"])
             self.last_checkpoint = now
         for h in self.hooks:
             h(now)

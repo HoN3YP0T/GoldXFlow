@@ -365,3 +365,21 @@ def test_capabilities_are_honest_and_report_lists_every_provider(tmp_path):
     md = (cfg.data_root / "reports" / "providers.md").read_text()
     assert "okx:usdt_swap:XAU-USDT-SWAP" in md and "GEO_RESTRICTED" in md and "nothing below is merged" in md
     assert os.path.exists(cfg.data_root / "reports" / "providers.json")
+
+
+def test_phase3_raw_registry_ignores_other_venues_raw_files(tmp_path):
+    """Regression (found in Phase 17): Phase 3 registered every zip under data/raw and refused to run once OKX raw
+    archives existed. It must register only its own provider's tree, and still flag a stray zip inside it."""
+    from goldflow.catalog import Catalog
+    from goldflow.checkpoint import Checkpoint
+    cfg = cfg_at(tmp_path)
+    Checkpoint(cfg.state_db)
+    files, _ = okx_archive(MS("2026-10-22T16:00:00.000Z"), MS("2026-10-24T16:00:00.000Z"))
+    venue_import(cfg, "okx", ["2026-10-23"], fetch=Fetch(files))
+    assert list((cfg.data_root / "raw" / "okx").rglob("*.zip"))
+    cat = Catalog(cfg)
+    assert cat.register_raw(make_readonly=False)["unaccounted"] == []
+    stray = cfg.data_root / "raw" / "binance" / "futures_um" / "XAUUSDT" / "trades" / "daily" / "stray.zip"
+    stray.parent.mkdir(parents=True)
+    stray.write_bytes(b"PK")
+    assert cat.register_raw(make_readonly=False)["unaccounted"] == [str(stray)]

@@ -647,5 +647,18 @@
     "slippage_window": 20,
     "sessions": "any",
     "day_reset_utc": "00:00"
+  },
+  "ops": {
+    "_doc": "Phase 17 operations (docs/RUNBOOK.md). Dashboard is read-only and loopback-only (token via env GOLDFLOW_DASHBOARD_TOKEN). Alerts: data/ops/alerts.jsonl; webhook only if webhook_env names an env var holding the URL. Logs rotate at log_max_mb, keeping log_backups files.",
+    "dashboard_host": "127.0.0.1",
+    "dashboard_port": 8765,
+    "refresh_s": 5,
+    "stale_checkpoint_s": 180,
+    "bridge_silent_s": 30,
+    "disk_warn_pct": 15,
+    "disk_crit_pct": 5,
+    "webhook_env": null,
+    "log_max_mb": 50,
+    "log_backups": 10
   }
 }

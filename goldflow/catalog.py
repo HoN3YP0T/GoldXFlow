@@ -79,7 +79,7 @@ class Catalog:
             "SELECT * FROM units WHERE method='archive' AND local_path IS NOT NULL")}
         prefer = {ds for ds, o in cfg["datasets"].items() if o.get("prefer_daily")}
         stmts, summary = [], {"files": 0, "by_role": {}, "unaccounted": [], "hash_mismatch": []}
-        raw_root = cfg.data_root / "raw"
+        raw_root = cfg.data_root / "raw" / cfg["source"]   # Phase 15: other venues' raw files belong to their own catalogs
         known_files = {r["path"]: r for r in self.db.execute("SELECT path, bytes, sha256 FROM raw_files")}
         for p in sorted(raw_root.rglob("*.zip")):
             sp = str(p)

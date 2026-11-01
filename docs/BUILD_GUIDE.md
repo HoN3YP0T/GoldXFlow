@@ -206,6 +206,7 @@ goldflow/                     current package
   live/{trades.py, bus.py, runner.py, parity.py}                                           (Phase 14, built)
   venues/{mapping.py, archives.py, ingest.py, run.py, crossvenue.py, report.py}; providers/{okx,bybit,bitget}  (Phase 15, built)
   execution/{protocol, settings, orders, risk, symbol, reconcile, audit, transport, bridge, gate, sim}.py; mt5/GoldflowExecutor.mq5  (Phase 16, built)
+  ops/{status, alerts, dashboard, backup}.py + ops/static/dashboard.html; deploy/{systemd, windows}  (Phase 17, built)
   execution/{bridge.py, order_manager.py, positions.py}  risk/                             (Phase 16)
   monitoring/  dashboard/                                                                  (Phase 17)
 config/  docs/  scripts/  tests/  data/ (git-ignored except small reports, manifest and frozen range)
@@ -235,7 +236,7 @@ mql5/   (Phase 16: EA executor source)
 | 14 | Live Binance ingestion and historical/live parity | **Built** (2026-10-31; see `docs/PHASE14_COMPLETION_REPORT.md`). Parity exact on 4 real days; live REST needs a non-US host (D6) | M6 |
 | 15 | Additional providers and cross-market mapping | **Done** (2026-10-31; see `docs/PHASE15_COMPLETION_REPORT.md`). OKX + Bybit history imported and run through the unchanged stack; Bitget discovery only | – |
 | 16 | MT5 execution bridge and risk controls | **Built** (2026-10-31; see `docs/PHASE16_COMPLETION_REPORT.md`). EA not compiled here; demo run and M7 gate need D2/D6 | M7 |
-| 17 | Dashboard, observability, deployment, hardening | Not started | M8 |
+| 17 | Dashboard, observability, deployment, hardening | **Built** (2026-10-31; see `docs/PHASE17_COMPLETION_REPORT.md`, `docs/RUNBOOK.md`, `docs/PRODUCTION_READINESS.md`). Restore tested on real data; service templates not installed on a host | M8 |
 
 ---
 
@@ -850,7 +851,9 @@ Every project requirement is mapped to the phases that deliver it and the eviden
 
 ---
 
-### Phase 17: Dashboard, observability, deployment and production hardening. **Status: Not started**
+### Phase 17: Dashboard, observability, deployment and production hardening. **Status: Built (2026-10-31). Host installation pending (D6).**
+**Built** (`goldflow/ops/`, `deploy/`; `docs/RUNBOOK.md`, `docs/PRODUCTION_READINESS.md`, `docs/PHASE17_COMPLETION_REPORT.md`): status snapshot where every value carries its source file (missing values say why); alert rules with an open/close lifecycle (stale feed, DQ, reconciliation mismatch, risk limit, bridge down, audit broken, disk, catalog, errors); read-only loopback dashboard (stdlib HTTP, optional token); backups with SQLite online copies, hard-linked increments, verification and restore into an empty root; rotating logs; systemd units and Windows scheduled tasks; hardening (failed live checkpoint does not stop ingestion; bridge blocks trading when it cannot persist). Evidence: the six evidence digests rebuilt from a restored backup of the real data root are identical. Found and fixed: Phase 3 refused to run once other venues' raw files existed (registry now scoped to its provider).
+
 **Objective.** A complete operational view and controlled continuous operation.
 
 **What to build.**

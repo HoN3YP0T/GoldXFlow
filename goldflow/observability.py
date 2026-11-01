@@ -68,8 +68,13 @@ def setup_logging(
     instrument: str = "-",
     level: int = logging.INFO,
     console: bool = True,
+    max_mb: int = 50,
+    backups: int = 10,
 ) -> Path:
-    """Configure root logging: JSON lines to <log_dir>/goldflow.jsonl plus a human console stream."""
+    """Configure root logging: JSON lines to <log_dir>/goldflow.jsonl plus a human console stream.
+
+    Phase 17: the file rotates at ``max_mb`` and keeps ``backups`` old files (goldflow.jsonl.1 ...), so retention is
+    bounded (default 50 MB x 11 files)."""
     log_dir.mkdir(parents=True, exist_ok=True)
     set_correlation_id(run_id)
     _static.update({"profile": profile, "provider": provider, "instrument": instrument, "pid": str(os.getpid())})
@@ -78,7 +83,9 @@ def setup_logging(
         root.removeHandler(h)
     root.setLevel(level)
     path = log_dir / "goldflow.jsonl"
-    fh = logging.FileHandler(path, encoding="utf-8")
+    from logging.handlers import RotatingFileHandler
+
+    fh = RotatingFileHandler(path, maxBytes=int(max_mb) * 1024 * 1024, backupCount=int(backups), encoding="utf-8")
     fh.setFormatter(JsonFormatter())
     root.addHandler(fh)
     if console:

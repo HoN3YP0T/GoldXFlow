@@ -20,6 +20,7 @@
   python -m goldflow.cli basis --pair binance:okx --dates D.. | volume-oz --venues binance okx bybit --dates D.. | providers-report
   python -m goldflow.cli bridge-run --profile demo --name E1 | bridge-status | emergency-stop | emergency-reset --operator N  # Phase 16
   python -m goldflow.cli exec-gate --name E1 --operator N | bridge-secret --out F | audit-verify --name E1 | ea-vector
+  python -m goldflow.cli dashboard [--port P] | ops-status | ops-check | backup --dest D | backup-verify --src S | restore --src S --target T
   python -m goldflow.cli depth-record [--duration S]   # Phase 8 live L2 recorder (non-US host)
   python -m goldflow.cli depth-replay | depth-normalize
 The acquisition range is frozen in data/state/range.json on first run so that resumed runs
@@ -201,7 +202,8 @@ def main(argv=None) -> int:
                                     "perf-report", "study", "ledger-verify", "live-run", "parity",
                                     "venue-import", "venue-run", "basis", "volume-oz", "providers-report",
                                     "bridge-run", "bridge-status", "emergency-stop", "emergency-reset", "exec-gate", "bridge-secret",
-                                    "audit-verify", "ea-vector",
+                                    "audit-verify", "ea-vector", "dashboard", "ops-status", "ops-check", "backup", "backup-verify",
+                                    "restore",
                                     "depth-record", "depth-replay", "depth-normalize"])
     ap.add_argument("--profile", help="research (default) | test | demo (MT5 demo routing) | live; or env GOLDFLOW_PROFILE")
     ap.add_argument("--config", default="config/binance_xauusdt.json")
@@ -240,6 +242,10 @@ def main(argv=None) -> int:
     ap.add_argument("--operator", help="emergency-reset / exec-gate: operator name recorded with the action")
     ap.add_argument("--reason", default="operator emergency stop", help="emergency-stop: reason")
     ap.add_argument("--out", help="bridge-secret: file to write the new shared secret to")
+    ap.add_argument("--dest", help="backup: backup root (snapshots go to <dest>/<UTC timestamp>/)")
+    ap.add_argument("--src", help="backup-verify/restore: snapshot directory")
+    ap.add_argument("--target", help="restore: new, empty data root to restore into")
+    ap.add_argument("--port", type=int, help="dashboard: port (default ops.dashboard_port)")
     a = ap.parse_args(argv)
     from .migrations import apply_migrations
     from .observability import new_run_id, setup_logging
@@ -254,7 +260,9 @@ def main(argv=None) -> int:
         return 2
     (cfg.data_root / "state").mkdir(parents=True, exist_ok=True)
     run_id = new_run_id(a.cmd)
-    setup_logging(cfg.data_root / "state", run_id, profile.value, cfg["source"], cfg.symbol)
+    _ops = (cfg.raw.get("ops") or {})
+    setup_logging(cfg.data_root / "state", run_id, profile.value, cfg["source"], cfg.symbol,
+                  max_mb=int(_ops.get("log_max_mb", 50)), backups=int(_ops.get("log_backups", 10)))
     for h in logging.getLogger().handlers:      # console to stdout, as before (wrappers capture stdout)
         if type(h) is logging.StreamHandler: h.setStream(sys.stdout)
     from .fsutil import connect
@@ -349,6 +357,8 @@ def main(argv=None) -> int:
         return _live_cmd(cfg, a, log)
     if a.cmd in ("venue-import", "venue-run", "basis", "volume-oz", "providers-report"):
         return _venue_cmd(cfg, a, log)
+    if a.cmd in ("dashboard", "ops-status", "ops-check", "backup", "backup-verify", "restore"):
+        return _ops_cmd(cfg, a, log)
     if a.cmd in ("bridge-run", "bridge-status", "emergency-stop", "emergency-reset", "exec-gate", "bridge-secret", "audit-verify", "ea-vector"):
         return _exec_cmd(cfg, a, log, profile)
     if a.cmd == "parity":
@@ -545,6 +555,42 @@ def _venue_cmd(cfg, a, log) -> int:
         x, y = (a.pair or "binance:okx").split(":")
         out = V.basis(cfg, x, y, _days(a)); print(json.dumps({k: v for k, v in out.items() if k != "hourly"}, indent=1)); return 0
     out = V.volume_oz(cfg, a.venues or ["binance", "okx", "bybit"], _days(a)); print(json.dumps(out, indent=1)); return 0
+
+def _ops_cmd(cfg, a, log) -> int:
+    """Phase 17: dashboard, status, alert check, backups."""
+    import time as _t
+    from .ops import AlertManager, Dashboard, backup, collect, evaluate, notifiers_for, ops_settings, restore, verify_backup
+    if a.cmd == "dashboard":
+        d = Dashboard(cfg, a.port)
+        log.info("dashboard on http://%s:%d/ (read-only%s)", d.ops["dashboard_host"], d.port, "; token required" if d.token else "")
+        print(f"http://{d.ops['dashboard_host']}:{d.port}/")
+        try:
+            d.serve()
+        except KeyboardInterrupt:
+            d.close()
+        return 0
+    if a.cmd in ("ops-status", "ops-check"):
+        st = collect(cfg)
+        if a.cmd == "ops-status":
+            print(json.dumps(st, indent=1, default=str)); return 0
+        ops = ops_settings(cfg)
+        am = AlertManager(cfg.data_root / "ops", notifiers_for(ops))
+        ev = am.update(evaluate(st, ops), int(_t.time() * 1000))
+        crit = [x for x in am.open.values() if x["severity"] == "critical"]
+        print(json.dumps({"open": list(am.open.values()), "transitions": ev}, indent=1, default=str))
+        return 2 if crit else 0
+    if a.cmd == "backup":
+        if not a.dest: print("goldflow: backup --dest DIR (outside the data root)", file=sys.stderr); return 2
+        out = backup(cfg, Path(a.dest), Path(a.config))
+        print(json.dumps(out, indent=1)); return 0 if out["ok"] else 1
+    if a.cmd == "backup-verify":
+        out = verify_backup(Path(a.src)); print(json.dumps(out, indent=1)); return 0 if out["ok"] else 1
+    if not (a.src and a.target): print("goldflow: restore --src SNAPSHOT --target NEW_EMPTY_DIR", file=sys.stderr); return 2
+    try:
+        out = restore(Path(a.src), Path(a.target))
+    except (ValueError, FileExistsError) as e:
+        print(f"goldflow: {e}", file=sys.stderr); return 2
+    print(json.dumps(out, indent=1)); return 0
 
 def _exec_cmd(cfg, a, log, profile) -> int:
     """Phase 16: MT5 execution bridge. Order routing only in the demo profile (demo accounts) or the gated live profile."""

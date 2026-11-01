@@ -381,6 +381,14 @@ def validate_config(raw: dict[str, Any], base_dir: Path | None = None, check_dis
             ResearchSettings.from_config(Config(raw, base_dir or Path(".")))
         except (ValueError, KeyError, TypeError) as e:
             raise ConfigError([f"research: {e}"]) from None
+    if raw.get("ops") is not None:
+        from .config import Config
+        from .ops.alerts import ops_settings
+
+        try:
+            ops_settings(Config(raw, base_dir or Path(".")))
+        except (ValueError, KeyError, TypeError) as e:
+            raise ConfigError([f"ops: {e}"]) from None
     if raw.get("bridge") is not None or raw.get("risk") is not None:
         from .config import Config
         from .execution.settings import BridgeSettings, RiskSettings
