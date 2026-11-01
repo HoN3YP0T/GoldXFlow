@@ -5,6 +5,8 @@ Downloads and verifies historical market data for **Binance USDⓈ-M `XAUUSDT`**
 **No market data is committed to this repository.** Rebuild it with `python -m goldflow.cli acquire` then `python -m goldflow.cli normalize`. The frozen range in `data/state/range.json` reproduces the exact dataset, and the partition digests in `data/manifests/dataset_manifest.json` let you verify it.
 
 ## Quick start: from nothing to signals
+**New here? Read [`docs/USER_MANUAL.md`](docs/USER_MANUAL.md)**: a step-by-step guide from installation to backtests, live paper mode and MT5 demo trading.
+
 ```bash
 pip install -r requirements.txt
 python -m goldflow.cli acquire --no-rest            # Phase 2: archives for the frozen range (data/state/range.json); add --new-range --start/--end for another
