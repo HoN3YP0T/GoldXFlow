@@ -142,7 +142,7 @@ def run_pipeline(cfg: Any, name: str, *, start: Any = None, end: Any = None, dat
     if stop_event is not None:
         stop_event.append(eng.stop)
     res = eng.run(resume=resume, until=until)
-    out: dict[str, Any] = {"name": name, "status": res["status"], "events": res["events"], "wall_s": res["wall_s"], "events_per_s": res["events_per_s"],
+    out: dict[str, Any] = {"name": name, "inputs": _inputs(cfg, eng, backtest), "status": res["status"], "events": res["events"], "wall_s": res["wall_s"], "events_per_s": res["events_per_s"],
                            "peak_rss_mb": res["peak_rss_mb"], "sequence_digest": hasher.digest, "integrity_violations": checker.violations,
                            "state_digests": st.digests(), "processor": st.proc.summary(), "strategies": st.strategies.summary()}  # fmt: skip
     if st.backtester is not None and res["status"] == "completed":
@@ -158,6 +158,34 @@ def run_pipeline(cfg: Any, name: str, *, start: Any = None, end: Any = None, dat
     d.mkdir(parents=True, exist_ok=True)
     (d / f"pipeline_{name}.json").write_text(json.dumps(out, indent=1, default=str))
     return out
+
+
+def _inputs(cfg: Any, eng: Any, backtest: bool) -> dict[str, Any]:
+    """What a pipeline result depends on: the data (dataset version incl. quality events), the full configuration, the
+    replay range and streams, the code version, and whether the backtest ran."""
+    from . import __version__
+
+    return {"dataset_version": eng.dataset_version, "config_hash": cfg.config_hash, "replay_config_hash": eng.config_hash,
+            "code_version": __version__, "backtest": bool(backtest)}  # fmt: skip
+
+
+def up_to_date(
+    cfg: Any, name: str, *, start: Any = None, end: Any = None, dates: list[str] | None = None, backtest: bool = False
+) -> str | None:
+    """None if ``data/reports/pipeline_<name>.json`` is a completed, verified run on exactly the current inputs;
+    otherwise the reason it must run."""
+    from .replay import ReplayEngine
+
+    p = Path(cfg.data_root) / "reports" / f"pipeline_{name}.json"
+    if not p.exists():
+        return "no previous run"
+    prev = json.loads(p.read_text())
+    if prev.get("status") != "completed" or not prev.get("ok"):
+        return "the previous run did not complete cleanly"
+    eng = ReplayEngine(cfg, [], start=start, end=end, dates=dates, name=f"pipeline-{name}", checkpoint=False)
+    now = _inputs(cfg, eng, backtest)
+    diff = sorted(k for k in now if prev.get("inputs", {}).get(k) != now[k])
+    return None if not diff else f"inputs changed: {diff}"
 
 
 def verify_all(cfg: Any) -> dict[str, dict[str, Any]]:

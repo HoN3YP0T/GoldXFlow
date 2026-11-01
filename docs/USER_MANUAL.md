@@ -59,8 +59,17 @@ MT5 demo trading. Commands are shown for **Windows** (your trading PC). On Linux
    ```
    You should see JSON with `"trading_mode": "DISABLED ..."` and the provider capabilities.
 
-> **Shortcut.** `run_windows.bat` performs Parts 1, 3, 4 and 5 in one go. Re-run it any time: finished steps are
-> skipped or resumed.
+> **Shortcut: two files do everything.**
+> 1. **`download_data.bat`** downloads the history into this project's `data\` folder, and nothing else.
+>    - If the download is already complete, it says so and does nothing, without contacting Binance.
+>    - If it was interrupted, it resumes and never downloads a verified file twice.
+> 2. **`run_windows.bat`** processes the downloaded data (Parts 4 and 5).
+>    - It **never downloads**, and never changes the downloaded data.
+>    - It refuses to start until the download is complete.
+>    - Steps that are already done and still current are skipped, so running it again is quick and gives the same
+>      results.
+>
+> Double-click them, or run them from any folder: they always work on the project they are in.
 
 ---
 
@@ -92,6 +101,16 @@ permission). The other secrets (bridge, dashboard token) come up in Parts 11 and
 
 ## Part 3. Download the history
 
+**Easiest: run `download_data.bat`.** It runs the steps below, saves everything in `data\` inside the project, and
+records when the download is complete.
+
+To check at any time, without downloading anything:
+```bash
+python -m goldflow.cli data-status
+```
+It reports `COMPLETE`, `INCOMPLETE`, `FILES_MISSING` or `NOT_STARTED`, with the reason. Exit code 0 means complete.
+
+The same steps by hand:
 1. *(Optional, India/PC only)* Record the live instrument specification:
    ```bash
    python -m goldflow.cli discover
@@ -114,8 +133,11 @@ permission). The other secrets (bridge, dashboard token) come up in Parts 11 and
    python -m goldflow.cli manifest
    ```
 
-**Result:** `data\manifest.json`. Exit code 1 means a file failed or an interval of trades is uncovered: rerun
-`acquire`.
+**Result:**
+- `data\manifest.json`;
+- `data\state\download_complete.json`, written only when every file of the range downloaded and verified.
+
+Exit code 1 means a file failed or an interval of trades is uncovered: run `acquire` (or `download_data.bat`) again.
 
 ---
 
@@ -161,6 +183,8 @@ python -m goldflow.cli pipeline --name main
 | strategy signals (and why others were suppressed) | 11 |
 
 - **Long run?** Add `--budget 3600` to stop after an hour, then continue with `--resume`.
+- **Re-running:** add `--if-changed` and nothing is recomputed while the data, configuration and code are unchanged.
+  `run_windows.bat` does this, and also runs `validate --if-changed`.
 - **Finished:** exit code 0 and `"ok": true` in `data\reports\pipeline_main.json`. Each `verification` entry must have
   an empty `fail` list.
 - **The same steps one at a time**, if you ever need them: `process`, `vprofile`, `orderflow`, `ib`, `auction`,
@@ -481,6 +505,8 @@ Linux VPS, use `deploy\systemd\`. Full procedures are in `docs\RUNBOOK.md`.
 | `checkpoint ... was taken with processing settings ...` | you changed analytics settings and tried to resume | start a new run with another `--name` (or without `--resume`) |
 | A run stops with exit code 3 | it was stopped by `--budget` or Ctrl-C | run it again with `--resume` |
 | `raw archive problem: unaccounted=[...]` | an unknown file inside `data\raw\binance\` | remove the stray file |
+| `run_windows.bat`: "The history is not downloaded yet, or the download is incomplete" | the download was never finished | run `download_data.bat` (it resumes), then `run_windows.bat` |
+| `data-status`: `FILES_MISSING` | a downloaded file was deleted or changed | run `download_data.bat`; it fetches only what is missing |
 
 ---
 
@@ -495,7 +521,7 @@ Run any command with `python -m goldflow.cli <command> [options]`. Options share
 
 | Area | Commands |
 |---|---|
-| Data (Phases 2–4) | `discover`, `acquire`, `rest`, `manifest`, `normalize`, `validate`, `report`, `replay` |
+| Data (Phases 2–4) | `discover`, `acquire`, `data-status`, `rest`, `manifest`, `normalize`, `validate`, `report`, `replay` |
 | Analytics and signals (5–11) | **`pipeline`**, `process`, `reconcile`, `vprofile`, `vprofile-verify`, `vprofile-export`, `orderflow`, `orderflow-verify`, `ib`, `ib-verify`, `auction`, `auction-verify`, `auction-review`, `signals`, `signals-verify` |
 | Order book (8) | `depth-record`, `depth-replay`, `depth-normalize` |
 | Backtest and research (12–13) | `broker-import`, `backtest`, `perf-report`, `study`, `ledger-verify` |

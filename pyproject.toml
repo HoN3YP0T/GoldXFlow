@@ -65,11 +65,11 @@ python_version = "3.12"
 warn_unused_configs = true
 ignore_missing_imports = true
 files = ["goldflow/settings.py", "goldflow/profiles.py", "goldflow/observability.py", "goldflow/migrations.py",
-         "goldflow/providers", "goldflow/processing", "goldflow/liquidity", "goldflow/orderflow", "goldflow/strategies", "goldflow/backtesting", "goldflow/research", "goldflow/live", "goldflow/venues", "goldflow/execution", "goldflow/ops", "goldflow/pipeline.py"]
+         "goldflow/providers", "goldflow/processing", "goldflow/liquidity", "goldflow/orderflow", "goldflow/strategies", "goldflow/backtesting", "goldflow/research", "goldflow/live", "goldflow/venues", "goldflow/execution", "goldflow/ops", "goldflow/pipeline.py", "goldflow/datastatus.py"]
 
 [[tool.mypy.overrides]]
 module = ["goldflow.settings", "goldflow.profiles", "goldflow.observability", "goldflow.migrations", "goldflow.providers.*",
-          "goldflow.processing.*", "goldflow.liquidity", "goldflow.liquidity.*", "goldflow.orderflow", "goldflow.orderflow.*", "goldflow.strategies", "goldflow.strategies.*", "goldflow.backtesting", "goldflow.backtesting.*", "goldflow.research", "goldflow.research.*", "goldflow.live", "goldflow.live.*", "goldflow.venues", "goldflow.venues.*", "goldflow.execution", "goldflow.execution.*", "goldflow.ops", "goldflow.ops.*", "goldflow.pipeline"]
+          "goldflow.processing.*", "goldflow.liquidity", "goldflow.liquidity.*", "goldflow.orderflow", "goldflow.orderflow.*", "goldflow.strategies", "goldflow.strategies.*", "goldflow.backtesting", "goldflow.backtesting.*", "goldflow.research", "goldflow.research.*", "goldflow.live", "goldflow.live.*", "goldflow.venues", "goldflow.venues.*", "goldflow.execution", "goldflow.execution.*", "goldflow.ops", "goldflow.ops.*", "goldflow.pipeline", "goldflow.datastatus"]
 strict = true
 
 [[tool.mypy.overrides]]

@@ -1,32 +1,53 @@
 @echo off
-REM GoldXFlow end to end on the Windows trading PC (fapi.binance.com is reachable from India; HTTP 451 from US cloud IPs).
-REM Each step is resumable: re-running this file continues where it stopped.
-REM   run_windows.bat            history + all analytics + signals + reports
-REM   run_windows.bat live       ... then live ingestion (paper mode, Ctrl-C to stop)
+REM ============================================================================================================
+REM  GoldXFlow - process the downloaded history: validation, all analytics, signals, reports.
+REM
+REM  - NEVER downloads anything. It uses the data already in data\ (download it first with download_data.bat).
+REM  - NEVER changes the downloaded data: raw archives and the frozen range are only read.
+REM  - Safe to run again: steps that are already done and still current are skipped
+REM      normalize  -> only days not yet normalised
+REM      validate   -> skipped if the last validation already covers the current data, code and config
+REM      pipeline   -> skipped if the last run used exactly the same data, config and code
+REM
+REM    run_windows.bat          the steps above
+REM    run_windows.bat live     ... then live paper mode (Ctrl-C to stop; needs Binance REST, i.e. not a US host)
+REM ============================================================================================================
 setlocal
-python -m pip install -r requirements.txt || goto :fail
+cd /d "%~dp0"
 
-REM ---- Phase 2-3: data (6-month frozen range in data\state\range.json)
-python -m goldflow.cli discover || goto :fail
-python -m goldflow.cli acquire || goto :fail
+python -m pip install -q -r requirements.txt || goto :fail
+
+python -m goldflow.cli data-status >nul 2>&1
+if errorlevel 1 (
+    echo.
+    echo The history is not downloaded yet, or the download is incomplete:
+    python -m goldflow.cli data-status
+    echo.
+    echo Run download_data.bat first, then run this file again.
+    exit /b 1
+)
+
+REM ---- Phase 3: validated Parquet partitions (only new days) and an independent re-check (only if something changed)
 python -m goldflow.cli normalize || goto :fail
-python -m goldflow.cli validate || goto :fail
+python -m goldflow.cli validate --if-changed || goto :fail
 
-REM ---- Phases 5-11 in one replay + every independent verifier (resumable with --resume)
-python -m goldflow.cli pipeline --name main || goto :fail
+REM ---- Phases 5-11: all analytics + signals in one replay, then every independent verifier (skipped if up to date)
+python -m goldflow.cli pipeline --name main --if-changed || goto :fail
 
-REM ---- Phase 14 parity check on the last archived day, Phase 15 venues, Phase 17 status
-python -m goldflow.cli providers-report
+REM ---- Reports and status
+python -m goldflow.cli providers-report --no-probe
 python -m goldflow.cli ops-check
 
-REM ---- Phase 12-13 need your broker data (decision D2): fill the "broker" block, then
+REM ---- Phases 12-13 need your broker data (decision D2): fill the "broker" block in the config, then
 REM   python -m goldflow.cli broker-import --file XAUUSD_ticks.csv --format mt5
 REM   python -m goldflow.cli pipeline --name bt1 --backtest
 REM   python -m goldflow.cli perf-report --name bt1
 
 if /I "%1"=="live" python -m goldflow.cli live-run --name live1
-echo Done. Dashboard: python -m goldflow.cli dashboard  (http://127.0.0.1:8765/)
+echo.
+echo Done. Results: data\reports\pipeline_main.json   Dashboard: python -m goldflow.cli dashboard  (http://127.0.0.1:8765/)
 exit /b 0
+
 :fail
-echo A step failed (exit code %errorlevel%). Fix the reported problem and re-run: completed steps are skipped or resumed.
+echo A step failed (exit code %errorlevel%). Fix the reported problem and run this file again: finished steps are skipped.
 exit /b 1

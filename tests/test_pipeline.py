@@ -86,3 +86,51 @@ def test_acquire_refuses_an_explicit_range_that_differs_from_the_frozen_one(tmp_
             cli.main(["manifest", "--config", str(cp)] + args)
         assert e.value.code == 2
     assert "--new-range" in capsys.readouterr().err
+
+
+def test_data_status_only_complete_after_a_clean_full_download(tmp_path):
+    """download_data.bat / run_windows.bat rely on this: COMPLETE only when acquire finished without failures for the
+    frozen range and every verified file is still on disk; never a network call."""
+    from goldflow.checkpoint import Checkpoint
+    from goldflow.config import Config
+    from goldflow.datastatus import data_status, record_complete
+    from test_processing import REAL_CFG
+    raw = json.loads(json.dumps(REAL_CFG)); raw["paths"] = {"data_root": "data", "state_db": "data/state/acquisition.sqlite"}
+    cfg = Config(raw, tmp_path)
+    (tmp_path / "data" / "state").mkdir(parents=True)
+    assert data_status(cfg)["state"] == "NOT_STARTED"
+    rng = {"start_ms": 1792713600000, "end_ms": 1793059200000, "start": "2026-10-23T00:00:00.000Z", "end": "2026-10-27T00:00:00.000Z"}
+    (tmp_path / "data" / "state" / "range.json").write_text(json.dumps(rng))
+    ck = Checkpoint(cfg.state_db)
+    f = tmp_path / "data" / "raw" / "binance" / "futures_um" / "XAUUSDT" / "trades" / "daily" / "XAUUSDT-trades-2026-10-23.zip"
+    f.parent.mkdir(parents=True)
+    f.write_bytes(b"x" * 100)
+    ck.upsert_unit("u1", source="binance", method="archive", dataset="trades", status="verified", local_path=str(f), bytes=100)
+    assert data_status(cfg)["state"] == "INCOMPLETE"                                  # no completion record yet
+    assert record_complete(cfg, {"failed": ["u2"]}, None, True) is None               # a run with failures never certifies
+    assert record_complete(cfg, {"failed": []}, ["trades"], True) is None             # nor does a partial --datasets run
+    assert record_complete(cfg, {"failed": [], "run_id": "r1"}, None, False) is not None
+    st = data_status(cfg)
+    assert st["complete"] and st["state"] == "COMPLETE" and st["verified_files"] == 1
+    f.write_bytes(b"x" * 99)                                                          # a verified file changed on disk
+    assert data_status(cfg)["state"] == "FILES_MISSING"
+    f.write_bytes(b"x" * 100)
+    rng2 = {**rng, "end_ms": rng["end_ms"] + 86_400_000, "end": "2026-10-28T00:00:00.000Z"}
+    (tmp_path / "data" / "state" / "range.json").write_text(json.dumps(rng2))          # a new range is not covered
+    assert data_status(cfg)["state"] == "INCOMPLETE"
+
+
+def test_pipeline_if_changed_skips_only_when_up_to_date(tmp_path, capsys):
+    cfg = make_dataset(tmp_path, n_per_day=800, partial_hour=None)
+    cp = _cfg_file(cfg, tmp_path)
+    base = ["--config", str(cp)]
+    rep = Path(cfg.data_root) / "reports" / "pipeline_m.json"
+    assert cli.main(["pipeline", "--name", "m", "--if-changed", "--no-verify"] + base) == 0
+    first = rep.read_text()
+    capsys.readouterr()
+    assert cli.main(["pipeline", "--name", "m", "--if-changed", "--no-verify"] + base) == 0
+    assert '"up_to_date"' in capsys.readouterr().out and rep.read_text() == first     # nothing recomputed
+    raw = json.loads(cp.read_text()); raw["strategies"]["warmup"] = "3h"                 # a config change must re-run it
+    cp.write_text(json.dumps(raw))
+    assert cli.main(["pipeline", "--name", "m", "--if-changed", "--no-verify"] + base) == 0
+    assert '"up_to_date"' not in capsys.readouterr().out and rep.read_text() != first

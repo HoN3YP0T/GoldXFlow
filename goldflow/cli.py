@@ -4,7 +4,8 @@
   python -m goldflow.cli acquire   --config ... [--months 6 | --start ISO --end ISO] [--new-range] [--no-rest]
   python -m goldflow.cli rest      --config ...          # REST recovery units only (run where fapi is reachable)
   python -m goldflow.cli manifest  --config ...
-  python -m goldflow.cli pipeline  --name run1 [--resume] [--backtest]          # Phases 5-11 (12) in ONE replay + every verifier
+  python -m goldflow.cli pipeline  --name run1 [--resume] [--backtest] [--if-changed]  # Phases 5-11 (12) in ONE replay + every verifier
+  python -m goldflow.cli data-status                                            # offline: is the download complete? (exit 0 = yes)
   python -m goldflow.cli process   --name p1 [--resume] [--dates ..] [--budget S]   # Phase 5 trade processor
   python -m goldflow.cli reconcile [--interval 1m]                              # Phase 5 footprint checks
   python -m goldflow.cli vprofile  --name v1 [--resume] [--footprint]          # Phase 6 volume profile / VWAP snapshots
@@ -211,7 +212,7 @@ def main(argv=None) -> int:
                                     "venue-import", "venue-run", "basis", "volume-oz", "providers-report",
                                     "bridge-run", "bridge-status", "emergency-stop", "emergency-reset", "exec-gate", "bridge-secret",
                                     "audit-verify", "ea-vector", "dashboard", "ops-status", "ops-check", "backup", "backup-verify",
-                                    "restore", "pipeline",
+                                    "restore", "pipeline", "data-status",
                                     "depth-record", "depth-replay", "depth-normalize"])
     ap.add_argument("--profile", help="research (default) | test | demo (MT5 demo routing) | live; or env GOLDFLOW_PROFILE")
     ap.add_argument("--config", default="config/binance_xauusdt.json")
@@ -256,6 +257,7 @@ def main(argv=None) -> int:
     ap.add_argument("--port", type=int, help="dashboard: port (default ops.dashboard_port)")
     ap.add_argument("--backtest", action="store_true", help="pipeline: also run the Phase 12 backtester (needs the broker block, D2)")
     ap.add_argument("--no-verify", action="store_true", help="pipeline: skip the independent verifiers")
+    ap.add_argument("--if-changed", action="store_true", help="pipeline/validate: do nothing if the last run is up to date (same data, config, code)")
     a = ap.parse_args(argv)
     from .migrations import apply_migrations
     from .observability import new_run_id, setup_logging
@@ -289,6 +291,12 @@ def main(argv=None) -> int:
         # Phase 3. normalize: validate + write partitions/catalog. validate: recompute everything into a scratch
         # catalog, write no data files, and compare the result digest with the previous run.
         from .catalog import run_phase3
+        if a.cmd == "validate" and a.if_changed and not a.dates:
+            why = _validate_current(cfg)
+            if why is None:
+                print(json.dumps({"validate": "up_to_date", "reason": "the last validation ran after the last normalisation, "
+                                  "with the same code and config, and found no differences"})); return 0
+            log.info("validate runs: %s", why)
         reset = a.reset if a.cmd == "normalize" else not a.resume
         summary = run_phase3(cfg, write=a.cmd == "normalize", workers=a.workers, dates=a.dates, budget_s=a.budget, reset=reset)
         log.info("phase3 %s", json.dumps({k: v for k, v in summary.items() if k != "raw_registry"}, default=str))
@@ -368,6 +376,9 @@ def main(argv=None) -> int:
         return _signals_cmd(cfg, a, log)
     if a.cmd == "pipeline":
         return _pipeline_cmd(cfg, a, log)
+    if a.cmd == "data-status":
+        from .datastatus import data_status
+        st = data_status(cfg); print(json.dumps(st, indent=1)); return 0 if st["complete"] else 1
     if a.cmd == "live-run":
         return _live_cmd(cfg, a, log)
     if a.cmd in ("venue-import", "venue-run", "basis", "volume-oz", "providers-report"):
@@ -414,6 +425,10 @@ def main(argv=None) -> int:
     if a.cmd in ("acquire", "rest"):
         res = run(cfg, s, e, do_archive=a.cmd == "acquire", do_rest=not a.no_rest, datasets=a.datasets)
         log.info("run result %s", json.dumps(res))
+        if a.cmd == "acquire":
+            from .datastatus import record_complete
+            mk = record_complete(cfg, res, a.datasets, with_rest=not a.no_rest)
+            log.info("download %s", f"complete: recorded in {mk}" if mk else "not complete yet: re-run acquire to resume")
     if a.cmd in ("acquire", "manifest") and not a.skip_reconcile:
         from .report import trades_vs_aggtrades
         log.info("reconciling trades vs aggTrades (quantity level)...")
@@ -511,6 +526,29 @@ def _ib_cmd(cfg, a, log) -> int:
     bad = checker.violations or (out.get("verification") or {}).get("fail")
     return 1 if bad else (0 if res["status"] == "completed" else 3)
 
+def _validate_current(cfg) -> str | None:
+    """None if a clean validation already covers the current catalog; otherwise why validation must run."""
+    import hashlib, sqlite3
+    from .catalog import code_version
+    if not cfg.state_db.exists(): return "no catalog"
+    db = sqlite3.connect(f"file:{cfg.state_db}?mode=ro", uri=True)
+    try:
+        # day_runs is written only when a day is (re)normalised: a re-run that found every day done does not count
+        last_norm = db.execute("SELECT MAX(finished_utc) FROM day_runs").fetchone()[0]
+        v = db.execute("SELECT finished_utc, code_version, config_sha256, summary_json FROM validation_runs WHERE mode='validate' "
+                       "AND finished_utc IS NOT NULL ORDER BY started_utc DESC LIMIT 1").fetchone()
+    except sqlite3.OperationalError:
+        return "no validation yet"
+    finally:
+        db.close()
+    if v is None: return "no validation yet"
+    if last_norm is not None and v[0] < last_norm: return "data was normalised after the last validation"
+    if v[1] != code_version(): return "code changed since the last validation"
+    if v[2] != hashlib.sha256(json.dumps(cfg.raw, sort_keys=True).encode()).hexdigest(): return "config changed since the last validation"
+    s = json.loads(v[3] or "{}")
+    if s.get("digest_differences_vs_catalog"): return "the last validation found differences"   # (only finished runs are selected)
+    return None
+
 def _pipeline_cmd(cfg, a, log) -> int:
     """Phases 5-11 (and 12 with --backtest) in one replay: every dataset written, then every independent verifier."""
     import signal, threading
@@ -521,6 +559,13 @@ def _pipeline_cmd(cfg, a, log) -> int:
     for sig in (signal.SIGINT, signal.SIGTERM):
         signal.signal(sig, lambda *_: (log.info("stop requested; checkpointing"), [f() for f in stops]))
     if a.budget: threading.Timer(a.budget, lambda: [f() for f in stops]).start()
+    if a.if_changed and not a.resume:
+        from .pipeline import up_to_date
+        why = up_to_date(cfg, name, start=a.start, end=a.end, dates=a.dates, backtest=a.backtest)
+        if why is None:
+            print(json.dumps({"name": name, "status": "up_to_date", "report": str(cfg.data_root / "reports" / f"pipeline_{name}.json")}))
+            return 0
+        log.info("pipeline %s runs: %s", name, why)
     try:
         out = run_pipeline(cfg, name, start=a.start, end=a.end, dates=a.dates, resume=a.resume, until=a.until, backtest=a.backtest,
                            verify=not a.no_verify, stop_event=stops,

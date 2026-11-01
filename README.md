@@ -14,7 +14,13 @@ python -m goldflow.cli normalize                    # Phase 3: validated Parquet
 python -m goldflow.cli pipeline --name main         # Phases 5-11 in ONE replay, every dataset written, every verifier run
 python -m goldflow.cli dashboard                    # Phase 17: http://127.0.0.1:8765/
 ```
-On Windows, `run_windows.bat` does all of this; on Linux/macOS, use `scripts/run_all.sh`. Every step is resumable.
+On Windows, use two files:
+- **`download_data.bat`** downloads the history into `data\`. If it is already complete, it does nothing; if it was
+  interrupted, it resumes.
+- **`run_windows.bat`** processes it. It never downloads, and skips steps that are already up to date.
+
+On Linux/macOS: `scripts/download_data.sh`, then `scripts/run_all.sh`. `python -m goldflow.cli data-status` reports,
+offline, whether the download is complete.
 
 ### How the phases connect
 | Step | Command | Reads | Writes |
